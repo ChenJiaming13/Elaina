@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Elaina", "Elaina\Elaina.vcxproj", "{701EC900-9FD1-4C36-95D2-CCC95420E511}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glad", "vendor\glad\glad.vcxproj", "{4F8946E7-3838-487C-AC99-4BE5938B75A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vendor", "vendor", "{75E8C6D6-425C-4235-80AA-97ED328297C1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stb", "vendor\stb\stb.vcxproj", "{E767BFFF-28FC-4973-BF4F-76A23E66D728}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "vendor\imgui\imgui.vcxproj", "{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vcpkg", "vcpkg", "{EEA2D10A-D998-411F-A686-004FF0613F5D}"
+	ProjectSection(SolutionItems) = preProject
+		vcpkg-configuration.json = vcpkg-configuration.json
+		vcpkg.json = vcpkg.json
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{F7C7A035-3650-48FD-A059-36925DCE18B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{701EC900-9FD1-4C36-95D2-CCC95420E511}.Debug|x64.ActiveCfg = Debug|x64
+		{701EC900-9FD1-4C36-95D2-CCC95420E511}.Debug|x64.Build.0 = Debug|x64
+		{701EC900-9FD1-4C36-95D2-CCC95420E511}.Release|x64.ActiveCfg = Release|x64
+		{701EC900-9FD1-4C36-95D2-CCC95420E511}.Release|x64.Build.0 = Release|x64
+		{4F8946E7-3838-487C-AC99-4BE5938B75A2}.Debug|x64.ActiveCfg = Debug|x64
+		{4F8946E7-3838-487C-AC99-4BE5938B75A2}.Debug|x64.Build.0 = Debug|x64
+		{4F8946E7-3838-487C-AC99-4BE5938B75A2}.Release|x64.ActiveCfg = Release|x64
+		{4F8946E7-3838-487C-AC99-4BE5938B75A2}.Release|x64.Build.0 = Release|x64
+		{E767BFFF-28FC-4973-BF4F-76A23E66D728}.Debug|x64.ActiveCfg = Debug|x64
+		{E767BFFF-28FC-4973-BF4F-76A23E66D728}.Debug|x64.Build.0 = Debug|x64
+		{E767BFFF-28FC-4973-BF4F-76A23E66D728}.Release|x64.ActiveCfg = Release|x64
+		{E767BFFF-28FC-4973-BF4F-76A23E66D728}.Release|x64.Build.0 = Release|x64
+		{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A}.Debug|x64.ActiveCfg = Debug|x64
+		{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A}.Debug|x64.Build.0 = Debug|x64
+		{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A}.Release|x64.ActiveCfg = Release|x64
+		{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A}.Release|x64.Build.0 = Release|x64
+		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Debug|x64.ActiveCfg = Debug|x64
+		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Debug|x64.Build.0 = Debug|x64
+		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Release|x64.ActiveCfg = Release|x64
+		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4F8946E7-3838-487C-AC99-4BE5938B75A2} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
+		{E767BFFF-28FC-4973-BF4F-76A23E66D728} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
+		{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BFD61269-D9DE-49AC-9A5D-67F018092DDE}
+	EndGlobalSection
+EndGlobal
