@@ -146,11 +146,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="base\ShaderProgram.h" />
+    <ClInclude Include="base\VertexArrayBuffer.h" />
     <ClInclude Include="core\ElainaApp.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="primitive\Primitive.h" />
+    <ClInclude Include="safe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="base\ShaderProgram.cpp" />
+    <ClCompile Include="base\VertexArrayBuffer.cpp" />
     <ClCompile Include="core\ElainaApp.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -158,6 +164,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="primitive\Primitive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vendor\glad\glad.vcxproj">

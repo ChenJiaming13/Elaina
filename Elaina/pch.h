@@ -11,9 +11,15 @@
 #include "framework.h"
 #include <exception>
 #include <format>
+#include <fstream>
+#include <numeric>
 #include <Windows.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <spdlog/spdlog.h>
 
 #endif //PCH_H

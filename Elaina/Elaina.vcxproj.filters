@@ -24,12 +24,33 @@
     <ClInclude Include="core\ElainaApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="base\ShaderProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="safe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base\VertexArrayBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="primitive\Primitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\ElainaApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\ShaderProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\VertexArrayBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="primitive\Primitive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

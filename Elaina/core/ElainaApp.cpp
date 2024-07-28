@@ -1,8 +1,27 @@
 #include "pch.h"
 #include "ElainaApp.h"
 
-Elaina::CElainaApp::CElainaApp(int vWidth, int vHeight, const std::string& vAppName) :m_pWindow(nullptr)
+Elaina::CElainaApp::CElainaApp() :m_pWindow(nullptr)
 {
+}
+
+Elaina::CElainaApp::~CElainaApp()
+{
+	__cleanup();
+}
+
+bool Elaina::CElainaApp::init(int vWidth, int vHeight, const std::string& vAppName)
+{
+	if (m_pWindow != nullptr)
+	{
+		spdlog::warn("window has been initialized");
+		return false;
+	}
+	if (vWidth <= 0 || vHeight <= 0)
+	{
+		spdlog::error("window size must be greater than 0");
+		return false;
+	}
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -11,28 +30,42 @@ Elaina::CElainaApp::CElainaApp(int vWidth, int vHeight, const std::string& vAppN
 	if (m_pWindow == nullptr)
 	{
 		glfwTerminate();
-		throw std::runtime_error("failed to create GLFW window");
+		spdlog::error("failed to create GLFW window");
+		return false;
 	}
 	glfwMakeContextCurrent(m_pWindow);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		glfwDestroyWindow(m_pWindow);
-		m_pWindow = nullptr;
-		glfwTerminate();
-		throw std::runtime_error("failed to initialize GLAD");
+		__cleanup();
+		spdlog::error("failed to initialize GLAD");
+		return false;
 	}
+	return true;
 }
 
-void Elaina::CElainaApp::run()
+bool Elaina::CElainaApp::shouldClose() const
 {
-	float LastTime = 0.0f;
-	while (!glfwWindowShouldClose(m_pWindow))
+	_ASSERTE(m_pWindow != nullptr);
+	return glfwWindowShouldClose(m_pWindow);
+}
+
+void Elaina::CElainaApp::pollEvents() const
+{
+	glfwPollEvents();
+}
+
+void Elaina::CElainaApp::swapBuffers() const
+{
+	_ASSERTE(m_pWindow != nullptr);
+	glfwSwapBuffers(m_pWindow);
+}
+
+void Elaina::CElainaApp::__cleanup()
+{
+	if (m_pWindow != nullptr)
 	{
-		float CurrTime = static_cast<float>(glfwGetTime());
-		float DeltaTime = CurrTime - LastTime;
-		LastTime = CurrTime;
-		spdlog::info("FPS: {}", (int)(1.0f / DeltaTime));
-		glfwPollEvents();
-		glfwSwapBuffers(m_pWindow);
+		glfwDestroyWindow(m_pWindow);
+		m_pWindow = nullptr;
 	}
+	glfwTerminate();
 }
