@@ -10,6 +10,21 @@
 #include "primitive/Primitive.h"
 #include "safe.h"
 
+size_t g_IndexOfVAOs = 0;
+size_t g_SizeofVAOs = 0;
+
+class CMyInputHandler : public Elaina::CInputHandler
+{
+public:
+	void onKeyDown(int vKey) override
+	{
+		if (vKey == 'X')
+		{
+			g_IndexOfVAOs = (g_IndexOfVAOs + 1) % g_SizeofVAOs;
+		}
+	}
+};
+
 int main()
 {
 	Elaina::CElainaApp App;
@@ -20,14 +35,20 @@ int main()
 	Program.attachShader(Elaina::CShaderProgram::EShaderType::FRAGMENT, "pbr.frag");
 	Program.linkProgram();
 
-	const auto& pVAO = Elaina::CPrimitive::createTorus();
+	std::vector<std::shared_ptr<Elaina::CVertexArrayBuffer>> VAOs{
+		Elaina::CPrimitive::createTorus(),
+		Elaina::CPrimitive::createCube(),
+		Elaina::CPrimitive::createSphere()
+	};
+	g_SizeofVAOs = VAOs.size();
 
 	glm::vec3 LightPos = glm::vec3(0.0f, 0.0f, 3.0f);
 
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, (float)App.getWidth() / (float)App.getHeight());
 	const auto& pCameraController = std::make_shared<Elaina::CArcballController>();
 	pCameraController->control(pCamera);
-	App.setCameraController(pCameraController);
+	App.addInputHandler(pCameraController);
+	App.addInputHandler(std::make_shared<CMyInputHandler>());
 
 	float LastTime = 0.0f;
 	while (!App.shouldClose())
@@ -54,6 +75,7 @@ int main()
 		Program.setUniform("uMetallic", 0.0f);
 		Program.setUniform("uRoughness", 1.0f);
 		Program.setUniform("uAo", 1.0f);
+		const auto& pVAO = VAOs[g_IndexOfVAOs];
 		pVAO->bind();
 		GL_SAFE_CALL(glDrawElements(pVAO->getDrawMode(), pVAO->getVerticesCount(), GL_UNSIGNED_INT, 0));
 		App.swapBuffers();

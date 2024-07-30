@@ -1,63 +1,68 @@
 #include "pch.h"
 #include "ElainaApp.h"
-#include "controller/CameraController.h"
+#include "InputHandler.h"
 
 void Elaina::windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight)
 {
 	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
 	pApp->m_Width = vWidth;
 	pApp->m_Height = vHeight;
-	if (pApp->m_pCamController != nullptr)
+	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
-		pApp->m_pCamController->onWindowSizeChange(vWidth, vHeight);
+		if (pInputHandler == nullptr) continue;
+		pInputHandler->onWindowSizeChange(vWidth, vHeight);
 	}
 }
 
 void Elaina::mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods)
 {
 	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
-	if (pApp->m_pCamController != nullptr)
+	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
-		if (vAction == GLFW_PRESS) pApp->m_pCamController->onMouseButtonDown(vButton);
-		else if (vAction == GLFW_RELEASE) pApp->m_pCamController->onMouseButtonUp(vButton);
+		if (pInputHandler == nullptr) continue;
+		if (vAction == GLFW_PRESS) pInputHandler->onMouseButtonDown(vButton);
+		else if (vAction == GLFW_RELEASE) pInputHandler->onMouseButtonUp(vButton);
 	}
 }
 
 void Elaina::mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset)
 {
 	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
-	if (pApp->m_pCamController != nullptr)
+	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
-		pApp->m_pCamController->onMouseScroll((float)vXoffset, (float)vYoffset);
+		if (pInputHandler == nullptr) continue;
+		pInputHandler->onMouseScroll((float)vXoffset, (float)vYoffset);
 	}
 }
 
 void Elaina::mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
 {
 	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
-	if (pApp->m_pCamController != nullptr)
+	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
-		pApp->m_pCamController->onMouseMove((float)vXpos, (float)vYpos);
+		if (pInputHandler == nullptr) continue;
+		pInputHandler->onMouseMove((float)vXpos, (float)vYpos);
 	}
 }
 
 void Elaina::keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods)
 {
 	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
-	if (pApp->m_pCamController != nullptr)
+	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
-		if (vAction == GLFW_PRESS) pApp->m_pCamController->onKeyDown(vKey);
-		else if (vAction == GLFW_RELEASE) pApp->m_pCamController->onKeyUp(vKey);
+		if (pInputHandler == nullptr) continue;
+		if (vAction == GLFW_PRESS) pInputHandler->onKeyDown(vKey);
+		else if (vAction == GLFW_RELEASE) pInputHandler->onKeyUp(vKey);
 	}
 }
 
-Elaina::CElainaApp::CElainaApp() :m_pWindow(nullptr), m_pCamController(nullptr), m_Width(0), m_Height(0)
+Elaina::CElainaApp::CElainaApp() :m_pWindow(nullptr), m_Width(0), m_Height(0), m_InputHandlers{}
 {
 }
 
 Elaina::CElainaApp::~CElainaApp()
 {
-	m_pCamController.reset();
+	m_InputHandlers.clear();
 	__cleanup();
 }
 
@@ -112,6 +117,12 @@ void Elaina::CElainaApp::swapBuffers() const
 {
 	_ASSERTE(m_pWindow != nullptr);
 	glfwSwapBuffers(m_pWindow);
+}
+
+void Elaina::CElainaApp::addInputHandler(const std::shared_ptr<CInputHandler>& vInputHandler)
+{
+	if (vInputHandler == nullptr) return;
+	m_InputHandlers.push_back(vInputHandler);
 }
 
 void Elaina::CElainaApp::__registerCallbacks() const

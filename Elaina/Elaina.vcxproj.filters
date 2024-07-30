@@ -48,7 +48,7 @@
     <ClInclude Include="controller\FPSController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="controller\InputHandler.h">
+    <ClInclude Include="core\InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

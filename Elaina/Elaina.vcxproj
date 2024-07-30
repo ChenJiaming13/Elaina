@@ -151,7 +151,7 @@
     <ClInclude Include="controller\ArcballController.h" />
     <ClInclude Include="controller\CameraController.h" />
     <ClInclude Include="controller\FPSController.h" />
-    <ClInclude Include="controller\InputHandler.h" />
+    <ClInclude Include="core\InputHandler.h" />
     <ClInclude Include="core\Camera.h" />
     <ClInclude Include="core\ElainaApp.h" />
     <ClInclude Include="framework.h" />

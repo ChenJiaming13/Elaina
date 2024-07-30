@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputHandler.h"
+#include "core/InputHandler.h"
 #include "core/Camera.h"
 #include <memory>
 

@@ -5,7 +5,7 @@
 struct GLFWwindow;
 namespace Elaina
 {
-	class CCameraController;
+	class CInputHandler;
 	class CElainaApp
 	{
 	public:
@@ -16,9 +16,9 @@ namespace Elaina
 		bool shouldClose() const;
 		void pollEvents() const;
 		void swapBuffers() const;
+		void addInputHandler(const std::shared_ptr<CInputHandler>& vInputHandler);
 		int getWidth() const { return m_Width; }
 		int getHeight() const { return m_Height; }
-		void setCameraController(const std::shared_ptr<CCameraController>& vCameraController) { m_pCamController = vCameraController; }
 
 	private:
 		void __registerCallbacks() const;
@@ -33,6 +33,6 @@ namespace Elaina
 		GLFWwindow* m_pWindow;
 		int m_Width;
 		int m_Height;
-		std::shared_ptr<CCameraController> m_pCamController;
+		std::vector<std::shared_ptr<CInputHandler>> m_InputHandlers;
 	};
 }
