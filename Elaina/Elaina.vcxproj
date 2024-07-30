@@ -148,6 +148,11 @@
   <ItemGroup>
     <ClInclude Include="base\ShaderProgram.h" />
     <ClInclude Include="base\VertexArrayBuffer.h" />
+    <ClInclude Include="controller\ArcballController.h" />
+    <ClInclude Include="controller\CameraController.h" />
+    <ClInclude Include="controller\FPSController.h" />
+    <ClInclude Include="controller\InputHandler.h" />
+    <ClInclude Include="core\Camera.h" />
     <ClInclude Include="core\ElainaApp.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -157,6 +162,9 @@
   <ItemGroup>
     <ClCompile Include="base\ShaderProgram.cpp" />
     <ClCompile Include="base\VertexArrayBuffer.cpp" />
+    <ClCompile Include="controller\ArcballController.cpp" />
+    <ClCompile Include="controller\FPSController.cpp" />
+    <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\ElainaApp.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

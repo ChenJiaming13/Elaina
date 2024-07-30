@@ -36,6 +36,21 @@
     <ClInclude Include="primitive\Primitive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\ArcballController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\CameraController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\FPSController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\InputHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -51,6 +66,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="primitive\Primitive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controller\ArcballController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controller\FPSController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

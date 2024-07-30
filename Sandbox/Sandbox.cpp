@@ -5,15 +5,15 @@
 #include "base/ShaderProgram.h"
 #include "base/VertexArrayBuffer.h"
 #include "core/ElainaApp.h"
+#include "core/Camera.h"
+#include "controller/ArcballController.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
 
 int main()
 {
-	const int Width = 800;
-	const int Height = 600;
 	Elaina::CElainaApp App;
-	_ASSERTE(App.init(Width, Height));
+	_ASSERTE(App.init(800, 600));
 
 	Elaina::CShaderProgram Program;
 	Program.attachShader(Elaina::CShaderProgram::EShaderType::VERTEX, "pbr.vert");
@@ -22,8 +22,12 @@ int main()
 
 	const auto& pVAO = Elaina::CPrimitive::createTorus();
 
-	glm::vec3 CamPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	glm::vec3 LightPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
+	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, (float)App.getWidth() / (float)App.getHeight());
+	const auto& pCameraController = std::make_shared<Elaina::CArcballController>();
+	pCameraController->control(pCamera);
+	App.setCameraController(pCameraController);
 
 	float LastTime = 0.0f;
 	while (!App.shouldClose())
@@ -32,19 +36,18 @@ int main()
 		float CurrTime = static_cast<float>(glfwGetTime());
 		float DeltaTime = CurrTime - LastTime;
 		LastTime = CurrTime;
-		spdlog::info("FPS: {}", (int)(1.0f / DeltaTime));
-		
+		//spdlog::info("FPS: {}", (int)(1.0f / DeltaTime));
+		GL_SAFE_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		GL_SAFE_CALL(glViewport(0, 0, App.getWidth(), App.getHeight()));
 		GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 		GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		glm::mat4 Model = glm::rotate(glm::mat4(1.0f), CurrTime, glm::vec3(1.0f, 1.0f, 1.0f));
+		//glm::mat4 Model = glm::rotate(glm::mat4(1.0f), CurrTime, glm::vec3(1.0f, 1.0f, 1.0f));
+		glm::mat4 Model(1.0f);
 		Program.use();
 		Program.setUniform("uModel", Model);
-		Program.setUniform("uView", glm::lookAt(
-			CamPos, 
-			glm::vec3(0.0f, 0.0f, 0.0f), 
-			glm::vec3(0.0f, 1.0f, 0.0f)));
-		Program.setUniform("uProjection", glm::perspective(glm::radians(45.0f), (float)Width/(float)Height, 0.1f, 100.0f));
-		Program.setUniform("uCamPos", CamPos);
+		Program.setUniform("uView", pCamera->getViewMatrix());
+		Program.setUniform("uProjection",pCamera->getProjectionMatrix());
+		Program.setUniform("uCamPos", pCamera->getWorldPos());
 		Program.setUniform("uLightPosition", LightPos);
 		Program.setUniform("uLightColor", glm::vec3(10.0f, 10.0f, 10.0f));
 		Program.setUniform("uAlbedo", glm::vec3(1.0f, 1.0f, 0.0f));
