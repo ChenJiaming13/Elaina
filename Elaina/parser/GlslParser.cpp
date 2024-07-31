@@ -66,31 +66,35 @@ bool Elaina::CGlslParser::checkValid(EUniformType vType, std::any vValue)
 			return false; // unknown or match error
 		}
 	}
-	catch (const std::bad_any_cast& e)
+	catch (const std::bad_any_cast e)
 	{
 		return false;
 	}
 }
 
-void Elaina::CGlslParser::parseUniforms(const std::string& vShaderCode, std::unordered_map<std::string, std::pair<EUniformType, std::any>>& voUniforms)
+void Elaina::CGlslParser::parseUniforms(const std::string& vShaderCode, std::unordered_map<std::string, EUniformType>& voUniforms)
 {
 	//voUniforms.clear();
+
+	// delete comments (single & multi line)
+	std::string ShaderCode = vShaderCode;
+	std::regex SingleLineComment(R"(//.*)");
+	ShaderCode = std::regex_replace(ShaderCode, SingleLineComment, "");
+	std::regex MultiLineComment(R"(/\*[\s\S]*?\*/)");
+	ShaderCode = std::regex_replace(ShaderCode, MultiLineComment, "");
+
 	std::regex UniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)");
 	std::smatch Match;
 
-	std::string::const_iterator SearchStart(vShaderCode.cbegin());
-	while (std::regex_search(SearchStart, vShaderCode.cend(), Match, UniformRegex))
+	std::string::const_iterator SearchStart(ShaderCode.cbegin());
+	while (std::regex_search(SearchStart, ShaderCode.cend(), Match, UniformRegex))
 	{
 		if (Match.size() == 3)
 		{
 			// match[0]是整个匹配，match[1]是类型，match[2]是名称
 			std::string TypeStr = Match[1];
 			std::string Name = Match[2];
-
-			EUniformType Type = queryUniformTypeByString(TypeStr);
-			std::any DefaultValue = getDefaultValue(Type);
-
-			voUniforms[Name] = { Type, DefaultValue };
+			voUniforms[Name] = queryUniformTypeByString(TypeStr);
 		}
 		SearchStart = Match.suffix().first;
 	}

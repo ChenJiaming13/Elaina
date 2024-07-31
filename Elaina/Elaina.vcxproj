@@ -162,6 +162,10 @@
     <ClInclude Include="core\RenderPass.h" />
     <ClInclude Include="core\RenderPipeline.h" />
     <ClInclude Include="core\Transform.h" />
+    <ClInclude Include="core\Material.h" />
+    <ClInclude Include="renderpass\DirShadowMapPass.h" />
+    <ClInclude Include="renderpass\DeferredLitPass.h" />
+    <ClInclude Include="renderpass\DeferredGeoPass.h" />
     <ClInclude Include="parser\GlslParser.h" />
     <ClInclude Include="renderpass\ForwardPbrPass.h" />
     <ClInclude Include="framework.h" />
@@ -189,6 +193,10 @@
     <ClCompile Include="core\RenderPass.cpp" />
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
+    <ClCompile Include="core\Material.cpp" />
+    <ClCompile Include="renderpass\DirShadowMapPass.cpp" />
+    <ClCompile Include="renderpass\DeferredLitPass.cpp" />
+    <ClCompile Include="renderpass\DeferredGeoPass.cpp" />
     <ClCompile Include="parser\GlslParser.cpp" />
     <ClCompile Include="renderpass\ForwardPbrPass.cpp" />
     <ClCompile Include="loader\ModelLoader.cpp" />

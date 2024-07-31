@@ -96,6 +96,18 @@
     <ClInclude Include="parser\GlslParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="renderpass\DeferredGeoPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderpass\DeferredLitPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderpass\DirShadowMapPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -159,6 +171,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="parser\GlslParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\DeferredGeoPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\DeferredLitPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\DirShadowMapPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

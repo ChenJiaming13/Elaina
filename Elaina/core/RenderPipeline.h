@@ -16,6 +16,7 @@ namespace Elaina
 		void render(const std::shared_ptr<CScene>& vScene) const;
 		void addRenderPass(const std::shared_ptr<CRenderPass>& vRenderPass, size_t vOutputIndex);
 		void addFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_FrameBuffers.push_back(vFrameBuffer); }
+		void resize(int vWidth, int vHeight) const;
 
 	private:
 		std::vector<std::shared_ptr<CFrameBuffer>> m_FrameBuffers;

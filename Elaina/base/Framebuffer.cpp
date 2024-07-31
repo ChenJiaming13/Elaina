@@ -109,16 +109,20 @@ std::shared_ptr<Elaina::CFrameBuffer> Elaina::CFrameBuffer::createFrameBuffer(
 	const auto& pFrameBuffer = std::make_shared<CFrameBuffer>();
 	pFrameBuffer->create();
 	pFrameBuffer->bind();
-	std::vector<GLenum> DrawAttachments{};
-	for (int i = 0; i < vNumOfColorBuffer; ++i)
+	if (vNumOfColorBuffer > 0)
 	{
-		const auto& pTexture2D = std::make_shared<CTexture2D>(vWidth, vHeight, GL_RGB16F, GL_RGB, GL_FLOAT);
-		pTexture2D->setParameters(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		pTexture2D->setParameters(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		pFrameBuffer->setAttachment(GL_COLOR_ATTACHMENT0 + i, pTexture2D);
-		DrawAttachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+		std::vector<GLenum> DrawAttachments{};
+		for (int i = 0; i < vNumOfColorBuffer; ++i)
+		{
+			const auto& pTexture2D = std::make_shared<CTexture2D>(vWidth, vHeight, GL_RGB16F, GL_RGB, GL_FLOAT);
+			pTexture2D->setParameters(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			pTexture2D->setParameters(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			pFrameBuffer->setAttachment(GL_COLOR_ATTACHMENT0 + i, pTexture2D);
+			DrawAttachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+		}
+		pFrameBuffer->setDrawAttachments(DrawAttachments);
 	}
-	pFrameBuffer->setDrawAttachments(DrawAttachments);
+	else setColorBufferEmpty();
 	// when color = 0 set none
 	if (vNeedDepthBuffer)
 	{

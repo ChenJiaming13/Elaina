@@ -48,95 +48,58 @@ bool Elaina::CShaderProgram::linkProgram()
 	return true;
 }
 
-void Elaina::CShaderProgram::autoUse() const
+void Elaina::CShaderProgram::use() const
 {
 	GL_SAFE_CALL(glUseProgram(m_ProgramID));
-	for (const auto& [Name, Uniform] : m_Uniforms) {
-		const auto& [Type, Value] = Uniform;
-		switch (Type)
-		{
-		case EUniformType::FLOAT:
-			__setUniform(Name, std::any_cast<float>(Value));
-			break;
-		case EUniformType::VEC2:
-			__setUniform(Name, std::any_cast<glm::vec2>(Value));
-			break;
-		case EUniformType::VEC3:
-			__setUniform(Name, std::any_cast<glm::vec3>(Value));
-			break;
-		case EUniformType::VEC4:
-			__setUniform(Name, std::any_cast<glm::vec4>(Value));
-			break;
-		case EUniformType::MAT3:
-			__setUniform(Name, std::any_cast<glm::mat3>(Value));
-			break;
-		case EUniformType::MAT4:
-			__setUniform(Name, std::any_cast<glm::mat4>(Value));
-			break;
-		case EUniformType::SAMPLER2D:
-			__setUniform(Name, std::any_cast<int>(Value));
-			break;
-		default:
-			spdlog::error("unsupported uniform type for: {}", Name);
-		}
-	}
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, int vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, int vValue) const
 {
 	GL_SAFE_CALL(glUniform1i(glGetUniformLocation(m_ProgramID, vName.c_str()), vValue));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, bool vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, bool vValue) const
 {
 	GL_SAFE_CALL(glUniform1i(glGetUniformLocation(m_ProgramID, vName.c_str()), (int)vValue));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, float vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, float vValue) const
 {
 	GL_SAFE_CALL(glUniform1f(glGetUniformLocation(m_ProgramID, vName.c_str()), vValue));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, const glm::vec2& vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec2& vValue) const
 {
 	GL_SAFE_CALL(glUniform2fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, &vValue[0]));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, const glm::vec3& vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec3& vValue) const
 {
 	GL_SAFE_CALL(glUniform3fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, &vValue[0]));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, const glm::vec4& vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec4& vValue) const
 {
 	GL_SAFE_CALL(glUniform4fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, &vValue[0]));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, const glm::mat4& vMat) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat4& vMat) const
 {
 	GL_SAFE_CALL(glUniformMatrix4fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, GL_FALSE, &vMat[0][0]));
 }
 
-void Elaina::CShaderProgram::__setUniform(const std::string& vName, const glm::mat3& vMat) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat3& vMat) const
 {
 	GL_SAFE_CALL(glUniformMatrix3fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, GL_FALSE, &vMat[0][0]));
 }
 
-bool Elaina::CShaderProgram::setUniform(const std::string& vName, std::any vValue)
+std::shared_ptr<Elaina::CShaderProgram> Elaina::CShaderProgram::createShaderProgram(const std::string& vVertPath, const std::string& vFragPath)
 {
-	if (m_Uniforms.count(vName) == 0)
-	{
-		spdlog::warn("uniform name: {} maybe not exist", vName);
-		return false;
-	}
-	const auto& [Type, OldValue] = m_Uniforms[vName];
-	if (!CGlslParser::checkValid(Type, vValue))
-	{
-		spdlog::error("uniform type and value not match {}", vName);
-		return false;
-	}
-	m_Uniforms[vName] = { Type, vValue };
-	return true;
+	const auto& pProgram = std::make_shared<Elaina::CShaderProgram>();
+	pProgram->attachShader(Elaina::CShaderProgram::EShaderType::VERTEX, vVertPath);
+	pProgram->attachShader(Elaina::CShaderProgram::EShaderType::FRAGMENT, vFragPath);
+	pProgram->linkProgram();
+	return pProgram;
 }
 
 bool Elaina::CShaderProgram::__dumpShaderCodeFromFile(const std::string& vShaderPath, EShaderType vShaderType, std::string& voShaderCode)

@@ -36,8 +36,8 @@ void Elaina::CPostProcessPass::renderV(
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE0));
 	pLastFrameBuffer->getAttachment(GL_COLOR_ATTACHMENT0)->bind();
 	
+	m_pShaderProgram->use();
 	m_pShaderProgram->setUniform("uMainTex", 0);
-	m_pShaderProgram->autoUse();
 	m_pQuadVAO->bind();
 	m_pQuadVAO->draw();
 }

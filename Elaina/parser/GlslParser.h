@@ -23,6 +23,6 @@ namespace Elaina
 		static EUniformType queryUniformTypeByString(const std::string& vTypeStr);
 		static std::any getDefaultValue(EUniformType vType);
 		static bool checkValid(EUniformType vType, std::any vValue);
-		static void parseUniforms(const std::string& vShaderCode, std::unordered_map<std::string, std::pair<EUniformType, std::any>>& voUniforms);
+		static void parseUniforms(const std::string& vShaderCode, std::unordered_map<std::string, EUniformType>& voUniforms);
 	};
 }

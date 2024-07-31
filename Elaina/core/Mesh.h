@@ -5,12 +5,12 @@
 
 namespace Elaina
 {
-	class CShaderProgram;
+	class CMaterial;
 	class CMesh
 	{
 	public:
-		CMesh(const std::shared_ptr<CVertexArrayObject>& vVAO, const std::shared_ptr<CShaderProgram>& vShaderProgram = nullptr)
-			:m_pVAO(vVAO), m_pShaderProgram(vShaderProgram) {}
+		CMesh(const std::shared_ptr<CVertexArrayObject>& vVAO, const std::shared_ptr<CMaterial>& vMaterial = nullptr)
+			:m_pVAO(vVAO), m_pMaterial(vMaterial) {}
 
 		void draw() const
 		{
@@ -18,11 +18,11 @@ namespace Elaina
 			m_pVAO->draw();
 		}
 
-		void setShaderProgram(const std::shared_ptr<CShaderProgram>& vShaderProgram) { m_pShaderProgram = vShaderProgram; }
-		const auto& getShaderProgram() const { return m_pShaderProgram; }
+		void setMaterial(const std::shared_ptr<CMaterial>& vMaterial) { m_pMaterial = vMaterial; }
+		const auto& getMaterial() const { return m_pMaterial; }
 
 	private:
 		std::shared_ptr<CVertexArrayObject> m_pVAO;
-		std::shared_ptr<CShaderProgram> m_pShaderProgram;
+		std::shared_ptr<CMaterial> m_pMaterial;
 	};
 }

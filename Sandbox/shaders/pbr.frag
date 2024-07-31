@@ -13,7 +13,8 @@ uniform float uRoughness;
 uniform float uAo;
 
 // lights
-uniform vec3 uLightPosition;
+// uniform vec3 uLightPosition;
+uniform vec3 uLightDir;
 uniform vec3 uLightColor;
 
 uniform vec3 uCamPos;
@@ -73,9 +74,11 @@ void main()
 
     // reflectance equation
     // calculate per-light radiance
-    vec3 L = normalize(uLightPosition - vWorldPos);
+    // vec3 L = normalize(uLightPosition - vWorldPos);
+    vec3 L = normalize(-uLightDir);
     vec3 H = normalize(V + L);
-    float distance = length(uLightPosition - vWorldPos);
+    // float distance = length(uLightPosition - vWorldPos);
+    float distance = 1.0;
     float attenuation = 1.0 / (distance * distance);
     vec3 radiance = uLightColor * attenuation;
 

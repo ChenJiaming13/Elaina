@@ -2,7 +2,7 @@
 #include "GlfwWindow.h"
 #include "InputHandler.h"
 
-void Elaina::windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight)
+void Elaina::CGlfwWindow::__windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight)
 {
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	pApp->m_Width = vWidth;
@@ -14,7 +14,7 @@ void Elaina::windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeig
 	}
 }
 
-void Elaina::mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods)
+void Elaina::CGlfwWindow::__mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods)
 {
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
@@ -25,7 +25,7 @@ void Elaina::mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, 
 	}
 }
 
-void Elaina::mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset)
+void Elaina::CGlfwWindow::__mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset)
 {
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
@@ -35,7 +35,7 @@ void Elaina::mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vY
 	}
 }
 
-void Elaina::mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
+void Elaina::CGlfwWindow::__mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
 {
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
@@ -45,7 +45,7 @@ void Elaina::mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
 	}
 }
 
-void Elaina::keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods)
+void Elaina::CGlfwWindow::__keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods)
 {
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
@@ -127,11 +127,11 @@ void Elaina::CGlfwWindow::addInputHandler(const std::shared_ptr<CInputHandler>& 
 
 void Elaina::CGlfwWindow::__registerCallbacks() const
 {
-	glfwSetFramebufferSizeCallback(m_pWindow, windowSizeChangeCallback);
-	glfwSetMouseButtonCallback(m_pWindow, mouseButtonCallback);
-	glfwSetScrollCallback(m_pWindow, mouseScrollCallback);
-	glfwSetCursorPosCallback(m_pWindow, mouseMoveCallback);
-	glfwSetKeyCallback(m_pWindow, keyCallback);
+	glfwSetFramebufferSizeCallback(m_pWindow, __windowSizeChangeCallback);
+	glfwSetMouseButtonCallback(m_pWindow, __mouseButtonCallback);
+	glfwSetScrollCallback(m_pWindow, __mouseScrollCallback);
+	glfwSetCursorPosCallback(m_pWindow, __mouseMoveCallback);
+	glfwSetKeyCallback(m_pWindow, __keyCallback);
 }
 
 void Elaina::CGlfwWindow::__cleanup()

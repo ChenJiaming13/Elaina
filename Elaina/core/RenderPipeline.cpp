@@ -16,3 +16,11 @@ void Elaina::CRenderPipeline::addRenderPass(const std::shared_ptr<CRenderPass>& 
 	m_RenderPasses.push_back(vRenderPass);
 	m_OutputIndices.push_back(vOutputIndex);
 }
+
+void Elaina::CRenderPipeline::resize(int vWidth, int vHeight) const
+{
+	for (const auto& pFrameBuffer : m_FrameBuffers)
+	{
+		pFrameBuffer->resize(vWidth, vHeight);
+	}
+}

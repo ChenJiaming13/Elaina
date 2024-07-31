@@ -24,11 +24,11 @@ namespace Elaina
 		void __registerCallbacks() const;
 		void __cleanup();
 
-		friend void windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight);
-		friend void mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods);
-		friend void mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset);
-		friend void mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos);
-		friend void keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods);
+		static void __windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight);
+		static void __mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods);
+		static void __mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset);
+		static void __mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos);
+		static void __keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods);
 
 		GLFWwindow* m_pWindow;
 		int m_Width;

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "ForwardPbrPass.h"
-#include "base/ShaderProgram.h"
 #include "core/Node.h"
 #include "core/Scene.h"
 #include "core/Mesh.h"
+#include "core/Material.h"
 #include "core/Camera.h"
 #include "light/Light.h"
 #include "safe.h"
@@ -21,14 +21,17 @@ void Elaina::CForwardPbrPass::renderV(
 		const auto& pDirLight = vScene->getDirectionalLight();
 		for (const auto& pMesh : vNode->getMeshes())
 		{
-			const auto& pProgram = pMesh->getShaderProgram();
-			pProgram->setUniform("uModel", vNode->getModelMatrix());
-			pProgram->setUniform("uView", pCamera->getViewMatrix());
-			pProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
-			pProgram->setUniform("uCamPos", pCamera->getWorldPos());
-			pProgram->setUniform("uLightPosition", pDirLight->_LightPos);
-			pProgram->setUniform("uLightColor", pDirLight->_LightColor);
-			pProgram->autoUse();
+			const auto& pMaterial = pMesh->getMaterial();
+			pMaterial->use();
+			pMaterial->setUniform("uModel", vNode->getModelMatrix());
+			pMaterial->setUniform("uView", pCamera->getViewMatrix());
+			pMaterial->setUniform("uProjection", pCamera->getProjectionMatrix());
+			pMaterial->setUniform("uCamPos", pCamera->getWorldPos());
+			if (pMaterial->checkUniformExist("uLightPosition"))
+				pMaterial->setUniform("uLightPosition", pDirLight->_LightPos);
+			if (pMaterial->checkUniformExist("uLightDir"))
+				pMaterial->setUniform("uLightDir", pDirLight->_LightDir);
+			pMaterial->setUniform("uLightColor", pDirLight->_LightColor);
 			pMesh->draw();
 		}
 	});

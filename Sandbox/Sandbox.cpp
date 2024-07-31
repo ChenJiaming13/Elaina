@@ -8,12 +8,15 @@
 #include "core/GlfwWindow.h"
 #include "core/Camera.h"
 #include "core/Mesh.h"
+#include "core/Material.h"
 #include "core/Node.h"
 #include "core/Scene.h"
 #include "core/RenderPipeline.h"
 #include "core/RenderPass.h"
 #include "renderpass/ForwardPbrPass.h"
 #include "renderpass/PostProcessPass.h"
+#include "renderpass/DeferredGeoPass.h"
+#include "renderpass/DirShadowMapPass.h"
 #include "light/Light.h"
 #include "controller/ArcballController.h"
 #include "primitive/Primitive.h"
@@ -22,10 +25,17 @@
 
 size_t g_IndexOfNodes = 0;
 size_t g_SizeofNodes = 0;
+std::shared_ptr<Elaina::CScene> g_Scene = nullptr;
+std::shared_ptr<Elaina::CRenderPipeline> g_RenderPipeline = nullptr;
 
 class CMyInputHandler : public Elaina::CInputHandler
 {
 public:
+	void onWindowSizeChange(int vWidth, int vHeight) override
+	{
+		if (g_RenderPipeline != nullptr) g_RenderPipeline->resize(vWidth, vHeight);
+	}
+
 	void onKeyDown(int vKey) override
 	{
 		if (vKey == 'X')
@@ -42,21 +52,45 @@ std::shared_ptr<Elaina::CNode> createNode(const std::shared_ptr<Elaina::CVertexA
 	return pNode;
 }
 
-std::shared_ptr<Elaina::CShaderProgram> createShaderProgram(const std::string& vVertPath, const std::string& vFragPath)
-{
-	const auto& pProgram = std::make_shared<Elaina::CShaderProgram>();
-	pProgram->attachShader(Elaina::CShaderProgram::EShaderType::VERTEX, vVertPath);
-	pProgram->attachShader(Elaina::CShaderProgram::EShaderType::FRAGMENT, vFragPath);
-	pProgram->linkProgram();
-	return pProgram;
-}
-
-void setShaderProgram(const std::shared_ptr<Elaina::CNode>& vRootNode, const std::shared_ptr<Elaina::CShaderProgram>& vShaderProgram)
+void setMaterial(const std::shared_ptr<Elaina::CNode>& vRootNode, const std::shared_ptr<Elaina::CMaterial>& vMaterial)
 {
 	Elaina::CNode::traverse(vRootNode, [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		for (const auto& pMesh : vNode->getMeshes())
-			pMesh->setShaderProgram(vShaderProgram);
+			pMesh->setMaterial(vMaterial);
 	});
+}
+
+void setRenderPipeline(int vWidth, int vHeight)
+{
+	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 0, true, false));
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 2, true, false));
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDirShadowMapPass>(Elaina::CShaderProgram::createShaderProgram(
+		"shaders\\dirShadowMap.vert",
+		"shaders\\dirShadowMap.frag"
+	)), 0);
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDeferredGeoPass>(Elaina::CShaderProgram::createShaderProgram(
+		"shaders\\deferGeo.vert",
+		"shaders\\deferGeo.frag"
+	)), 1);
+	/*g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CForwardPbrPass>(), 1);
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
+		"shaders\\postProcess.vert",
+		"shaders\\postProcessInversion.frag"
+	)), 1);
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
+		"shaders\\postProcess.vert",
+		"shaders\\postProcessInversion.frag"
+	)), 0);
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
+		"shaders\\postProcess.vert",
+		"shaders\\postProcessInversion.frag"
+	)), 1);*/
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(Elaina::CShaderProgram::createShaderProgram(
+		"shaders\\postProcess.vert",
+		"shaders\\postProcessInversion.frag"
+	)), 2);
 }
 
 int main()
@@ -65,12 +99,22 @@ int main()
 	_ASSERTE(App.init(800, 600));
 	Elaina::CFrameBuffer::initDefaultFrameBuffer(App.getWidth(), App.getHeight(), 0);
 
-	const auto& pProgram = createShaderProgram("shaders\\pbr.vert", "shaders\\pbr.frag");
+	const auto& pProgram = Elaina::CShaderProgram::createShaderProgram("shaders\\pbr.vert", "shaders\\pbr.frag");
+	pProgram->use();
 	pProgram->setUniform("uAlbedo", glm::vec3(1.0f, 1.0f, 0.0f));
 	pProgram->setUniform("uMetallic", 0.0f);
 	pProgram->setUniform("uRoughness", 1.0f);
-	pProgram->setUniform("uAo", 1.0f);
-	//pProgram->setUniform("uAo1", 1.0f);
+	pProgram->setUniform("uAo", 0.1f);
+
+	const auto& pRootNode = std::make_shared<Elaina::CNode>();
+	const auto& pTestNode = std::make_shared<Elaina::CNode>();
+	const auto& pPlaneNode = createNode(Elaina::CPrimitive::createQuad());
+	setMaterial(pPlaneNode, std::make_shared<Elaina::CMaterial>(pProgram));
+	pPlaneNode->setScale(glm::vec3(10.0f, 10.0f, 10.0f));
+	pPlaneNode->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+	pPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
+	pRootNode->addChild(pPlaneNode);
+	pRootNode->addChild(pTestNode);
 
 	std::vector<std::shared_ptr<Elaina::CNode>> Nodes{
 		//createNode(Elaina::CPrimitive::createQuad()),
@@ -79,7 +123,7 @@ int main()
 		createNode(Elaina::CPrimitive::createSphere()),
 		Elaina::CModelLoader::loadGltfFile("C:\\Users\\Chen\\Documents\\Code\\HiveGL\\assets\\Models\\TriMesh\\dragon.gltf")
 	};
-	for (const auto& pNode : Nodes) setShaderProgram(pNode, pProgram);
+	for (const auto& pNode : Nodes) setMaterial(pNode, std::make_shared<Elaina::CMaterial>(pProgram));
 	g_SizeofNodes = Nodes.size();
 
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, (float)App.getWidth() / (float)App.getHeight());
@@ -90,33 +134,16 @@ int main()
 
 	const auto& pDirLight = std::make_shared<Elaina::SDirectionalLight>();
 	pDirLight->_LightColor = glm::vec3(10.0f, 10.0f, 10.0f);
-	pDirLight->_LightPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	pDirLight->_LightPos = glm::vec3(5.0f, 10.0f, 5.0f);
+	pDirLight->_LightDir = glm::vec3(0.1f, -1.0f, 0.1f);
 
-	const auto& pScene = std::make_shared<Elaina::CScene>();
-	pScene->setCamera(pCamera);
-	pScene->setDirectionalLight(pDirLight);
+	g_Scene = std::make_shared<Elaina::CScene>();
+	g_Scene->setCamera(pCamera);
+	g_Scene->setDirectionalLight(pDirLight);
+	g_Scene->setRootNode(pRootNode);
 
-	const auto& pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	pRenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(App.getWidth(), App.getHeight(), 1, true, false));
-	pRenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(App.getWidth(), App.getHeight(), 1, true, false));
-	pRenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
-	pRenderPipeline->addRenderPass(std::make_shared<Elaina::CForwardPbrPass>(), 0);
-	pRenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 1);
-	pRenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 0);
-	pRenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 1);
-	pRenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 2);
+	setRenderPipeline(App.getWidth(), App.getHeight());
+
 	float LastTime = 0.0f;
 	while (!App.shouldClose())
 	{
@@ -125,9 +152,12 @@ int main()
 		float DeltaTime = CurrTime - LastTime;
 		LastTime = CurrTime;
 		//spdlog::info("FPS: {}", (int)(1.0f / DeltaTime));
-		pScene->setRootNode(Nodes[g_IndexOfNodes]);
-		pRenderPipeline->render(pScene);
+		pTestNode->clearChilds();
+		pTestNode->addChild(Nodes[g_IndexOfNodes]);
+		g_RenderPipeline->render(g_Scene);
 		App.swapBuffers();
 	}
+	g_Scene.reset();
+	g_RenderPipeline.reset();
 	return 0;
 }
