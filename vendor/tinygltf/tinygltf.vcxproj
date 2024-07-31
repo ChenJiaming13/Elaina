@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{701ec900-9fd1-4c36-95d2-ccc95420e511}</ProjectGuid>
-    <RootNamespace>Elaina</RootNamespace>
+    <ProjectGuid>{85292b36-f86a-41f7-803b-a413690b8ab0}</ProjectGuid>
+    <RootNamespace>tinygltf</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Label="Vcpkg">
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgEnabled>false</VcpkgEnabled>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,10 +113,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -132,10 +131,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -146,67 +144,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="base\Framebuffer.h" />
-    <ClInclude Include="base\RenderBuffer.h" />
-    <ClInclude Include="base\ShaderProgram.h" />
-    <ClInclude Include="base\Texture2D.h" />
-    <ClInclude Include="base\VertexArrayObject.h" />
-    <ClInclude Include="base\Buffer.h" />
-    <ClInclude Include="controller\ArcballController.h" />
-    <ClInclude Include="controller\CameraController.h" />
-    <ClInclude Include="controller\FPSController.h" />
-    <ClInclude Include="core\InputHandler.h" />
-    <ClInclude Include="core\Camera.h" />
-    <ClInclude Include="core\GlfwWindow.h" />
-    <ClInclude Include="core\Node.h" />
-    <ClInclude Include="core\RenderPass.h" />
-    <ClInclude Include="core\RenderPipeline.h" />
-    <ClInclude Include="core\Transform.h" />
-    <ClInclude Include="renderpass\ForwardPbrPass.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="core\Mesh.h" />
-    <ClInclude Include="light\Light.h" />
-    <ClInclude Include="loader\ModelLoader.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="renderpass\PostProcessPass.h" />
-    <ClInclude Include="primitive\Primitive.h" />
-    <ClInclude Include="safe.h" />
-    <ClInclude Include="core\Scene.h" />
+    <ClCompile Include="tiny_gltf.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base\Framebuffer.cpp" />
-    <ClCompile Include="base\RenderBuffer.cpp" />
-    <ClCompile Include="base\ShaderProgram.cpp" />
-    <ClCompile Include="base\Texture2D.cpp" />
-    <ClCompile Include="base\VertexArrayObject.cpp" />
-    <ClCompile Include="base\Buffer.cpp" />
-    <ClCompile Include="controller\ArcballController.cpp" />
-    <ClCompile Include="controller\FPSController.cpp" />
-    <ClCompile Include="core\Camera.cpp" />
-    <ClCompile Include="core\GlfwWindow.cpp" />
-    <ClCompile Include="core\Node.cpp" />
-    <ClCompile Include="core\RenderPass.cpp" />
-    <ClCompile Include="core\RenderPipeline.cpp" />
-    <ClCompile Include="core\Transform.cpp" />
-    <ClCompile Include="renderpass\ForwardPbrPass.cpp" />
-    <ClCompile Include="loader\ModelLoader.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="renderpass\PostProcessPass.cpp" />
-    <ClCompile Include="primitive\Primitive.cpp" />
-    <ClCompile Include="core\Scene.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\vendor\glad\glad.vcxproj">
-      <Project>{4f8946e7-3838-487c-ac99-4be5938b75a2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\vendor\tinygltf\tinygltf.vcxproj">
-      <Project>{85292b36-f86a-41f7-803b-a413690b8ab0}</Project>
-    </ProjectReference>
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="tiny_gltf.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,5 +21,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <spdlog/spdlog.h>
+#include <tiny_gltf.h>
 
 #endif //PCH_H

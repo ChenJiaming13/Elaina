@@ -6,11 +6,11 @@ struct GLFWwindow;
 namespace Elaina
 {
 	class CInputHandler;
-	class CElainaApp
+	class CGlfwWindow
 	{
 	public:
-		CElainaApp();
-		~CElainaApp();
+		CGlfwWindow();
+		~CGlfwWindow();
 
 		bool init(int vWidth, int vHeight, const std::string & vAppName = "Elaina");
 		bool shouldClose() const;

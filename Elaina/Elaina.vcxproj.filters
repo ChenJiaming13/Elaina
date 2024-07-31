@@ -21,7 +21,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\ElainaApp.h">
+    <ClInclude Include="core\GlfwWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="base\ShaderProgram.h">
@@ -30,7 +30,7 @@
     <ClInclude Include="safe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="base\VertexArrayBuffer.h">
+    <ClInclude Include="base\VertexArrayObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="primitive\Primitive.h">
@@ -51,18 +51,60 @@
     <ClInclude Include="core\InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="base\Framebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base\RenderBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\ModelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="light\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\RenderPipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\RenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderpass\PostProcessPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderpass\ForwardPbrPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\ElainaApp.cpp">
+    <ClCompile Include="core\GlfwWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="base\ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="base\VertexArrayBuffer.cpp">
+    <ClCompile Include="base\VertexArrayObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="primitive\Primitive.cpp">
@@ -75,6 +117,42 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="controller\FPSController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\RenderBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loader\ModelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\RenderPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\PostProcessPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\RenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\ForwardPbrPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

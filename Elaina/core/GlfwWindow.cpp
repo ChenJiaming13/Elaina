@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "ElainaApp.h"
+#include "GlfwWindow.h"
 #include "InputHandler.h"
 
 void Elaina::windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight)
 {
-	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
+	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	pApp->m_Width = vWidth;
 	pApp->m_Height = vHeight;
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
@@ -16,7 +16,7 @@ void Elaina::windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeig
 
 void Elaina::mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods)
 {
-	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
+	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
@@ -27,7 +27,7 @@ void Elaina::mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, 
 
 void Elaina::mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset)
 {
-	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
+	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
@@ -37,7 +37,7 @@ void Elaina::mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vY
 
 void Elaina::mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
 {
-	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
+	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
@@ -47,7 +47,7 @@ void Elaina::mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
 
 void Elaina::keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods)
 {
-	CElainaApp* pApp = (CElainaApp*)glfwGetWindowUserPointer(vWindow);
+	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
@@ -56,17 +56,17 @@ void Elaina::keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vActi
 	}
 }
 
-Elaina::CElainaApp::CElainaApp() :m_pWindow(nullptr), m_Width(0), m_Height(0), m_InputHandlers{}
+Elaina::CGlfwWindow::CGlfwWindow() :m_pWindow(nullptr), m_Width(0), m_Height(0), m_InputHandlers{}
 {
 }
 
-Elaina::CElainaApp::~CElainaApp()
+Elaina::CGlfwWindow::~CGlfwWindow()
 {
 	m_InputHandlers.clear();
 	__cleanup();
 }
 
-bool Elaina::CElainaApp::init(int vWidth, int vHeight, const std::string& vAppName)
+bool Elaina::CGlfwWindow::init(int vWidth, int vHeight, const std::string& vAppName)
 {
 	if (m_pWindow != nullptr)
 	{
@@ -102,30 +102,30 @@ bool Elaina::CElainaApp::init(int vWidth, int vHeight, const std::string& vAppNa
 	return true;
 }
 
-bool Elaina::CElainaApp::shouldClose() const
+bool Elaina::CGlfwWindow::shouldClose() const
 {
 	_ASSERTE(m_pWindow != nullptr);
 	return glfwWindowShouldClose(m_pWindow);
 }
 
-void Elaina::CElainaApp::pollEvents() const
+void Elaina::CGlfwWindow::pollEvents() const
 {
 	glfwPollEvents();
 }
 
-void Elaina::CElainaApp::swapBuffers() const
+void Elaina::CGlfwWindow::swapBuffers() const
 {
 	_ASSERTE(m_pWindow != nullptr);
 	glfwSwapBuffers(m_pWindow);
 }
 
-void Elaina::CElainaApp::addInputHandler(const std::shared_ptr<CInputHandler>& vInputHandler)
+void Elaina::CGlfwWindow::addInputHandler(const std::shared_ptr<CInputHandler>& vInputHandler)
 {
 	if (vInputHandler == nullptr) return;
 	m_InputHandlers.push_back(vInputHandler);
 }
 
-void Elaina::CElainaApp::__registerCallbacks() const
+void Elaina::CGlfwWindow::__registerCallbacks() const
 {
 	glfwSetFramebufferSizeCallback(m_pWindow, windowSizeChangeCallback);
 	glfwSetMouseButtonCallback(m_pWindow, mouseButtonCallback);
@@ -134,7 +134,7 @@ void Elaina::CElainaApp::__registerCallbacks() const
 	glfwSetKeyCallback(m_pWindow, keyCallback);
 }
 
-void Elaina::CElainaApp::__cleanup()
+void Elaina::CGlfwWindow::__cleanup()
 {
 	if (m_pWindow != nullptr)
 	{

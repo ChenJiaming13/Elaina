@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vcpkg", "vcpkg", "{EEA2D10A
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{F7C7A035-3650-48FD-A059-36925DCE18B3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinygltf", "vendor\tinygltf\tinygltf.vcxproj", "{85292B36-F86A-41F7-803B-A413690B8AB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,6 +49,10 @@ Global
 		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Debug|x64.Build.0 = Debug|x64
 		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Release|x64.ActiveCfg = Release|x64
 		{F7C7A035-3650-48FD-A059-36925DCE18B3}.Release|x64.Build.0 = Release|x64
+		{85292B36-F86A-41F7-803B-A413690B8AB0}.Debug|x64.ActiveCfg = Debug|x64
+		{85292B36-F86A-41F7-803B-A413690B8AB0}.Debug|x64.Build.0 = Debug|x64
+		{85292B36-F86A-41F7-803B-A413690B8AB0}.Release|x64.ActiveCfg = Release|x64
+		{85292B36-F86A-41F7-803B-A413690B8AB0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{4F8946E7-3838-487C-AC99-4BE5938B75A2} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
 		{E767BFFF-28FC-4973-BF4F-76A23E66D728} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
 		{28221DD0-DB4A-434D-A6AB-FE2BDEE1A91A} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
+		{85292B36-F86A-41F7-803B-A413690B8AB0} = {75E8C6D6-425C-4235-80AA-97ED328297C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BFD61269-D9DE-49AC-9A5D-67F018092DDE}

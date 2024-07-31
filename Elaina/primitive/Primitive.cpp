@@ -1,8 +1,24 @@
 #include "pch.h"
 #include "Primitive.h"
-#include "base/VertexArrayBuffer.h"
+#include "base/VertexArrayObject.h"
 
-std::shared_ptr<Elaina::CVertexArrayBuffer> Elaina::CPrimitive::createCube()
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createQuad()
+{
+	std::vector<float> Vertices{
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+	std::vector<unsigned int> Indices{
+		0, 1, 2, // first Triangle
+		0, 2, 3, // second Triangle
+	};
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{2, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
+}
+
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createCube()
 {
 	std::vector<float> Vertices 
 	{
@@ -55,10 +71,10 @@ std::shared_ptr<Elaina::CVertexArrayBuffer> Elaina::CPrimitive::createCube()
 		Indices.push_back(i);
 	}
 
-	return std::make_shared<CVertexArrayBuffer>(Vertices, Indices, std::vector<int>{3, 3});
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
-std::shared_ptr<Elaina::CVertexArrayBuffer> Elaina::CPrimitive::createSphere(int vSegments)
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSphere(int vSegments)
 {
 	std::vector<float> Vertices;
 	std::vector<unsigned int> Indices;
@@ -100,10 +116,11 @@ std::shared_ptr<Elaina::CVertexArrayBuffer> Elaina::CPrimitive::createSphere(int
 			Indices.push_back(First + 1);
 		}
 	}
-	return std::make_shared<CVertexArrayBuffer>(Vertices, Indices, std::vector<int>{ 3, 3, 2 });
+
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
-std::shared_ptr<Elaina::CVertexArrayBuffer> Elaina::CPrimitive::createTorus(float vInnerRadius, float vOuterRadius, int vNsides, int vRings)
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createTorus(float vInnerRadius, float vOuterRadius, int vNsides, int vRings)
 {
 	std::vector<float> Vertices;
 	std::vector<unsigned int> Indices;
@@ -153,5 +170,5 @@ std::shared_ptr<Elaina::CVertexArrayBuffer> Elaina::CPrimitive::createTorus(floa
 		}
 	}
 
-	return std::make_shared<CVertexArrayBuffer>(Vertices, Indices, std::vector<int>{ 3, 3 });
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
