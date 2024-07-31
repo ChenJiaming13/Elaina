@@ -66,6 +66,11 @@ int main()
 	Elaina::CFrameBuffer::initDefaultFrameBuffer(App.getWidth(), App.getHeight(), 0);
 
 	const auto& pProgram = createShaderProgram("shaders\\pbr.vert", "shaders\\pbr.frag");
+	pProgram->setUniform("uAlbedo", glm::vec3(1.0f, 1.0f, 0.0f));
+	pProgram->setUniform("uMetallic", 0.0f);
+	pProgram->setUniform("uRoughness", 1.0f);
+	pProgram->setUniform("uAo", 1.0f);
+	//pProgram->setUniform("uAo1", 1.0f);
 
 	std::vector<std::shared_ptr<Elaina::CNode>> Nodes{
 		//createNode(Elaina::CPrimitive::createQuad()),
@@ -84,7 +89,7 @@ int main()
 	App.addInputHandler(std::make_shared<CMyInputHandler>());
 
 	const auto& pDirLight = std::make_shared<Elaina::SDirectionalLight>();
-	pDirLight->_LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	pDirLight->_LightColor = glm::vec3(10.0f, 10.0f, 10.0f);
 	pDirLight->_LightPos = glm::vec3(0.0f, 0.0f, 3.0f);
 
 	const auto& pScene = std::make_shared<Elaina::CScene>();

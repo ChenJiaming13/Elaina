@@ -162,6 +162,7 @@
     <ClInclude Include="core\RenderPass.h" />
     <ClInclude Include="core\RenderPipeline.h" />
     <ClInclude Include="core\Transform.h" />
+    <ClInclude Include="parser\GlslParser.h" />
     <ClInclude Include="renderpass\ForwardPbrPass.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="core\Mesh.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="core\RenderPass.cpp" />
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
+    <ClCompile Include="parser\GlslParser.cpp" />
     <ClCompile Include="renderpass\ForwardPbrPass.cpp" />
     <ClCompile Include="loader\ModelLoader.cpp" />
     <ClCompile Include="pch.cpp">

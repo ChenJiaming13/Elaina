@@ -4,9 +4,11 @@
 #include <unordered_set>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <any>
 
 namespace Elaina
 {
+	enum class EUniformType;
 	class CShaderProgram
 	{
 	public:
@@ -23,16 +25,19 @@ namespace Elaina
 		bool attachShader(const EShaderType& vShaderType, const std::string& vShaderPath);
 		bool linkProgram();
 
-		void use() const;
-		void setUniform(const std::string& vName, int vValue) const;
-		void setUniform(const std::string& vName, bool vValue) const;
-		void setUniform(const std::string& vName, float vValue) const;
-		void setUniform(const std::string& vName, const glm::vec3& vValue) const;
-		void setUniform(const std::string& vName, const glm::vec4& vValue) const;
-		void setUniform(const std::string& vName, const glm::mat4& vMat) const;
-		void setUniform(const std::string& vName, const glm::mat3& vMat) const;
+		void autoUse() const;
+		bool setUniform(const std::string& vName, std::any vValue);
 
 	private:
+		void __setUniform(const std::string& vName, int vValue) const;
+		void __setUniform(const std::string& vName, bool vValue) const;
+		void __setUniform(const std::string& vName, float vValue) const;
+		void __setUniform(const std::string& vName, const glm::vec2& vValue) const;
+		void __setUniform(const std::string& vName, const glm::vec3& vValue) const;
+		void __setUniform(const std::string& vName, const glm::vec4& vValue) const;
+		void __setUniform(const std::string& vName, const glm::mat4& vMat) const;
+		void __setUniform(const std::string& vName, const glm::mat3& vMat) const;
+
 		static bool __dumpShaderCodeFromFile(const std::string& vShaderPath, EShaderType vShaderType, std::string& voShaderCode);
 		static bool __compileShader(const std::string& vShaderCode, EShaderType vShaderType, GLuint& voShaderID);
 		static bool __checkCompileError(GLuint vID, EShaderType vShaderType);
@@ -41,5 +46,6 @@ namespace Elaina
 		void __deleteShaderIDs();
 		GLuint m_ProgramID;
 		std::unordered_set<GLuint> m_ShaderIDs;
+		std::unordered_map<std::string, std::pair<EUniformType, std::any>> m_Uniforms;
 	};
 }

@@ -22,17 +22,13 @@ void Elaina::CForwardPbrPass::renderV(
 		for (const auto& pMesh : vNode->getMeshes())
 		{
 			const auto& pProgram = pMesh->getShaderProgram();
-			pProgram->use();
+			pProgram->setUniform("uModel", vNode->getModelMatrix());
 			pProgram->setUniform("uView", pCamera->getViewMatrix());
 			pProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
 			pProgram->setUniform("uCamPos", pCamera->getWorldPos());
 			pProgram->setUniform("uLightPosition", pDirLight->_LightPos);
 			pProgram->setUniform("uLightColor", pDirLight->_LightColor);
-			pProgram->setUniform("uAlbedo", glm::vec3(1.0f, 1.0f, 0.0f));
-			pProgram->setUniform("uMetallic", 0.0f);
-			pProgram->setUniform("uRoughness", 1.0f);
-			pProgram->setUniform("uAo", 1.0f);
-			pProgram->setUniform("uModel", vNode->getModelMatrix());
+			pProgram->autoUse();
 			pMesh->draw();
 		}
 	});

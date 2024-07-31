@@ -93,6 +93,9 @@
     <ClInclude Include="renderpass\ForwardPbrPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="parser\GlslParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -153,6 +156,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\ForwardPbrPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\GlslParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
