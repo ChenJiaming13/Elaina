@@ -8,17 +8,24 @@
 #include "core/Scene.h"
 #include "light/Light.h"
 #include "primitive/Primitive.h"
+#include "renderpass/DirShadowMapPass.h"
 #include "safe.h"
 
-Elaina::CDeferredLitPass::CDeferredLitPass(const std::shared_ptr<CShaderProgram>& vShaderProgram, size_t vIdxOfDeferredGeoFB, size_t vIdxOfDirShadowMapFB)
+Elaina::CDeferredLitPass::CDeferredLitPass(
+	const std::shared_ptr<CShaderProgram>& vShaderProgram,
+	size_t vIdxOfDeferredGeoFB, size_t vIdxOfDirShadowMapFB,
+	const std::shared_ptr<CDirShadowMapPass>& vDirShadowMapPass
+)
 	:CRenderPass(vShaderProgram), m_pQuadVAO(CPrimitive::createQuad()),
-	m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB), m_IdxOfDirShadowMapFB(vIdxOfDirShadowMapFB)
+	m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB), m_IdxOfDirShadowMapFB(vIdxOfDirShadowMapFB),
+	m_pDirShadowMapPass(vDirShadowMapPass)
 {
 }
 
 Elaina::CDeferredLitPass::~CDeferredLitPass()
 {
 	m_pQuadVAO.reset();
+	m_pDirShadowMapPass.reset();
 }
 
 void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses)
@@ -58,6 +65,7 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	m_pShaderProgram->setUniform("uViewPos", pCamera->getWorldPos());
 	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
 	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor);
+	m_pShaderProgram->setUniform("uLightMatrix", m_pDirShadowMapPass->calcLightMatrix(pDirLight));
 
 	m_pQuadVAO->bind();
 	m_pQuadVAO->draw();

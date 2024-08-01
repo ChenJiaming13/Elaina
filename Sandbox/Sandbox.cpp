@@ -63,22 +63,26 @@ void setMaterial(const std::shared_ptr<Elaina::CNode>& vRootNode, const std::sha
 
 void setRenderPipeline(int vWidth, int vHeight)
 {
-	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 0, true, false));
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 4, true, false));
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDirShadowMapPass>(Elaina::CShaderProgram::createShaderProgram(
+	const auto& pDirShadowMapPass = std::make_shared<Elaina::CDirShadowMapPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\dirShadowMap.vert",
 		"shaders\\dirShadowMap.frag"
-	)), 0, false);
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDeferredGeoPass>(Elaina::CShaderProgram::createShaderProgram(
+	));
+	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\deferGeo.vert",
 		"shaders\\deferGeo.frag"
-	)), 1);
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDeferredLitPass>(Elaina::CShaderProgram::createShaderProgram(
+	));
+	const auto& pDeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\deferPbr.vert",
 		"shaders\\deferPbr.frag"
-	), 1, 0), 2);
+	), 1, 0, pDirShadowMapPass);
+
+	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(1024, 1024, 0, true, false));
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 4, true, false));
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
+	g_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
+	g_RenderPipeline->addRenderPass(pDeferredGeoPass, 1);
+	g_RenderPipeline->addRenderPass(pDeferredLitPass, 2);
 	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CForwardPbrPass>(Elaina::CShaderProgram::createShaderProgram(
 	//	"shaders\\pbr.vert", 
 	//	"shaders\\pbr.frag"
@@ -120,8 +124,8 @@ int main()
 	pObjMat->_Ao = 0.1f;
 
 	const auto& pPlaneNode = createNode(Elaina::CPrimitive::createPlane());
-	pPlaneNode->setScale(glm::vec3(5.0f, 1.0f, 5.0f));
-	pPlaneNode->setPosition(glm::vec3(0.0f, -2.0f, 0.0f));
+	pPlaneNode->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
+	pPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
 	setMaterial(pPlaneNode, pPlaneMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	const auto& pTestNode = std::make_shared<Elaina::CNode>();
@@ -166,6 +170,7 @@ int main()
 		//spdlog::info("FPS: {}", (int)(1.0f / DeltaTime));
 		pTestNode->clearChilds();
 		pTestNode->addChild(Nodes[g_IndexOfNodes]);
+		pTestNode->setRotation(glm::vec3(1.0f, 1.0f, 1.0f) * CurrTime * 5.0f);
 		g_RenderPipeline->render(g_Scene);
 		App.swapBuffers();
 	}
