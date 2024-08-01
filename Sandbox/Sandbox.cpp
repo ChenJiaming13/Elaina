@@ -150,10 +150,10 @@ void renderUI()
 		ShadowMapSize[0] = g_DirShadowMapFB->getWidth();
 		ShadowMapSize[1] = g_DirShadowMapFB->getHeight();
 		ImGui::ColorEdit3("Light Color", &g_Scene->getDirectionalLight()->_LightColor.x);
-		ImGui::DragFloat("Light Intensity", &g_Scene->getDirectionalLight()->_LightIntensity);
-		ImGui::DragFloat3("Light Direction", &g_Scene->getDirectionalLight()->_LightDir.x);
-		ImGui::DragFloat3("Light Position", &g_Scene->getDirectionalLight()->_LightPos.x);
-		if (ImGui::InputInt2("Shadow Map Size", ShadowMapSize))
+		ImGui::DragFloat("Light Intensity", &g_Scene->getDirectionalLight()->_LightIntensity, 0.01f);
+		ImGui::DragFloat3("Light Direction", &g_Scene->getDirectionalLight()->_LightDir.x, 0.01f);
+		ImGui::DragFloat3("Light Position", &g_Scene->getDirectionalLight()->_LightPos.x, 0.01f);
+		if (ImGui::DragInt2("Shadow Map Size", ShadowMapSize, 5.0f))
 		{
 			if (ShadowMapSize[0] > 0 && ShadowMapSize[1] > 0)
 			{
