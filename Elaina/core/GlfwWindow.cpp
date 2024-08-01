@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GlfwWindow.h"
 #include "InputHandler.h"
+#include "ui/ImGui.h"
 
 void Elaina::CGlfwWindow::__windowSizeChangeCallback(GLFWwindow* vWindow, int vWidth, int vHeight)
 {
@@ -16,6 +17,7 @@ void Elaina::CGlfwWindow::__windowSizeChangeCallback(GLFWwindow* vWindow, int vW
 
 void Elaina::CGlfwWindow::__mouseButtonCallback(GLFWwindow* vWindow, int vButton, int vAction, int vMods)
 {
+	if (CImGui::wantCaptureMouse()) return;
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
@@ -27,6 +29,7 @@ void Elaina::CGlfwWindow::__mouseButtonCallback(GLFWwindow* vWindow, int vButton
 
 void Elaina::CGlfwWindow::__mouseScrollCallback(GLFWwindow* vWindow, double vXoffset, double vYoffset)
 {
+	if (CImGui::wantCaptureMouse()) return;
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
@@ -37,6 +40,7 @@ void Elaina::CGlfwWindow::__mouseScrollCallback(GLFWwindow* vWindow, double vXof
 
 void Elaina::CGlfwWindow::__mouseMoveCallback(GLFWwindow* vWindow, double vXpos, double vYpos)
 {
+	if (CImGui::wantCaptureMouse()) return;
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
@@ -47,6 +51,7 @@ void Elaina::CGlfwWindow::__mouseMoveCallback(GLFWwindow* vWindow, double vXpos,
 
 void Elaina::CGlfwWindow::__keyCallback(GLFWwindow* vWindow, int vKey, int vScancode, int vAction, int vMods)
 {
+	if (CImGui::wantCaptureKeyboard()) return;
 	CGlfwWindow* pApp = (CGlfwWindow*)glfwGetWindowUserPointer(vWindow);
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
@@ -99,6 +104,7 @@ bool Elaina::CGlfwWindow::init(int vWidth, int vHeight, const std::string& vAppN
 		spdlog::error("failed to initialize GLAD");
 		return false;
 	}
+	CImGui::init(m_pWindow);
 	return true;
 }
 

@@ -136,3 +136,25 @@ std::shared_ptr<Elaina::CFrameBuffer> Elaina::CFrameBuffer::createFrameBuffer(
 	pFrameBuffer->unbind();
 	return pFrameBuffer;
 }
+
+std::shared_ptr<Elaina::CFrameBuffer> Elaina::CFrameBuffer::createDepthOnlyFrameBuffer(int vWidth, int vHeight)
+{
+	_ASSERTE(vWidth > 0 && vHeight > 0);
+
+	const auto& pDepthTex = std::make_shared<CTexture2D>(vWidth, vHeight, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+	pDepthTex->setParameters(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	pDepthTex->setParameters(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	pDepthTex->setParameters(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	pDepthTex->setParameters(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	GLfloat BorderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	pDepthTex->setParameters(GL_TEXTURE_BORDER_COLOR, BorderColor);
+
+	const auto& pFrameBuffer = std::make_shared<CFrameBuffer>();
+	pFrameBuffer->create();
+	pFrameBuffer->bind();
+	pFrameBuffer->setAttachment(GL_DEPTH_ATTACHMENT, pDepthTex);
+	setColorBufferEmpty();
+	checkComplete();
+	pFrameBuffer->unbind();
+	return pFrameBuffer;
+}

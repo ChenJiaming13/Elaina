@@ -116,7 +116,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)vendor\imgui;$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -135,7 +135,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)vendor\imgui;$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -163,6 +163,7 @@
     <ClInclude Include="core\RenderPipeline.h" />
     <ClInclude Include="core\Transform.h" />
     <ClInclude Include="core\Material.h" />
+    <ClInclude Include="ui\ImGui.h" />
     <ClInclude Include="renderpass\DeferredSkyBoxPass.h" />
     <ClInclude Include="renderpass\DirShadowMapPass.h" />
     <ClInclude Include="renderpass\DeferredLitPass.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="core\Material.cpp" />
+    <ClCompile Include="ui\ImGui.cpp" />
     <ClCompile Include="renderpass\DeferredSkyBoxPass.cpp" />
     <ClCompile Include="renderpass\DirShadowMapPass.cpp" />
     <ClCompile Include="renderpass\DeferredLitPass.cpp" />
@@ -217,6 +219,9 @@
   <ItemGroup>
     <ProjectReference Include="..\vendor\glad\glad.vcxproj">
       <Project>{4f8946e7-3838-487c-ac99-4be5938b75a2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\vendor\imgui\imgui.vcxproj">
+      <Project>{28221dd0-db4a-434d-a6ab-fe2bdee1a91a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\vendor\tinygltf\tinygltf.vcxproj">
       <Project>{85292b36-f86a-41f7-803b-a413690b8ab0}</Project>

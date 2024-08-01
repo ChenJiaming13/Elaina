@@ -65,6 +65,7 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	m_pShaderProgram->setUniform("uViewPos", pCamera->getWorldPos());
 	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
 	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor);
+	m_pShaderProgram->setUniform("uLightIntensity", pDirLight->_LightIntensity);
 	m_pShaderProgram->setUniform("uLightMatrix", m_pDirShadowMapPass->calcLightMatrix(pDirLight));
 
 	m_pQuadVAO->bind();

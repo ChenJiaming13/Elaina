@@ -114,6 +114,9 @@
     <ClInclude Include="renderpass\DeferredSkyBoxPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui\ImGui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -195,6 +198,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\DeferredSkyBoxPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ImGui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

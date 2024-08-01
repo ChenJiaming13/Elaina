@@ -1,6 +1,7 @@
 #include <spdlog/spdlog.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "base/ShaderProgram.h"
 #include "base/VertexArrayObject.h"
@@ -24,12 +25,15 @@
 #include "controller/ArcballController.h"
 #include "primitive/Primitive.h"
 #include "loader/ModelLoader.h"
-#include "safe.h"
+#include "ui/ImGui.h"
 
 size_t g_IndexOfNodes = 0;
 size_t g_SizeofNodes = 0;
 std::shared_ptr<Elaina::CScene> g_Scene = nullptr;
 std::shared_ptr<Elaina::CRenderPipeline> g_RenderPipeline = nullptr;
+std::shared_ptr<Elaina::SPbrMaterial> g_PlaneMat = nullptr;
+std::shared_ptr<Elaina::SPbrMaterial> g_ObjMat = nullptr;
+std::shared_ptr<Elaina::CFrameBuffer> g_DirShadowMapFB = nullptr;
 
 class CMyInputHandler : public Elaina::CInputHandler
 {
@@ -93,7 +97,8 @@ void setRenderPipeline(int vWidth, int vHeight)
 	), pSkyBoxTex, 1);
 
 	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(1024, 1024, 0, true, false));
+	g_DirShadowMapFB = Elaina::CFrameBuffer::createDepthOnlyFrameBuffer(1024, 1024);
+	g_RenderPipeline->addFrameBuffer(g_DirShadowMapFB);
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 4, true, false));
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
 	g_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
@@ -122,28 +127,84 @@ void setRenderPipeline(int vWidth, int vHeight)
 	//)), 2);
 }
 
+void renderUI()
+{
+	int ID = 0;
+	ImGui::Begin("Inspector");
+	if (ImGui::CollapsingHeader("Render Pipeline"))
+	{
+		ImGui::PushID(ID++);
+		static bool EnableSkyBoxPass;
+		size_t IdxOfSkyBoxPass = 3;
+		EnableSkyBoxPass = g_RenderPipeline->getPassEnable(IdxOfSkyBoxPass);
+		if (ImGui::Checkbox("Enable SkyBox Pass", &EnableSkyBoxPass))
+		{
+			g_RenderPipeline->setPassEnable(IdxOfSkyBoxPass, EnableSkyBoxPass);
+		}
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Directional Light"))
+	{
+		ImGui::PushID(ID++);
+		static int ShadowMapSize[] = { 0, 0 };
+		ShadowMapSize[0] = g_DirShadowMapFB->getWidth();
+		ShadowMapSize[1] = g_DirShadowMapFB->getHeight();
+		ImGui::ColorEdit3("Light Color", &g_Scene->getDirectionalLight()->_LightColor.x);
+		ImGui::DragFloat("Light Intensity", &g_Scene->getDirectionalLight()->_LightIntensity);
+		ImGui::DragFloat3("Light Direction", &g_Scene->getDirectionalLight()->_LightDir.x);
+		ImGui::DragFloat3("Light Position", &g_Scene->getDirectionalLight()->_LightPos.x);
+		if (ImGui::InputInt2("Shadow Map Size", ShadowMapSize))
+		{
+			if (ShadowMapSize[0] > 0 && ShadowMapSize[1] > 0)
+			{
+				g_DirShadowMapFB->resize(ShadowMapSize[0], ShadowMapSize[1]);
+			}
+		}
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Obj PBR Material"))
+	{
+		ImGui::PushID(ID++);
+		ImGui::ColorEdit3("Albedo", &g_ObjMat->_Albedo.x);
+		ImGui::DragFloat("Metallic", &g_ObjMat->_Metallic, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Roughness", &g_ObjMat->_Roughness, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Ao", &g_ObjMat->_Ao, 0.01f, 0.0f, 1.0f);
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Plane PBR Material"))
+	{
+		ImGui::PushID(ID++);
+		ImGui::ColorEdit3("Albedo", &g_PlaneMat->_Albedo.x);
+		ImGui::DragFloat("Metallic", &g_PlaneMat->_Metallic, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Roughness", &g_PlaneMat->_Roughness, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Ao", &g_PlaneMat->_Ao, 0.01f, 0.0f, 1.0f);
+		ImGui::PopID();
+	}
+	ImGui::End();
+}
+
 int main()
 {
 	Elaina::CGlfwWindow App;
 	_ASSERTE(App.init(800, 600));
 	Elaina::CFrameBuffer::initDefaultFrameBuffer(App.getWidth(), App.getHeight(), 0);
 
-	const auto& pPlaneMat = std::make_shared<Elaina::SPbrMaterial>();
-	pPlaneMat->_Albedo = glm::vec3(1.0f, 1.0f, 1.0f);
-	pPlaneMat->_Metallic = 0.5f;
-	pPlaneMat->_Roughness = 0.1f;
-	pPlaneMat->_Ao = 0.1f;
+	g_PlaneMat = std::make_shared<Elaina::SPbrMaterial>();
+	g_PlaneMat->_Albedo = glm::vec3(1.0f, 1.0f, 1.0f);
+	g_PlaneMat->_Metallic = 0.5f;
+	g_PlaneMat->_Roughness = 0.1f;
+	g_PlaneMat->_Ao = 0.1f;
 
-	const auto& pObjMat = std::make_shared<Elaina::SPbrMaterial>();
-	pObjMat->_Albedo = glm::vec3(1.0f, 0.0f, 0.0f);
-	pObjMat->_Metallic = 0.5f;
-	pObjMat->_Roughness = 1.0f;
-	pObjMat->_Ao = 0.1f;
+	g_ObjMat = std::make_shared<Elaina::SPbrMaterial>();
+	g_ObjMat->_Albedo = glm::vec3(1.0f, 0.0f, 0.0f);
+	g_ObjMat->_Metallic = 0.5f;
+	g_ObjMat->_Roughness = 1.0f;
+	g_ObjMat->_Ao = 0.1f;
 
 	const auto& pPlaneNode = createNode(Elaina::CPrimitive::createPlane());
 	pPlaneNode->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
 	pPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
-	setMaterial(pPlaneNode, pPlaneMat);
+	setMaterial(pPlaneNode, g_PlaneMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	const auto& pTestNode = std::make_shared<Elaina::CNode>();
 	pRootNode->addChild(pPlaneNode);
@@ -156,7 +217,7 @@ int main()
 		createNode(Elaina::CPrimitive::createSphere()),
 		Elaina::CModelLoader::loadGltfFile("C:\\Users\\Chen\\Documents\\Code\\HiveGL\\assets\\Models\\TriMesh\\dragon.gltf")
 	};
-	for (const auto& pNode : Nodes) setMaterial(pNode, pObjMat);
+	for (const auto& pNode : Nodes) setMaterial(pNode, g_ObjMat);
 	g_SizeofNodes = Nodes.size();
 
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, (float)App.getWidth() / (float)App.getHeight());
@@ -166,7 +227,8 @@ int main()
 	App.addInputHandler(std::make_shared<CMyInputHandler>());
 
 	const auto& pDirLight = std::make_shared<Elaina::SDirectionalLight>();
-	pDirLight->_LightColor = glm::vec3(10.0f, 10.0f, 10.0f);
+	pDirLight->_LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	pDirLight->_LightIntensity = 10.0f;
 	pDirLight->_LightPos = glm::vec3(-5.0f, 10.0f, 0.0f);
 	pDirLight->_LightDir = glm::vec3(0.0f, 0.0f, 0.0f) - pDirLight->_LightPos;
 
@@ -181,6 +243,7 @@ int main()
 	while (!App.shouldClose())
 	{
 		App.pollEvents();
+		Elaina::CImGui::beginFrame();
 		float CurrTime = static_cast<float>(glfwGetTime());
 		float DeltaTime = CurrTime - LastTime;
 		LastTime = CurrTime;
@@ -189,9 +252,12 @@ int main()
 		pTestNode->addChild(Nodes[g_IndexOfNodes]);
 		pTestNode->setRotation(glm::vec3(1.0f, 1.0f, 1.0f) * CurrTime * 5.0f);
 		g_RenderPipeline->render(g_Scene);
+		renderUI();
+		Elaina::CImGui::endFrame();
 		App.swapBuffers();
 	}
 	g_Scene.reset();
 	g_RenderPipeline.reset();
+	g_DirShadowMapFB.reset();
 	return 0;
 }

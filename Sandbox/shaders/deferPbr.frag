@@ -22,6 +22,7 @@ uniform sampler2D uDirShadowMapTex;
 // uniform vec3 uLightPosition;
 uniform vec3 uLightDir;
 uniform vec3 uLightColor;
+uniform float uLightIntensity;
 
 uniform vec3 uViewPos;
 
@@ -77,6 +78,7 @@ float calcDirShadow(vec3 vWorldPos, vec3 vNormal, vec3 vLightDir)
     LightNDCPos = LightNDCPos * 0.5 + 0.5;
     float ClosestDepth = texture(uDirShadowMapTex, LightNDCPos.xy).r;
     float CurrDepth = LightNDCPos.z;
+    if (CurrDepth > 1.0) return 0.0;
     float Bias = max(0.05 * (1.0 - dot(vNormal, vLightDir)), 0.005);
     float Shadow = CurrDepth - Bias > ClosestDepth ? 1.0 : 0.0;
     return Shadow;
@@ -109,7 +111,7 @@ void main()
     // float distance = length(uLightPosition - WorldPos);
     float distance = 1.0;
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = uLightColor * attenuation;
+    vec3 radiance = uLightColor * uLightIntensity * attenuation;
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, Roughness);   

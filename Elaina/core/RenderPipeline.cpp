@@ -7,7 +7,10 @@ void Elaina::CRenderPipeline::render(const std::shared_ptr<CScene>& vScene) cons
 {
 	for (size_t i = 0; i < m_RenderPasses.size(); ++i)
 	{
-		m_RenderPasses[i]->renderV(vScene, m_FrameBuffers, m_OutputIndices, i);
+		if (m_EnablePasses[i])
+		{
+			m_RenderPasses[i]->renderV(vScene, m_FrameBuffers, m_OutputIndices, i);
+		}
 	}
 }
 
@@ -15,6 +18,7 @@ void Elaina::CRenderPipeline::addRenderPass(const std::shared_ptr<CRenderPass>& 
 {
 	m_RenderPasses.push_back(vRenderPass);
 	m_OutputIndices.push_back(vOutputIndex);
+	m_EnablePasses.push_back(true);
 	m_EnableAutoResize.push_back(vEnableAutoResize);
 }
 

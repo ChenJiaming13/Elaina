@@ -37,6 +37,7 @@ namespace Elaina
 			bool vNeedDepthBuffer,
 			bool vNeedStencilBuffer
 		);
+		static std::shared_ptr<CFrameBuffer> createDepthOnlyFrameBuffer(int vWidth, int vHeight);
 	
 	private:
 		GLuint m_FrameBufferID;

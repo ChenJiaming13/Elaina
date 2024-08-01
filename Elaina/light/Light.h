@@ -7,6 +7,7 @@ namespace Elaina
 	struct SLight
 	{
 		glm::vec3 _LightColor;
+		float _LightIntensity;
 		glm::vec3 _LightPos;
 	};
 
