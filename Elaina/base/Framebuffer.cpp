@@ -20,14 +20,14 @@ void Elaina::CFrameBuffer::create()
 	GL_SAFE_CALL(glGenFramebuffers(1, &m_FrameBufferID));
 }
 
-void Elaina::CFrameBuffer::bind() const
+void Elaina::CFrameBuffer::bind(GLenum vTarget) const
 {
-	GL_SAFE_CALL(glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID));
+	GL_SAFE_CALL(glBindFramebuffer(vTarget, m_FrameBufferID));
 }
 
-void Elaina::CFrameBuffer::unbind() const
+void Elaina::CFrameBuffer::unbind(GLenum vTarget) const
 {
-	GL_SAFE_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	GL_SAFE_CALL(glBindFramebuffer(vTarget, 0));
 }
 
 void Elaina::CFrameBuffer::resize(int vWidth, int vHeight)

@@ -22,5 +22,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include <spdlog/spdlog.h>
 #include <tiny_gltf.h>
+#include <stb_image.h>
 
 #endif //PCH_H

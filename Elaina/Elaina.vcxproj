@@ -163,6 +163,7 @@
     <ClInclude Include="core\RenderPipeline.h" />
     <ClInclude Include="core\Transform.h" />
     <ClInclude Include="core\Material.h" />
+    <ClInclude Include="renderpass\DeferredSkyBoxPass.h" />
     <ClInclude Include="renderpass\DirShadowMapPass.h" />
     <ClInclude Include="renderpass\DeferredLitPass.h" />
     <ClInclude Include="renderpass\DeferredGeoPass.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="primitive\Primitive.h" />
     <ClInclude Include="safe.h" />
     <ClInclude Include="core\Scene.h" />
+    <ClInclude Include="base\TextureCube.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\Framebuffer.cpp" />
@@ -194,6 +196,7 @@
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="core\Material.cpp" />
+    <ClCompile Include="renderpass\DeferredSkyBoxPass.cpp" />
     <ClCompile Include="renderpass\DirShadowMapPass.cpp" />
     <ClCompile Include="renderpass\DeferredLitPass.cpp" />
     <ClCompile Include="renderpass\DeferredGeoPass.cpp" />
@@ -209,6 +212,7 @@
     <ClCompile Include="renderpass\PostProcessPass.cpp" />
     <ClCompile Include="primitive\Primitive.cpp" />
     <ClCompile Include="core\Scene.cpp" />
+    <ClCompile Include="base\TextureCube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vendor\glad\glad.vcxproj">
@@ -217,6 +221,9 @@
     <ProjectReference Include="..\vendor\tinygltf\tinygltf.vcxproj">
       <Project>{85292b36-f86a-41f7-803b-a413690b8ab0}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

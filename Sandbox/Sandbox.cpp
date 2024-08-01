@@ -5,6 +5,7 @@
 #include "base/ShaderProgram.h"
 #include "base/VertexArrayObject.h"
 #include "base/Framebuffer.h"
+#include "base/TextureCube.h"
 #include "core/GlfwWindow.h"
 #include "core/Camera.h"
 #include "core/Mesh.h"
@@ -18,6 +19,7 @@
 #include "renderpass/DeferredGeoPass.h"
 #include "renderpass/DeferredLitPass.h"
 #include "renderpass/DirShadowMapPass.h"
+#include "renderpass/DeferredSkyBoxPass.h"
 #include "light/Light.h"
 #include "controller/ArcballController.h"
 #include "primitive/Primitive.h"
@@ -75,6 +77,20 @@ void setRenderPipeline(int vWidth, int vHeight)
 		"shaders\\deferPbr.vert",
 		"shaders\\deferPbr.frag"
 	), 1, 0, pDirShadowMapPass);
+	
+	const auto& pSkyBoxTex = std::make_shared<Elaina::CTextureCube>();
+	pSkyBoxTex->loadCubeMapFiles(std::vector<std::string>{
+		"skybox\\right.jpg",
+		"skybox\\left.jpg",
+		"skybox\\top.jpg",
+		"skybox\\bottom.jpg",
+		"skybox\\front.jpg",
+		"skybox\\back.jpg"
+	});
+	const auto& pDeferredSkyBoxPass = std::make_shared<Elaina::CDeferredSkyBoxPass>(Elaina::CShaderProgram::createShaderProgram(
+		"shaders\\deferSkyBox.vert",
+		"shaders\\deferSkyBox.frag"
+	), pSkyBoxTex, 1);
 
 	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(1024, 1024, 0, true, false));
@@ -83,6 +99,7 @@ void setRenderPipeline(int vWidth, int vHeight)
 	g_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
 	g_RenderPipeline->addRenderPass(pDeferredGeoPass, 1);
 	g_RenderPipeline->addRenderPass(pDeferredLitPass, 2);
+	g_RenderPipeline->addRenderPass(pDeferredSkyBoxPass, 2);
 	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CForwardPbrPass>(Elaina::CShaderProgram::createShaderProgram(
 	//	"shaders\\pbr.vert", 
 	//	"shaders\\pbr.frag"

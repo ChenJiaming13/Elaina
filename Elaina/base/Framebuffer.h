@@ -16,8 +16,8 @@ namespace Elaina
 		~CFrameBuffer();
 
 		void create();
-		void bind() const;
-		void unbind() const;
+		void bind(GLenum vTarget = GL_FRAMEBUFFER) const;
+		void unbind(GLenum vTarget = GL_FRAMEBUFFER) const;
 		int getWidth() const { return m_Width; }
 		int getHeight() const { return m_Height; }
 		void resize(int vWidth, int vHeight);
