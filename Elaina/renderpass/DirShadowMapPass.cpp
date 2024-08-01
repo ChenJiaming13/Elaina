@@ -7,16 +7,6 @@
 #include "light/Light.h"
 #include "safe.h"
 
-Elaina::CDirShadowMapPass::CDirShadowMapPass(const std::shared_ptr<CShaderProgram>& vShaderProgram)
-	:m_pShaderProgram(vShaderProgram), m_Width(20.0f), m_Height(20.0f), m_Near(0.1f), m_Far(10.0f)
-{
-}
-
-Elaina::CDirShadowMapPass::~CDirShadowMapPass()
-{
-	m_pShaderProgram.reset();
-}
-
 void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses)
 {
 	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);

@@ -11,16 +11,21 @@ void Elaina::CRenderPipeline::render(const std::shared_ptr<CScene>& vScene) cons
 	}
 }
 
-void Elaina::CRenderPipeline::addRenderPass(const std::shared_ptr<CRenderPass>& vRenderPass, size_t vOutputIndex)
+void Elaina::CRenderPipeline::addRenderPass(const std::shared_ptr<CRenderPass>& vRenderPass, size_t vOutputIndex, bool vEnableAutoResize)
 {
 	m_RenderPasses.push_back(vRenderPass);
 	m_OutputIndices.push_back(vOutputIndex);
+	m_EnableAutoResize.push_back(vEnableAutoResize);
 }
 
 void Elaina::CRenderPipeline::resize(int vWidth, int vHeight) const
 {
-	for (const auto& pFrameBuffer : m_FrameBuffers)
+	for (size_t i = 0; i < m_FrameBuffers.size(); ++i)
 	{
-		pFrameBuffer->resize(vWidth, vHeight);
+		if (m_EnableAutoResize[i])
+		{
+			m_FrameBuffers[i]->resize(vWidth, vHeight);
+			spdlog::info("framebuffer {} resize {} {}", i, vWidth, vHeight);
+		}
 	}
 }

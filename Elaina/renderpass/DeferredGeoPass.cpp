@@ -6,16 +6,8 @@
 #include "core/Scene.h"
 #include "core/Node.h"
 #include "core/Mesh.h"
+#include "core/Material.h"
 #include "safe.h"
-
-Elaina::CDeferredGeoPass::CDeferredGeoPass(const std::shared_ptr<CShaderProgram>& vShaderProgram) :m_pShaderProgram(vShaderProgram)
-{
-}
-
-Elaina::CDeferredGeoPass::~CDeferredGeoPass()
-{
-	m_pShaderProgram.reset();
-}
 
 void Elaina::CDeferredGeoPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses)
 {
@@ -30,9 +22,16 @@ void Elaina::CDeferredGeoPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	m_pShaderProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
 	CNode::traverse(vScene->getRootNode(), [this](const std::shared_ptr<CNode>& vNode) {
 		m_pShaderProgram->setUniform("uModel", vNode->getModelMatrix());
-		for (const auto& pModel : vNode->getMeshes())
+		for (const auto& pMesh : vNode->getMeshes())
 		{
-			pModel->draw();
+			if (pMesh->getMaterial()->getMaterialType() != EMaterialType::PBR)
+				continue;
+			const auto& pMaterial = std::dynamic_pointer_cast<SPbrMaterial>(pMesh->getMaterial());
+			m_pShaderProgram->setUniform("uAlbedo", pMaterial->_Albedo);
+			m_pShaderProgram->setUniform("uMetallic", pMaterial->_Metallic);
+			m_pShaderProgram->setUniform("uRoughness", pMaterial->_Roughness);
+			m_pShaderProgram->setUniform("uAo", pMaterial->_Ao);
+			pMesh->draw();
 		}
 	});
 }

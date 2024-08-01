@@ -18,6 +18,23 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createQuad()
 	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{2, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createPlane()
+{
+	std::vector<float> Vertices{
+		// positions          // normals
+		-0.5f, 0.0f, -0.5f,  0.0f, 1.0f, 0.0f,
+		 0.5f, 0.0f, -0.5f,  0.0f, 1.0f, 0.0f,
+		 0.5f, 0.0f,  0.5f,  0.0f, 1.0f, 0.0f,
+		-0.5f, 0.0f,  0.5f,  0.0f, 1.0f, 0.0f
+	};
+
+	std::vector<unsigned int> Indices{
+		0, 1, 2,
+		2, 3, 0
+	};
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
+}
+
 std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createCube()
 {
 	std::vector<float> Vertices 

@@ -7,13 +7,16 @@ in vec2 vTexCoords;
 // geometry info
 uniform sampler2D uPositionTex;
 uniform sampler2D uNormalTex;
+uniform sampler2D uAlbedoTex;
+uniform sampler2D uPbrPropsTex;
 uniform sampler2D uDepthTex;
+uniform sampler2D uDirShadowMapTex;
 
 // material parameters
-uniform vec3 uAlbedo;
-uniform float uMetallic;
-uniform float uRoughness;
-uniform float uAo;
+// uniform vec3 uAlbedo;
+// uniform float uMetallic;
+// uniform float uRoughness;
+// uniform float uAo;
 
 // lights
 // uniform vec3 uLightPosition;
@@ -71,13 +74,18 @@ void main()
         discard;
     vec3 WorldPos = texture(uPositionTex, vTexCoords).rgb;
     vec3 Normal = texture(uNormalTex, vTexCoords).rgb;
+    vec3 Albedo = texture(uAlbedoTex, vTexCoords).rgb;
+    vec3 PbrProps = texture(uPbrPropsTex, vTexCoords).rgb;
+    float Metallic = PbrProps.r;
+    float Roughness = PbrProps.g;
+    float Ao = PbrProps.b;
     vec3 N = normalize(Normal);
     vec3 V = normalize(uViewPos - WorldPos);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
     vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, uAlbedo, uMetallic);
+    F0 = mix(F0, Albedo, Metallic);
 
     // reflectance equation
     // calculate per-light radiance
@@ -90,8 +98,8 @@ void main()
     vec3 radiance = uLightColor * attenuation;
 
     // Cook-Torrance BRDF
-    float NDF = DistributionGGX(N, H, uRoughness);   
-    float G   = GeometrySmith(N, V, L, uRoughness);      
+    float NDF = DistributionGGX(N, H, Roughness);   
+    float G   = GeometrySmith(N, V, L, Roughness);      
     vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
        
     vec3 numerator    = NDF * G * F; 
@@ -107,18 +115,18 @@ void main()
     // multiply kD by the inverse metalness such that only non-metals 
     // have diffuse lighting, or a linear blend if partly metal (pure metals
     // have no diffuse light).
-    kD *= 1.0 - uMetallic;	  
+    kD *= 1.0 - Metallic;	  
 
     // scale light by NdotL
     float NdotL = max(dot(N, L), 0.0);        
 
     // add to outgoing radiance Lo
-    vec3 Lo = (kD * uAlbedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    vec3 Lo = (kD * Albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
        
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * uAlbedo * uAo;
+    vec3 ambient = vec3(0.03) * Albedo * Ao;
 
     vec3 color = ambient + Lo;
 

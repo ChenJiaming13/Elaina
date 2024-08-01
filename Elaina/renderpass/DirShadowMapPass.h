@@ -9,8 +9,7 @@ namespace Elaina
 	class CDirShadowMapPass : public CRenderPass
 	{
 	public:
-		CDirShadowMapPass(const std::shared_ptr<CShaderProgram>& vShaderProgram);
-		~CDirShadowMapPass();
+		using CRenderPass::CRenderPass;
 
 		// Inherited via CRenderPass
 		void renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses) override;
@@ -18,8 +17,9 @@ namespace Elaina
 	private:
 		glm::mat4 __calcLightMatrix(const std::shared_ptr<SDirectionalLight>& vLight) const;
 
-		std::shared_ptr<CShaderProgram> m_pShaderProgram;
-		float m_Width, m_Height;
-		float m_Near, m_Far;
+		float m_Width = 20.0f;
+		float m_Height = 20.0f;
+		float m_Near = 0.1f;
+		float m_Far = 20.0f;
 	};
 }

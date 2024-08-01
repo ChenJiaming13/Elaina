@@ -16,6 +16,7 @@
 #include "renderpass/ForwardPbrPass.h"
 #include "renderpass/PostProcessPass.h"
 #include "renderpass/DeferredGeoPass.h"
+#include "renderpass/DeferredLitPass.h"
 #include "renderpass/DirShadowMapPass.h"
 #include "light/Light.h"
 #include "controller/ArcballController.h"
@@ -52,7 +53,7 @@ std::shared_ptr<Elaina::CNode> createNode(const std::shared_ptr<Elaina::CVertexA
 	return pNode;
 }
 
-void setMaterial(const std::shared_ptr<Elaina::CNode>& vRootNode, const std::shared_ptr<Elaina::CMaterial>& vMaterial)
+void setMaterial(const std::shared_ptr<Elaina::CNode>& vRootNode, const std::shared_ptr<Elaina::SMaterial>& vMaterial)
 {
 	Elaina::CNode::traverse(vRootNode, [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		for (const auto& pMesh : vNode->getMeshes())
@@ -64,33 +65,40 @@ void setRenderPipeline(int vWidth, int vHeight)
 {
 	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 0, true, false));
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 2, true, false));
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 4, true, false));
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
 	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDirShadowMapPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\dirShadowMap.vert",
 		"shaders\\dirShadowMap.frag"
-	)), 0);
+	)), 0, false);
 	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDeferredGeoPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\deferGeo.vert",
 		"shaders\\deferGeo.frag"
 	)), 1);
-	/*g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CForwardPbrPass>(), 1);
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 1);
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 0);
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 1);*/
-	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(Elaina::CShaderProgram::createShaderProgram(
-		"shaders\\postProcess.vert",
-		"shaders\\postProcessInversion.frag"
-	)), 2);
+	g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CDeferredLitPass>(Elaina::CShaderProgram::createShaderProgram(
+		"shaders\\deferPbr.vert",
+		"shaders\\deferPbr.frag"
+	), 1, 0), 2);
+	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CForwardPbrPass>(Elaina::CShaderProgram::createShaderProgram(
+	//	"shaders\\pbr.vert", 
+	//	"shaders\\pbr.frag"
+	//)), 2);
+	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(Elaina::CShaderProgram::createShaderProgram(
+	//	"shaders\\postProcess.vert",
+	//	"shaders\\postProcessInversion.frag"
+	//)), 1);
+	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(Elaina::CShaderProgram::createShaderProgram(
+	//	"shaders\\postProcess.vert",
+	//	"shaders\\postProcessInversion.frag"
+	//)), 0);
+	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(Elaina::CShaderProgram::createShaderProgram(
+	//	"shaders\\postProcess.vert",
+	//	"shaders\\postProcessInversion.frag"
+	//)), 1);
+	//g_RenderPipeline->addRenderPass(std::make_shared<Elaina::CPostProcessPass>(Elaina::CShaderProgram::createShaderProgram(
+	//	"shaders\\postProcess.vert",
+	//	"shaders\\postProcessInversion.frag"
+	//)), 2);
 }
 
 int main()
@@ -99,20 +107,24 @@ int main()
 	_ASSERTE(App.init(800, 600));
 	Elaina::CFrameBuffer::initDefaultFrameBuffer(App.getWidth(), App.getHeight(), 0);
 
-	const auto& pProgram = Elaina::CShaderProgram::createShaderProgram("shaders\\pbr.vert", "shaders\\pbr.frag");
-	pProgram->use();
-	pProgram->setUniform("uAlbedo", glm::vec3(1.0f, 1.0f, 0.0f));
-	pProgram->setUniform("uMetallic", 0.0f);
-	pProgram->setUniform("uRoughness", 1.0f);
-	pProgram->setUniform("uAo", 0.1f);
+	const auto& pPlaneMat = std::make_shared<Elaina::SPbrMaterial>();
+	pPlaneMat->_Albedo = glm::vec3(1.0f, 1.0f, 1.0f);
+	pPlaneMat->_Metallic = 0.5f;
+	pPlaneMat->_Roughness = 0.1f;
+	pPlaneMat->_Ao = 0.1f;
 
+	const auto& pObjMat = std::make_shared<Elaina::SPbrMaterial>();
+	pObjMat->_Albedo = glm::vec3(1.0f, 0.0f, 0.0f);
+	pObjMat->_Metallic = 0.5f;
+	pObjMat->_Roughness = 1.0f;
+	pObjMat->_Ao = 0.1f;
+
+	const auto& pPlaneNode = createNode(Elaina::CPrimitive::createPlane());
+	pPlaneNode->setScale(glm::vec3(5.0f, 1.0f, 5.0f));
+	pPlaneNode->setPosition(glm::vec3(0.0f, -2.0f, 0.0f));
+	setMaterial(pPlaneNode, pPlaneMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	const auto& pTestNode = std::make_shared<Elaina::CNode>();
-	const auto& pPlaneNode = createNode(Elaina::CPrimitive::createQuad());
-	setMaterial(pPlaneNode, std::make_shared<Elaina::CMaterial>(pProgram));
-	pPlaneNode->setScale(glm::vec3(10.0f, 10.0f, 10.0f));
-	pPlaneNode->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
-	pPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
 	pRootNode->addChild(pPlaneNode);
 	pRootNode->addChild(pTestNode);
 
@@ -123,7 +135,7 @@ int main()
 		createNode(Elaina::CPrimitive::createSphere()),
 		Elaina::CModelLoader::loadGltfFile("C:\\Users\\Chen\\Documents\\Code\\HiveGL\\assets\\Models\\TriMesh\\dragon.gltf")
 	};
-	for (const auto& pNode : Nodes) setMaterial(pNode, std::make_shared<Elaina::CMaterial>(pProgram));
+	for (const auto& pNode : Nodes) setMaterial(pNode, pObjMat);
 	g_SizeofNodes = Nodes.size();
 
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, (float)App.getWidth() / (float)App.getHeight());
@@ -134,8 +146,8 @@ int main()
 
 	const auto& pDirLight = std::make_shared<Elaina::SDirectionalLight>();
 	pDirLight->_LightColor = glm::vec3(10.0f, 10.0f, 10.0f);
-	pDirLight->_LightPos = glm::vec3(5.0f, 10.0f, 5.0f);
-	pDirLight->_LightDir = glm::vec3(0.1f, -1.0f, 0.1f);
+	pDirLight->_LightPos = glm::vec3(-5.0f, 10.0f, 0.0f);
+	pDirLight->_LightDir = glm::vec3(0.0f, 0.0f, 0.0f) - pDirLight->_LightPos;
 
 	g_Scene = std::make_shared<Elaina::CScene>();
 	g_Scene->setCamera(pCamera);

@@ -1,25 +1,36 @@
 #pragma once
 
-#include <unordered_map>
-#include <any>
+#include <glm/glm.hpp>
 
 namespace Elaina
 {
-	class CShaderProgram;
-	enum class EUniformType;
-	class CMaterial
+	enum class EMaterialType
 	{
-	public:
-		CMaterial(const std::shared_ptr<CShaderProgram>& vShaderProgram);
-		~CMaterial();
+		UNKNOWN,
+		PBR,
+		PHONG
+	};
 
-		bool checkUniformExist(const std::string& vName) const;
-		bool setUniform(const std::string& vName, std::any vValue);
-		void use() const;
+	struct SMaterial
+	{
+		virtual EMaterialType getMaterialType() const { return EMaterialType::UNKNOWN; }
+	};
 
-	private:
-		void __setUniform(const std::string& vName, EUniformType vType, std::any vValue) const;
+	struct SPbrMaterial : public SMaterial
+	{
+		EMaterialType getMaterialType() const override { return EMaterialType::PBR; }
+		glm::vec3 _Albedo;
+		float _Metallic;
+		float _Roughness;
+		float _Ao;
+	};
 
-		std::shared_ptr<CShaderProgram> m_pShaderProgram;
+	struct SPhongMaterial : public SMaterial
+	{
+		EMaterialType getMaterialType() const override { return EMaterialType::PHONG; }
+		glm::vec3 _Color;
+		float _Ambient;
+		float _Specular;
+		float _Glossy;
 	};
 }

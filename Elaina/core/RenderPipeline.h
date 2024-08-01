@@ -14,7 +14,7 @@ namespace Elaina
 		CRenderPipeline() = default;
 
 		void render(const std::shared_ptr<CScene>& vScene) const;
-		void addRenderPass(const std::shared_ptr<CRenderPass>& vRenderPass, size_t vOutputIndex);
+		void addRenderPass(const std::shared_ptr<CRenderPass>& vRenderPass, size_t vOutputIndex, bool vEnableAutoResize = true);
 		void addFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_FrameBuffers.push_back(vFrameBuffer); }
 		void resize(int vWidth, int vHeight) const;
 
@@ -22,5 +22,6 @@ namespace Elaina
 		std::vector<std::shared_ptr<CFrameBuffer>> m_FrameBuffers;
 		std::vector<std::shared_ptr<CRenderPass>> m_RenderPasses;
 		std::vector<size_t> m_OutputIndices;
+		std::vector<bool> m_EnableAutoResize;
 	};
 }

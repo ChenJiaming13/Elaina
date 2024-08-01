@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ForwardPbrPass.h"
+#include "base/ShaderProgram.h"
 #include "core/Node.h"
 #include "core/Scene.h"
 #include "core/Mesh.h"
@@ -14,24 +15,33 @@ void Elaina::CForwardPbrPass::renderV(
 	const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses)
 {
 	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
+	
+	const auto& pCamera = vScene->getCamera();
+	const auto& pDirLight = vScene->getDirectionalLight();
+	glm::vec4 SolidColor = pCamera->getSolidColor();
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
+	GL_SAFE_CALL(glClearColor(SolidColor.x, SolidColor.y, SolidColor.z, SolidColor.w));
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	
+	m_pShaderProgram->use();
+	m_pShaderProgram->setUniform("uView", pCamera->getViewMatrix());
+	m_pShaderProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
+	m_pShaderProgram->setUniform("uCamPos", pCamera->getWorldPos());
+	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
+	//m_pShaderProgram->setUniform("uLightPosition", pDirLight->_LightPos);
+	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor);
+	
 	CNode::traverse(vScene->getRootNode(), [&](const std::shared_ptr<Elaina::CNode>& vNode) {
-		const auto& pCamera = vScene->getCamera();
-		const auto& pDirLight = vScene->getDirectionalLight();
+		m_pShaderProgram->setUniform("uModel", vNode->getModelMatrix());
 		for (const auto& pMesh : vNode->getMeshes())
 		{
-			const auto& pMaterial = pMesh->getMaterial();
-			pMaterial->use();
-			pMaterial->setUniform("uModel", vNode->getModelMatrix());
-			pMaterial->setUniform("uView", pCamera->getViewMatrix());
-			pMaterial->setUniform("uProjection", pCamera->getProjectionMatrix());
-			pMaterial->setUniform("uCamPos", pCamera->getWorldPos());
-			if (pMaterial->checkUniformExist("uLightPosition"))
-				pMaterial->setUniform("uLightPosition", pDirLight->_LightPos);
-			if (pMaterial->checkUniformExist("uLightDir"))
-				pMaterial->setUniform("uLightDir", pDirLight->_LightDir);
-			pMaterial->setUniform("uLightColor", pDirLight->_LightColor);
+			if (pMesh->getMaterial()->getMaterialType() != EMaterialType::PBR)
+				continue;
+			const auto& pMaterial = std::dynamic_pointer_cast<SPbrMaterial>(pMesh->getMaterial());
+			m_pShaderProgram->setUniform("uAlbedo", pMaterial->_Albedo);
+			m_pShaderProgram->setUniform("uMetallic", pMaterial->_Metallic);
+			m_pShaderProgram->setUniform("uRoughness", pMaterial->_Roughness);
+			m_pShaderProgram->setUniform("uAo", pMaterial->_Ao);
 			pMesh->draw();
 		}
 	});
