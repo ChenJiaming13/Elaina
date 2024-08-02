@@ -1,19 +1,21 @@
 #pragma once
 
+#include "Texture.h"
+
 namespace Elaina
 {
-	class CTextureCube
+	class CTextureCube : public CTexture
 	{
 	public:
-		CTextureCube();
-		~CTextureCube();
+		CTextureCube(int vWidth, int vHeight, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType);
+		CTextureCube(
+			const std::array<std::string, 6>& vCubeMapFiles,
+			GLenum vInternalFormat = GL_RGB,
+			GLenum vFormat = GL_RGB,
+			GLenum vDataType = GL_UNSIGNED_BYTE);
 
-		void bind() const;
-		bool loadCubeMapFiles(const std::vector<std::string>& vCubeMapFiles) const;
-
-		static void setParameters(GLenum vName, GLint vValue);
-
-	private:
-		GLuint m_TextureID;
+		// Inherited via CTexture
+		void resize(int vWidth, int vHeight) override;
+		void resize(int vWidth, int vHeight, const std::array<const GLvoid*, 6>& vData);
 	};
 }

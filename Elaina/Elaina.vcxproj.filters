@@ -117,6 +117,12 @@
     <ClInclude Include="ui\ImGui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="base\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\FrameBufferHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -201,6 +207,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ui\ImGui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\FrameBufferHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

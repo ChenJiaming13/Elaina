@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "FrameBuffer.h"
-#include "Texture2D.h"
+#include "Texture.h"
 #include "RenderBuffer.h"
 #include "safe.h"
 
@@ -35,17 +35,29 @@ void Elaina::CFrameBuffer::resize(int vWidth, int vHeight)
 	m_Width = vWidth;
 	m_Height = vHeight;
 	for (const auto& Pair : m_TexturesMap)
-		Pair.second->resize(vWidth, vHeight, nullptr);
+		Pair.second->resize(vWidth, vHeight);
 	for (const auto& Pair : m_RenderBuffersMap)
 		Pair.second->resize(vWidth, vHeight);
 }
 
-void Elaina::CFrameBuffer::setAttachment(GLenum vAttachmentType, const std::shared_ptr<CTexture2D>& vTexture2D, GLint vTextureLevel)
+void Elaina::CFrameBuffer::setAttachment(GLenum vAttachmentType, const std::shared_ptr<CTexture>& vTexture, GLint vTextureLevel)
 {
-	GL_SAFE_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, vAttachmentType, GL_TEXTURE_2D, vTexture2D->getID(), vTextureLevel));
-	m_TexturesMap[vAttachmentType] = vTexture2D;
-	m_Width = vTexture2D->getWidth();
-	m_Height = vTexture2D->getHeight();
+	if (vTexture->getTextureType() == GL_TEXTURE_2D)
+	{
+		GL_SAFE_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, vAttachmentType, vTexture->getTextureType(), vTexture->getID(), vTextureLevel));
+	}
+	else if (vTexture->getTextureType() == GL_TEXTURE_CUBE_MAP)
+	{
+		GL_SAFE_CALL(glFramebufferTexture(GL_FRAMEBUFFER, vAttachmentType, vTexture->getID(), vTextureLevel));
+	}
+	else
+	{
+		spdlog::warn("frame buffer curr not support this texture type: {}", vTexture->getTextureType());
+		return;
+	}
+	m_TexturesMap[vAttachmentType] = vTexture;
+	m_Width = vTexture->getWidth();
+	m_Height = vTexture->getHeight();
 }
 
 void Elaina::CFrameBuffer::setAttachment(GLenum vAttachmentType, const std::shared_ptr<CRenderBuffer>& vRenderBuffer)
@@ -56,7 +68,7 @@ void Elaina::CFrameBuffer::setAttachment(GLenum vAttachmentType, const std::shar
 	m_Height = vRenderBuffer->getHeight();
 }
 
-const std::shared_ptr<Elaina::CTexture2D>& Elaina::CFrameBuffer::getAttachment(GLenum vAttachmentType)
+const std::shared_ptr<Elaina::CTexture>& Elaina::CFrameBuffer::getAttachment(GLenum vAttachmentType)
 {
 	return m_TexturesMap[vAttachmentType];
 }
@@ -93,68 +105,4 @@ void Elaina::CFrameBuffer::initDefaultFrameBuffer(int vWidth, int vHeight, GLuin
 	getDefaultFrameBuffer()->m_Width = vWidth;
 	getDefaultFrameBuffer()->m_Height = vHeight;
 	getDefaultFrameBuffer()->m_FrameBufferID = vFrameBufferID;
-}
-
-std::shared_ptr<Elaina::CFrameBuffer> Elaina::CFrameBuffer::createFrameBuffer(
-	int vWidth,
-	int vHeight,
-	int vNumOfColorBuffer,
-	bool vNeedDepthBuffer,
-	bool vNeedStencilBuffer
-)
-{	
-	_ASSERTE(vWidth > 0 && vHeight > 0);
-	_ASSERTE(vNumOfColorBuffer >= 0 && vNumOfColorBuffer <= 32);
-
-	const auto& pFrameBuffer = std::make_shared<CFrameBuffer>();
-	pFrameBuffer->create();
-	pFrameBuffer->bind();
-	if (vNumOfColorBuffer > 0)
-	{
-		std::vector<GLenum> DrawAttachments{};
-		for (int i = 0; i < vNumOfColorBuffer; ++i)
-		{
-			const auto& pTexture2D = std::make_shared<CTexture2D>(vWidth, vHeight, GL_RGB16F, GL_RGB, GL_FLOAT);
-			pTexture2D->setParameters(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			pTexture2D->setParameters(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			pFrameBuffer->setAttachment(GL_COLOR_ATTACHMENT0 + i, pTexture2D);
-			DrawAttachments.push_back(GL_COLOR_ATTACHMENT0 + i);
-		}
-		pFrameBuffer->setDrawAttachments(DrawAttachments);
-	}
-	else setColorBufferEmpty();
-	// when color = 0 set none
-	if (vNeedDepthBuffer)
-	{
-		const auto& pDepthTex = std::make_shared<CTexture2D>(vWidth, vHeight, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE);
-		pDepthTex->setParameters(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		pDepthTex->setParameters(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		pFrameBuffer->setAttachment(GL_DEPTH_ATTACHMENT, pDepthTex);
-	}
-	if (vNeedStencilBuffer) {} // TODO
-	CFrameBuffer::checkComplete();
-	pFrameBuffer->unbind();
-	return pFrameBuffer;
-}
-
-std::shared_ptr<Elaina::CFrameBuffer> Elaina::CFrameBuffer::createDepthOnlyFrameBuffer(int vWidth, int vHeight)
-{
-	_ASSERTE(vWidth > 0 && vHeight > 0);
-
-	const auto& pDepthTex = std::make_shared<CTexture2D>(vWidth, vHeight, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
-	pDepthTex->setParameters(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	pDepthTex->setParameters(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	pDepthTex->setParameters(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	pDepthTex->setParameters(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	GLfloat BorderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-	pDepthTex->setParameters(GL_TEXTURE_BORDER_COLOR, BorderColor);
-
-	const auto& pFrameBuffer = std::make_shared<CFrameBuffer>();
-	pFrameBuffer->create();
-	pFrameBuffer->bind();
-	pFrameBuffer->setAttachment(GL_DEPTH_ATTACHMENT, pDepthTex);
-	setColorBufferEmpty();
-	checkComplete();
-	pFrameBuffer->unbind();
-	return pFrameBuffer;
 }

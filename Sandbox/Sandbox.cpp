@@ -26,6 +26,7 @@
 #include "primitive/Primitive.h"
 #include "loader/ModelLoader.h"
 #include "ui/ImGui.h"
+#include "utils/FrameBufferHelper.h"
 
 size_t g_IndexOfNodes = 0;
 size_t g_SizeofNodes = 0;
@@ -82,8 +83,7 @@ void setRenderPipeline(int vWidth, int vHeight)
 		"shaders\\deferPbr.frag"
 	), 1, 0, pDirShadowMapPass);
 	
-	const auto& pSkyBoxTex = std::make_shared<Elaina::CTextureCube>();
-	pSkyBoxTex->loadCubeMapFiles(std::vector<std::string>{
+	const auto& pSkyBoxTex = std::make_shared<Elaina::CTextureCube>(std::array<std::string, 6>{
 		"skybox\\right.jpg",
 		"skybox\\left.jpg",
 		"skybox\\top.jpg",
@@ -91,15 +91,20 @@ void setRenderPipeline(int vWidth, int vHeight)
 		"skybox\\front.jpg",
 		"skybox\\back.jpg"
 	});
+	pSkyBoxTex->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	pSkyBoxTex->setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	pSkyBoxTex->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	pSkyBoxTex->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	pSkyBoxTex->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	const auto& pDeferredSkyBoxPass = std::make_shared<Elaina::CDeferredSkyBoxPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\deferSkyBox.vert",
 		"shaders\\deferSkyBox.frag"
 	), pSkyBoxTex, 1);
 
 	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	g_DirShadowMapFB = Elaina::CFrameBuffer::createDepthOnlyFrameBuffer(1024, 1024);
+	g_DirShadowMapFB = Elaina::CFrameBufferHelper::createDepthOnlyFrameBuffer(1024, 1024);
 	g_RenderPipeline->addFrameBuffer(g_DirShadowMapFB);
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::createFrameBuffer(vWidth, vHeight, 4, true, false));
+	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBufferHelper::createFrameBuffer(vWidth, vHeight, 4, true, false));
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
 	g_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
 	g_RenderPipeline->addRenderPass(pDeferredGeoPass, 1);
@@ -188,6 +193,13 @@ int main()
 	Elaina::CGlfwWindow App;
 	_ASSERTE(App.init(800, 600));
 	Elaina::CFrameBuffer::initDefaultFrameBuffer(App.getWidth(), App.getHeight(), 0);
+
+	const auto& pTestCubeMap = std::make_shared<Elaina::CTextureCube>(512, 512, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+	pTestCubeMap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	pTestCubeMap->setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	pTestCubeMap->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	pTestCubeMap->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	pTestCubeMap->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	g_PlaneMat = std::make_shared<Elaina::SPbrMaterial>();
 	g_PlaneMat->_Albedo = glm::vec3(1.0f, 1.0f, 1.0f);
