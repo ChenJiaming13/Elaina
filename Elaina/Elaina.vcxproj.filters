@@ -126,6 +126,9 @@
     <ClInclude Include="renderpass\PointShadowMapPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="renderpass\DeferVisLightPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -219,6 +222,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\PointShadowMapPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\DeferVisLightPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

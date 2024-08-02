@@ -22,6 +22,7 @@
 #include "controller/ArcballController.h"
 #include "primitive/Primitive.h"
 #include "loader/ModelLoader.h"
+#include "renderpass/DeferVisLightPass.h"
 #include "renderpass/PointShadowMapPass.h"
 #include "ui/ImGui.h"
 #include "utils/FrameBufferHelper.h"
@@ -105,6 +106,11 @@ void setRenderPipeline(int vWidth, int vHeight)
 		"shaders\\deferSkyBox.frag"
 	), pSkyBoxTex, 2);
 
+	const auto& pVisLightPass = std::make_shared<Elaina::CDeferVisLightPass>(Elaina::CShaderProgram::createShaderProgram(
+		"shaders\\visLight.vert",
+		"shaders\\visLight.frag"
+	));
+
 	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	g_DirShadowMapFB = Elaina::CFrameBufferHelper::createDepthOnlyFrameBuffer(1024, 1024);
 	g_PointShadowMapFB = Elaina::CFrameBufferHelper::createPointLightShadowFrameBuffer(512, 512);
@@ -117,6 +123,7 @@ void setRenderPipeline(int vWidth, int vHeight)
 	g_RenderPipeline->addRenderPass(pDeferredGeoPass, 2);
 	g_RenderPipeline->addRenderPass(pDeferredLitPass, 3);
 	g_RenderPipeline->addRenderPass(pDeferredSkyBoxPass, 3);
+	g_RenderPipeline->addRenderPass(pVisLightPass, 3);
 }
 
 void renderUI()
