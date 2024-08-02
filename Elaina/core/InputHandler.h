@@ -5,6 +5,8 @@ namespace Elaina
 	class CInputHandler
 	{
 	public:
+		virtual ~CInputHandler() = default;
+
 		virtual void onWindowSizeChange(int vWidth, int vHeight) {}
 		virtual void onKeyDown(int vKey) {}
 		virtual void onKeyUp(int vKey) {}

@@ -45,7 +45,8 @@ void Elaina::CDeferredSkyBoxPass::renderV(const std::shared_ptr<CScene>& vScene,
 	m_pCubeMap->bind();
 	m_pShaderProgram->use();
 	m_pShaderProgram->setUniform("uView", glm::mat4(glm::mat3(pCamera->getViewMatrix())));
-	m_pShaderProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
+	//m_pShaderProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
+	m_pShaderProgram->setUniform("uProjection", glm::perspective(90.0f, pCamera->getAspect(), pCamera->getNear(), pCamera->getFar()));
 	m_pShaderProgram->setUniform("uSkyBoxTex", 0);
 	m_pSkyBoxVAO->bind();
 	m_pSkyBoxVAO->draw();

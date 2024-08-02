@@ -164,6 +164,7 @@
     <ClInclude Include="core\Transform.h" />
     <ClInclude Include="core\Material.h" />
     <ClInclude Include="base\Texture.h" />
+    <ClInclude Include="renderpass\PointShadowMapPass.h" />
     <ClInclude Include="utils\FrameBufferHelper.h" />
     <ClInclude Include="ui\ImGui.h" />
     <ClInclude Include="renderpass\DeferredSkyBoxPass.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="core\Material.cpp" />
     <ClCompile Include="base\Texture.cpp" />
+    <ClCompile Include="renderpass\PointShadowMapPass.cpp" />
     <ClCompile Include="utils\FrameBufferHelper.cpp" />
     <ClCompile Include="ui\ImGui.cpp" />
     <ClCompile Include="renderpass\DeferredSkyBoxPass.cpp" />

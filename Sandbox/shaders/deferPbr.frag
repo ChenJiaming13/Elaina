@@ -11,6 +11,7 @@ uniform sampler2D uAlbedoTex;
 uniform sampler2D uPbrPropsTex;
 uniform sampler2D uDepthTex;
 uniform sampler2D uDirShadowMapTex;
+uniform samplerCube uPointShadowMapTex;
 
 // material parameters
 // uniform vec3 uAlbedo;
@@ -23,6 +24,10 @@ uniform sampler2D uDirShadowMapTex;
 uniform vec3 uLightDir;
 uniform vec3 uLightColor;
 uniform float uLightIntensity;
+
+// point lights
+uniform vec3 uPointLightPos;
+uniform float uPointFarPlane;
 
 uniform vec3 uViewPos;
 
@@ -80,6 +85,17 @@ float calcDirShadow(vec3 vWorldPos, vec3 vNormal, vec3 vLightDir)
     float CurrDepth = LightNDCPos.z;
     if (CurrDepth > 1.0) return 0.0;
     float Bias = max(0.05 * (1.0 - dot(vNormal, vLightDir)), 0.005);
+    float Shadow = CurrDepth - Bias > ClosestDepth ? 1.0 : 0.0;
+    return Shadow;
+}
+
+float calcPointShadow(vec3 pWorldPos, vec3 pPointLightPos, float pFarPlane, samplerCube pShadowMapTex)
+{
+    vec3 FragToLight = pWorldPos - pPointLightPos;
+    float ClosestDepth = texture(pShadowMapTex, FragToLight).r;
+    ClosestDepth *= pFarPlane;
+    float CurrDepth = length(FragToLight);
+    float Bias = 0.05;
     float Shadow = CurrDepth - Bias > ClosestDepth ? 1.0 : 0.0;
     return Shadow;
 }
@@ -144,7 +160,10 @@ void main()
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * Albedo * Ao;
 
-    float Shadow = calcDirShadow(WorldPos, N, L);
+    float DirShadow = calcDirShadow(WorldPos, N, L);
+    float PointShadow = calcPointShadow(WorldPos, uPointLightPos, uPointFarPlane, uPointShadowMapTex);
+    DirShadow = 0.0;
+    float Shadow = clamp(DirShadow + PointShadow, 0.0, 1.0);
     vec3 color = ambient + Lo * (1.0 - Shadow);
 
     // HDR tonemapping
@@ -153,4 +172,5 @@ void main()
     color = pow(color, vec3(1.0/2.2)); 
 
     oFragColor = vec4(color, 1.0);
+    // oFragColor = texture(uPointShadowMapTex, WorldPos - uPointLightPos);
 }

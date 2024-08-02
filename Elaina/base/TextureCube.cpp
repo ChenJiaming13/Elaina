@@ -5,31 +5,31 @@
 Elaina::CTextureCube::CTextureCube(int vWidth, int vHeight, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType)
 	:CTexture(GL_TEXTURE_CUBE_MAP, vWidth, vHeight, vInternalFormat, vFormat, vDataType)
 {
-	resize(vWidth, vHeight);
+	CTextureCube::resize(vWidth, vHeight);
 }
 
 Elaina::CTextureCube::CTextureCube(const std::array<std::string, 6>& vCubeMapFiles, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType)
 	:CTexture(GL_TEXTURE_CUBE_MAP, 0, 0, vInternalFormat, vFormat, vDataType)
 {
 	int Width = 0, Height = 0, NrChannels = 0;
-	std::array<unsigned char*, 6> pRawDatas{};
-	std::array<const GLvoid*, 6> pDatas{};
-	for (size_t i = 0; i < pRawDatas.size(); ++i)
+	std::array<unsigned char*, 6> pRawDataList{};
+	std::array<const GLvoid*, 6> pDataList{};
+	for (size_t i = 0; i < pRawDataList.size(); ++i)
 	{
 		unsigned char* pData = stbi_load(vCubeMapFiles[i].c_str(), &Width, &Height, &NrChannels, 0);
 		if (pData == nullptr)
 		{
-			spdlog::warn("cubemap {} texture failed to load at path: {}", i, vCubeMapFiles[i]);
+			spdlog::warn("cube map {} texture failed to load at path: {}", i, vCubeMapFiles[i]);
 		}
-		pRawDatas[i] = pData;
-		pDatas[i] = (const GLvoid*)pData;
+		pRawDataList[i] = pData;
+		pDataList[i] = static_cast<const GLvoid*>(pData);
 	}
 
-	if (Width != 0 && Height != 0 && NrChannels != 0) resize(Width, Height, pDatas);
+	if (Width != 0 && Height != 0 && NrChannels != 0) resize(Width, Height, pDataList);
 	
-	for (size_t i = 0; i < pRawDatas.size(); ++i)
+	for (const auto& pData : pRawDataList)
 	{
-		stbi_image_free(pRawDatas[i]);
+		stbi_image_free(pData);
 	}
 }
 

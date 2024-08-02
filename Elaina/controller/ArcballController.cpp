@@ -2,7 +2,7 @@
 #include "ArcballController.h"
 
 Elaina::CArcballController::CArcballController() :
-	m_TargetPos(0.0f, 0.0f, 0.0f), m_Distance(5.0f),
+	m_TargetPos(0.0f, 0.0f, 0.0f), m_Distance(40.0f),
 	m_Yaw(-90.0f), m_Pitch(0.0f), m_Sensitivity(1.0f),
 	m_IsLeftBtnPressed(false), m_IsRightBtnPressed(false), m_IsFirst(true)
 {

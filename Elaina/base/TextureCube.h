@@ -4,11 +4,11 @@
 
 namespace Elaina
 {
-	class CTextureCube : public CTexture
+	class CTextureCube final : public CTexture
 	{
 	public:
 		CTextureCube(int vWidth, int vHeight, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType);
-		CTextureCube(
+		explicit CTextureCube(
 			const std::array<std::string, 6>& vCubeMapFiles,
 			GLenum vInternalFormat = GL_RGB,
 			GLenum vFormat = GL_RGB,

@@ -10,8 +10,10 @@ namespace Elaina
 	{
 	public:
 		CDeferredLitPass(
-			const std::shared_ptr<CShaderProgram>& vShaderProgram, 
-			size_t vIdxOfDeferredGeoFB, size_t vIdxOfDirShadowMapFB,
+			const std::shared_ptr<CShaderProgram>& vShaderProgram,
+			size_t vIdxOfDeferredGeoFB,
+			size_t vIdxOfDirShadowMapFB,
+			size_t vIdxOfPointShadowMapFB,
 			const std::shared_ptr<CDirShadowMapPass>& vDirShadowMapPass
 		);
 		~CDeferredLitPass();
@@ -24,5 +26,6 @@ namespace Elaina
 		std::shared_ptr<CDirShadowMapPass> m_pDirShadowMapPass;
 		size_t m_IdxOfDeferredGeoFB;
 		size_t m_IdxOfDirShadowMapFB;
+		size_t m_IdxOfPointShadowMapFB;
 	};
 }

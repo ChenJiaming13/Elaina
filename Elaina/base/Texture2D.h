@@ -4,7 +4,7 @@
 
 namespace Elaina
 {
-	class CTexture2D : public CTexture
+	class CTexture2D final : public CTexture
 	{
 	public:
 		CTexture2D(int vWidth, int vHeight, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType);

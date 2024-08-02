@@ -6,13 +6,8 @@ namespace Elaina
 	class CFrameBufferHelper
 	{
 	public:
-		static std::shared_ptr<CFrameBuffer> createFrameBuffer(
-			int vWidth,
-			int vHeight,
-			int vNumOfColorBuffer,
-			bool vNeedDepthBuffer,
-			bool vNeedStencilBuffer
-		);
+		static std::shared_ptr<CFrameBuffer> createColorAndDepthFrameBuffer(int vWidth, int vHeight, const std::vector<int>& vColorBufferChannels);
 		static std::shared_ptr<CFrameBuffer> createDepthOnlyFrameBuffer(int vWidth, int vHeight);
+		static std::shared_ptr<CFrameBuffer> createPointLightShadowFrameBuffer(int vWidth, int vHeight);
 	};
 }

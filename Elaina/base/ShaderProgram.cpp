@@ -60,7 +60,7 @@ void Elaina::CShaderProgram::setUniform(const std::string& vName, int vValue) co
 
 void Elaina::CShaderProgram::setUniform(const std::string& vName, bool vValue) const
 {
-	GL_SAFE_CALL(glUniform1i(glGetUniformLocation(m_ProgramID, vName.c_str()), (int)vValue));
+	GL_SAFE_CALL(glUniform1i(glGetUniformLocation(m_ProgramID, vName.c_str()), static_cast<int>(vValue)));
 }
 
 void Elaina::CShaderProgram::setUniform(const std::string& vName, float vValue) const
@@ -93,11 +93,12 @@ void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat
 	GL_SAFE_CALL(glUniformMatrix3fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, GL_FALSE, &vMat[0][0]));
 }
 
-std::shared_ptr<Elaina::CShaderProgram> Elaina::CShaderProgram::createShaderProgram(const std::string& vVertPath, const std::string& vFragPath)
+std::shared_ptr<Elaina::CShaderProgram> Elaina::CShaderProgram::createShaderProgram(const std::string& vVertPath, const std::string& vFragPath, const std::string& vGeomPath)
 {
 	const auto& pProgram = std::make_shared<Elaina::CShaderProgram>();
-	pProgram->attachShader(Elaina::CShaderProgram::EShaderType::VERTEX, vVertPath);
-	pProgram->attachShader(Elaina::CShaderProgram::EShaderType::FRAGMENT, vFragPath);
+	pProgram->attachShader(EShaderType::VERTEX, vVertPath);
+	pProgram->attachShader(EShaderType::FRAGMENT, vFragPath);
+	if (!vGeomPath.empty()) pProgram->attachShader(EShaderType::GEOMETRY, vGeomPath);
 	pProgram->linkProgram();
 	return pProgram;
 }
@@ -139,10 +140,10 @@ bool Elaina::CShaderProgram::__compileShader(const std::string& vShaderCode, ESh
 bool Elaina::CShaderProgram::__checkCompileError(GLuint vID, EShaderType vShaderType)
 {
 	GLint IsSuccess;
-	GLchar InfoLog[1024];
 	GL_SAFE_CALL(glGetShaderiv(vID, GL_COMPILE_STATUS, &IsSuccess));
 	if (!IsSuccess)
 	{
+		GLchar InfoLog[1024];
 		GL_SAFE_CALL(glGetShaderInfoLog(vID, 1024, nullptr, InfoLog));
 		spdlog::error("shader COMPILE failed: {}\n{}", __getShaderTypeName(vShaderType), InfoLog);
 		return false;
@@ -153,10 +154,10 @@ bool Elaina::CShaderProgram::__checkCompileError(GLuint vID, EShaderType vShader
 bool Elaina::CShaderProgram::__checkLinkError(GLuint vID)
 {
 	GLint IsSuccess;
-	GLchar InfoLog[1024];
 	GL_SAFE_CALL(glGetProgramiv(vID, GL_LINK_STATUS, &IsSuccess));
 	if (!IsSuccess)
 	{
+		GLchar InfoLog[1024];
 		GL_SAFE_CALL(glGetProgramInfoLog(vID, 1024, nullptr, InfoLog));
 		spdlog::error("shader LINK failed: \n{}", InfoLog);
 		return false;

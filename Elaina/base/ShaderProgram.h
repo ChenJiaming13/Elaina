@@ -4,7 +4,6 @@
 #include <unordered_set>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <any>
 
 namespace Elaina
 {
@@ -33,9 +32,9 @@ namespace Elaina
 		void setUniform(const std::string& vName, const glm::vec4& vValue) const;
 		void setUniform(const std::string& vName, const glm::mat4& vMat) const;
 		void setUniform(const std::string& vName, const glm::mat3& vMat) const;
-		const auto& getUniforms() const { return m_Uniforms; }
+		[[nodiscard]] const auto& getUniforms() const { return m_Uniforms; }
 
-		static std::shared_ptr<CShaderProgram> createShaderProgram(const std::string& vVertPath, const std::string& vFragPath);
+		static std::shared_ptr<CShaderProgram> createShaderProgram(const std::string& vVertPath, const std::string& vFragPath, const std::string& vGeomPath = "");
 
 	private:
 		static bool __dumpShaderCodeFromFile(const std::string& vShaderPath, EShaderType vShaderType, std::string& voShaderCode);
