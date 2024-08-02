@@ -33,6 +33,7 @@ std::shared_ptr<Elaina::CRenderPipeline> g_RenderPipeline = nullptr;
 std::shared_ptr<Elaina::SPbrMaterial> g_PlaneMat = nullptr;
 std::shared_ptr<Elaina::SPbrMaterial> g_ObjMat = nullptr;
 std::shared_ptr<Elaina::CFrameBuffer> g_DirShadowMapFB = nullptr;
+std::shared_ptr<Elaina::CFrameBuffer> g_PointShadowMapFB = nullptr;
 
 class CMyInputHandler final : public Elaina::CInputHandler
 {
@@ -106,8 +107,9 @@ void setRenderPipeline(int vWidth, int vHeight)
 
 	g_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	g_DirShadowMapFB = Elaina::CFrameBufferHelper::createDepthOnlyFrameBuffer(1024, 1024);
+	g_PointShadowMapFB = Elaina::CFrameBufferHelper::createPointLightShadowFrameBuffer(512, 512);
 	g_RenderPipeline->addFrameBuffer(g_DirShadowMapFB);
-	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBufferHelper::createPointLightShadowFrameBuffer(512, 512));
+	g_RenderPipeline->addFrameBuffer(g_PointShadowMapFB);
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector<int>(4, 3)));
 	g_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
 	g_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
@@ -136,18 +138,35 @@ void renderUI()
 	if (ImGui::CollapsingHeader("Directional Light"))
 	{
 		ImGui::PushID(ID++);
-		static int ShadowMapSize[] = { 0, 0 };
-		ShadowMapSize[0] = g_DirShadowMapFB->getWidth();
-		ShadowMapSize[1] = g_DirShadowMapFB->getHeight();
+		static int DirShadowMapSize[] = { 0, 0 };
+		DirShadowMapSize[0] = g_DirShadowMapFB->getWidth();
+		DirShadowMapSize[1] = g_DirShadowMapFB->getHeight();
 		ImGui::ColorEdit3("Light Color", &g_Scene->getDirectionalLight()->_LightColor.x);
 		ImGui::DragFloat("Light Intensity", &g_Scene->getDirectionalLight()->_LightIntensity, 0.01f);
 		ImGui::DragFloat3("Light Direction", &g_Scene->getDirectionalLight()->_LightDir.x, 0.01f);
 		ImGui::DragFloat3("Light Position", &g_Scene->getDirectionalLight()->_LightPos.x, 0.01f);
-		if (ImGui::DragInt2("Shadow Map Size", ShadowMapSize, 5.0f))
+		if (ImGui::DragInt2("Shadow Map Size", DirShadowMapSize, 5.0f))
 		{
-			if (ShadowMapSize[0] > 0 && ShadowMapSize[1] > 0)
+			if (DirShadowMapSize[0] > 0 && DirShadowMapSize[1] > 0)
 			{
-				g_DirShadowMapFB->resize(ShadowMapSize[0], ShadowMapSize[1]);
+				g_DirShadowMapFB->resize(DirShadowMapSize[0], DirShadowMapSize[1]);
+			}
+		}
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Point Light"))
+	{
+		ImGui::PushID(ID++);
+		static int PointShadowMapSize = 0;
+		PointShadowMapSize = g_PointShadowMapFB->getWidth();
+		ImGui::ColorEdit3("Light Color", &g_Scene->getPointLight()->_LightColor.x);
+		ImGui::DragFloat("Light Intensity", &g_Scene->getPointLight()->_LightIntensity, 0.01f);
+		ImGui::DragFloat3("Light Position", &g_Scene->getPointLight()->_LightPos.x, 0.01f);
+		if (ImGui::DragInt("Shadow Map Size", &PointShadowMapSize, 5.0f))
+		{
+			if (PointShadowMapSize > 0)
+			{
+				g_PointShadowMapFB->resize(PointShadowMapSize, PointShadowMapSize);
 			}
 		}
 		ImGui::PopID();
@@ -231,14 +250,14 @@ int main()
 	pDirLight->_LightDir = glm::vec3(0.0f, 0.0f, 0.0f) - pDirLight->_LightPos;
 
 	const auto& pPointLight = std::make_shared<Elaina::SPointLight>();
-	pPointLight->_LightColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	pPointLight->_LightIntensity = 1.0f;
-	pPointLight->_LightPos = glm::vec3(0.0f, 5.0f, 5.0f);
+	pPointLight->_LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	pPointLight->_LightIntensity = 1000.0f;
+	pPointLight->_LightPos = glm::vec3(0.0f, 0.0f, 5.0f);
 
 	g_Scene = std::make_shared<Elaina::CScene>();
 	g_Scene->setCamera(pCamera);
 	g_Scene->setDirectionalLight(pDirLight);
-	g_Scene->addPointLight(pPointLight);
+	g_Scene->setPointLight(pPointLight);
 	g_Scene->setRootNode(pRootNode);
 
 	setRenderPipeline(App.getWidth(), App.getHeight());
@@ -263,5 +282,6 @@ int main()
 	g_Scene.reset();
 	g_RenderPipeline.reset();
 	g_DirShadowMapFB.reset();
+	g_PointShadowMapFB.reset();
 	return 0;
 }

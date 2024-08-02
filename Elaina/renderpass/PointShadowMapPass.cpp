@@ -13,10 +13,9 @@ void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene,
 	size_t vIdxOfPasses)
 {
 	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
-	if (vScene->getPointLights().empty()) return;
 	const auto& pCurrFrameBuffer = vFrameBuffers[vOutputIndices[vIdxOfPasses]];
 	m_Aspect = static_cast<float>(pCurrFrameBuffer->getWidth()) / static_cast<float>(pCurrFrameBuffer->getHeight());
-	const auto& pPointLight = vScene->getPointLights()[0];
+	const auto& pPointLight = vScene->getPointLight();
 	__updateShadowTransforms(pPointLight);
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	GL_SAFE_CALL(glClear(GL_DEPTH_BUFFER_BIT));

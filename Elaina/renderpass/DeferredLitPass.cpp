@@ -36,7 +36,7 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	
 	const auto& pCamera = vScene->getCamera();
 	const auto& pDirLight = vScene->getDirectionalLight();
-	const auto& pPointLight = vScene->getPointLights()[0];
+	const auto& pPointLight = vScene->getPointLight();
 	const glm::vec4 SolidColor = pCamera->getSolidColor();
 
 	GL_SAFE_CALL(glDisable(GL_DEPTH_TEST));
@@ -71,10 +71,10 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	m_pShaderProgram->setUniform("uPointShadowMapTex", 6);
 	m_pShaderProgram->setUniform("uViewPos", pCamera->getWorldPos());
 	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
-	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor);
-	m_pShaderProgram->setUniform("uLightIntensity", pDirLight->_LightIntensity);
+	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor * pDirLight->_LightIntensity);
 	m_pShaderProgram->setUniform("uLightMatrix", m_pDirShadowMapPass->calcLightMatrix(pDirLight));
-	m_pShaderProgram->setUniform("uPointLightPos", pPointLight->_LightPos);
+	m_pShaderProgram->setUniform("uPointLightColor", pPointLight->_LightColor * pPointLight->_LightIntensity);
+	m_pShaderProgram->setUniform("uPointLightPosition", pPointLight->_LightPos);
 	m_pShaderProgram->setUniform("uPointFarPlane", pPointLight->_Far);
 
 	m_pQuadVAO->bind();
