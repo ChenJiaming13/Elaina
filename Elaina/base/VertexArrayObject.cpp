@@ -4,7 +4,7 @@
 #include "safe.h"
 
 Elaina::CVertexArrayObject::CVertexArrayObject()
-	:m_VAO(0), m_VerticesCount(0), m_pVertexBuffer(nullptr), m_pIndexBuffer(nullptr), m_DrawMode{}, m_IndexType{}
+	:m_VAO(0), m_VerticesCount(0), m_DrawMode{}, m_IndexType{}, m_pVertexBuffer(nullptr), m_pIndexBuffer(nullptr)
 {
 	GL_SAFE_CALL(glGenVertexArrays(1, &m_VAO));
 }
@@ -40,15 +40,15 @@ void Elaina::CVertexArrayObject::addBuffer(const std::shared_ptr<CBuffer>& vBuff
 	else spdlog::warn("undefined buffer type");
 }
 
-void Elaina::CVertexArrayObject::setVertexLayout(const std::vector<int>& vLayout) const
+void Elaina::CVertexArrayObject::setVertexLayout(const std::vector<int>& vLayout)
 {
-	unsigned int TotalCount = std::accumulate(vLayout.begin(), vLayout.end(), 0);
-	unsigned int CurrAccumCount = 0;
-	for (int i = 0; i < vLayout.size(); ++i)
+	const unsigned int TotalCount = std::accumulate(vLayout.begin(), vLayout.end(), 0);
+	unsigned int CurrTotalCount = 0;
+	for (unsigned int i = 0; i < vLayout.size(); ++i)
 	{
-		GL_SAFE_CALL(glVertexAttribPointer(i, vLayout[i], GL_FLOAT, GL_FALSE, TotalCount * sizeof(float), (void*)(CurrAccumCount * sizeof(float))));
+		GL_SAFE_CALL(glVertexAttribPointer(i, vLayout[i], GL_FLOAT, GL_FALSE, TotalCount * sizeof(float), reinterpret_cast<const void*>(CurrTotalCount * sizeof(float))));
 		GL_SAFE_CALL(glEnableVertexAttribArray(i));
-		CurrAccumCount += vLayout[i];
+		CurrTotalCount += vLayout[i];
 	}
 }
 
@@ -57,12 +57,12 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CVertexArrayObject::createVA
 	const auto& pVAO = std::make_shared<CVertexArrayObject>();
 	pVAO->bind();
 	pVAO->setDrawMode(vDrawMode);
-	//pVAO->setVerticesCount(vVertices.size() / std::accumulate(vLayout.begin(), vLayout.end(), 0));
-	pVAO->setVerticesCount((GLsizei)vVertices.size());
+	pVAO->setVerticesCount(static_cast<GLsizei>(vVertices.size() / std::accumulate(vLayout.begin(), vLayout.end(), 0)));
+	//pVAO->setVerticesCount((GLsizei)vVertices.size());
 
 	const auto& pVertexBuffer = std::make_shared<CBuffer>(CBuffer::EBufferType::VERTEX_BUFFER);
 	pVertexBuffer->bind();
-	pVertexBuffer->setBufferData(sizeof(float) * vVertices.size(), vVertices.data(), vUsage);
+	pVertexBuffer->setBufferData(static_cast<GLsizeiptr>(sizeof(float) * vVertices.size()), vVertices.data(), vUsage);
 	pVAO->addBuffer(pVertexBuffer);
 	pVAO->setVertexLayout(vLayout);
 
@@ -75,9 +75,10 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CVertexArrayObject::createVA
 
 	const auto& pIndexBuffer = std::make_shared<CBuffer>(CBuffer::EBufferType::INDEX_BUFFER);
 	pIndexBuffer->bind();
-	pIndexBuffer->setBufferData(sizeof(unsigned int) * vIndices.size(), vIndices.data(), vUsage);
+	pIndexBuffer->setBufferData(static_cast<GLsizeiptr>(sizeof(unsigned int) * vIndices.size()), vIndices.data(), vUsage);
 	pVAO->addBuffer(pIndexBuffer);
 	pVAO->setIndexType(GL_UNSIGNED_INT);
+	pVAO->setVerticesCount(static_cast<GLsizei>(vIndices.size())); // suppose that the 3 vertices form a triangle
 
 	return pVAO;
 }

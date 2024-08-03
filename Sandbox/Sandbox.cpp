@@ -44,13 +44,13 @@ public:
 		if (g_RenderPipeline != nullptr) g_RenderPipeline->resize(vWidth, vHeight);
 	}
 
-	void onKeyDown(int vKey) override
-	{
-		if (vKey == 'X')
-		{
-			g_IndexOfNodes = (g_IndexOfNodes + 1) % g_SizeofNodes;
-		}
-	}
+	//void onKeyDown(int vKey) override
+	//{
+	//	if (vKey == 'X')
+	//	{
+	//		g_IndexOfNodes = (g_IndexOfNodes + 1) % g_SizeofNodes;
+	//	}
+	//}
 };
 
 std::shared_ptr<Elaina::CNode> createNode(const std::shared_ptr<Elaina::CVertexArrayObject>& vVAO)
@@ -185,6 +185,10 @@ void renderUI()
 		ImGui::DragFloat("Metallic", &g_ObjMat->_Metallic, 0.01f, 0.0f, 1.0f);
 		ImGui::DragFloat("Roughness", &g_ObjMat->_Roughness, 0.01f, 0.0f, 1.0f);
 		ImGui::DragFloat("Ao", &g_ObjMat->_Ao, 0.01f, 0.0f, 1.0f);
+		if (ImGui::Button("Switch Model"))
+		{
+			g_IndexOfNodes = (g_IndexOfNodes + 1) % g_SizeofNodes;
+		}
 		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Plane PBR Material"))
@@ -235,7 +239,6 @@ int main()
 	pRootNode->addChild(pTestNode);
 
 	const std::vector<std::shared_ptr<Elaina::CNode>> Nodes{
-		//createNode(Elaina::CPrimitive::createQuad()),
 		createNode(Elaina::CPrimitive::createTorus()),
 		createNode(Elaina::CPrimitive::createCube()),
 		createNode(Elaina::CPrimitive::createSphere()),

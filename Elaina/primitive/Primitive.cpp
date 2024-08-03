@@ -4,23 +4,23 @@
 
 std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createQuad()
 {
-	std::vector<float> Vertices{
+	const std::vector Vertices{
 		// positions   // texCoords
 		-1.0f,  1.0f,  0.0f, 1.0f,
 		-1.0f, -1.0f,  0.0f, 0.0f,
 		 1.0f, -1.0f,  1.0f, 0.0f,
 		 1.0f,  1.0f,  1.0f, 1.0f
 	};
-	std::vector<unsigned int> Indices{
+	const std::vector<unsigned int> Indices{
 		0, 1, 2, // first Triangle
 		0, 2, 3, // second Triangle
 	};
-	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{2, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector{2, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
 std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createPlane()
 {
-	std::vector<float> Vertices{
+	const std::vector Vertices{
 		// positions          // normals
 		-0.5f, 0.0f, -0.5f,  0.0f, 1.0f, 0.0f,
 		 0.5f, 0.0f, -0.5f,  0.0f, 1.0f, 0.0f,
@@ -28,16 +28,16 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createPlane()
 		-0.5f, 0.0f,  0.5f,  0.0f, 1.0f, 0.0f
 	};
 
-	std::vector<unsigned int> Indices{
+	const std::vector<unsigned int> Indices{
 		0, 1, 2,
 		2, 3, 0
 	};
-	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
 std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createCube()
 {
-	std::vector<float> Vertices 
+	const std::vector Vertices 
 	{
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -88,12 +88,12 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createCube()
 		Indices.push_back(i);
 	}
 
-	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
 std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSkyBox()
 {
-	std::vector<float> Vertices
+	const std::vector Vertices
 	{
 		// positions          
 		-1.0f,  1.0f, -1.0f,
@@ -138,7 +138,7 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSkyBox()
 		-1.0f, -1.0f,  1.0f,
 		 1.0f, -1.0f,  1.0f
 	};
-	return CVertexArrayObject::createVAO(Vertices, std::vector<int>{3}, GL_TRIANGLES, GL_STATIC_DRAW);
+	return CVertexArrayObject::createVAO(Vertices, std::vector{3}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
 std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSphere(int vSegments)
@@ -148,15 +148,15 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSphere(int
 
 	for (int y = 0; y <= vSegments; ++y) {
 		for (int x = 0; x <= vSegments; ++x) {
-			float xSegment = (float)x / (float)vSegments;
-			float ySegment = (float)y / (float)vSegments;
-			float xPos = std::cos(xSegment * glm::two_pi<float>()) * std::sin(ySegment * glm::pi<float>());
-			float yPos = std::cos(ySegment * glm::pi<float>());
-			float zPos = std::sin(xSegment * glm::two_pi<float>()) * std::sin(ySegment * glm::pi<float>());
+			const float xSegment = static_cast<float>(x) / static_cast<float>(vSegments);
+			const float ySegment = static_cast<float>(y) / static_cast<float>(vSegments);
+			const float xPos = std::cos(xSegment * glm::two_pi<float>()) * std::sin(ySegment * glm::pi<float>());
+			const float yPos = std::cos(ySegment * glm::pi<float>());
+			const float zPos = std::sin(xSegment * glm::two_pi<float>()) * std::sin(ySegment * glm::pi<float>());
 
-			glm::vec3 Position = glm::vec3(xPos, yPos, zPos);
+			auto Position = glm::vec3(xPos, yPos, zPos);
 			glm::vec3 Normal = glm::normalize(Position);
-			glm::vec2 UV = glm::vec2(xSegment, ySegment);
+			auto UV = glm::vec2(xSegment, ySegment);
 
 			Vertices.push_back(Position.x);
 			Vertices.push_back(Position.y);
@@ -171,8 +171,8 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSphere(int
 
 	for (int i = 0; i < vSegments; ++i) {
 		for (int j = 0; j < vSegments; ++j) {
-			int First = (i * (vSegments + 1)) + j;
-			int Second = First + vSegments + 1;
+			const int First = (i * (vSegments + 1)) + j;
+			const int Second = First + vSegments + 1;
 
 			Indices.push_back(First);
 			Indices.push_back(Second);
@@ -184,23 +184,23 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createSphere(int
 		}
 	}
 
-	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector{3, 3, 2}, GL_TRIANGLES, GL_STATIC_DRAW);
 }
 
-std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createTorus(float vInnerRadius, float vOuterRadius, int vNsides, int vRings)
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createTorus(float vInnerRadius, float vOuterRadius, int vNSides, int vRings)
 {
 	std::vector<float> Vertices;
 	std::vector<unsigned int> Indices;
 
 	for (int i = 0; i <= vRings; ++i) {
-		float Theta = i * glm::two_pi<float>() / vRings;
-		float SinTheta = sin(Theta);
-		float CosTheta = cos(Theta);
+		const float Theta = static_cast<float>(i) * glm::two_pi<float>() / static_cast<float>(vRings);
+		const float SinTheta = sin(Theta);
+		const float CosTheta = cos(Theta);
 
-		for (int j = 0; j <= vNsides; ++j) {
-			float Phi = j * glm::two_pi<float>() / vNsides;
-			float SinPhi = sin(Phi);
-			float CosPhi = cos(Phi);
+		for (int j = 0; j <= vNSides; ++j) {
+			const float Phi = static_cast<float>(j) * glm::two_pi<float>() / static_cast<float>(vNSides);
+			const float SinPhi = sin(Phi);
+			const float CosPhi = cos(Phi);
 
 			float PosX = (vOuterRadius + vInnerRadius * CosTheta) * CosPhi;
 			float PosY = (vOuterRadius + vInnerRadius * CosTheta) * SinPhi;
@@ -223,9 +223,9 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createTorus(floa
 	}
 
 	for (int i = 0; i < vRings; ++i) {
-		for (int j = 0; j < vNsides; ++j) {
-			int First = (i * (vNsides + 1)) + j;
-			int Second = First + vNsides + 1;
+		for (int j = 0; j < vNSides; ++j) {
+			const int First = (i * (vNSides + 1)) + j;
+			const int Second = First + vNSides + 1;
 
 			Indices.push_back(First);
 			Indices.push_back(Second);
@@ -237,5 +237,164 @@ std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createTorus(floa
 		}
 	}
 
-	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector<int>{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
+}
+
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createCylinder(float vRadius, float vHeight, int vSegments)
+{
+	std::vector<float> Vertices;
+	std::vector<GLuint> Indices;
+
+	const float HalfHeight = vHeight / 2.0f;
+	const float AngleStep = glm::two_pi<float>() / static_cast<float>(vSegments);
+
+	// Top center vertex
+	Vertices.push_back(0.0f);
+	Vertices.push_back(HalfHeight);
+	Vertices.push_back(0.0f);
+	Vertices.push_back(0.0f);
+	Vertices.push_back(1.0f);
+	Vertices.push_back(0.0f);
+
+	// Bottom center vertex
+	Vertices.push_back(0.0f);
+	Vertices.push_back(-HalfHeight);
+	Vertices.push_back(0.0f);
+	Vertices.push_back(0.0f);
+	Vertices.push_back(-1.0f);
+	Vertices.push_back(0.0f);
+
+	// Create vertices and normals
+	for (int i = 0; i <= vSegments; ++i) {
+		const float Angle = static_cast<float>(i) * AngleStep;
+		float x = vRadius * cos(Angle);
+		float z = vRadius * sin(Angle);
+
+		// Top circle
+		Vertices.push_back(x);
+		Vertices.push_back(HalfHeight);
+		Vertices.push_back(z);
+		Vertices.push_back(0.0f);
+		Vertices.push_back(1.0f);
+		Vertices.push_back(0.0f);
+
+		// Bottom circle
+		Vertices.push_back(x);
+		Vertices.push_back(-HalfHeight);
+		Vertices.push_back(z);
+		Vertices.push_back(0.0f);
+		Vertices.push_back(-1.0f);
+		Vertices.push_back(0.0f);
+
+		// Side vertices
+		Vertices.push_back(x);
+		Vertices.push_back(HalfHeight);
+		Vertices.push_back(z);
+		Vertices.push_back(x);
+		Vertices.push_back(0.0f);
+		Vertices.push_back(z);
+
+		Vertices.push_back(x);
+		Vertices.push_back(-HalfHeight);
+		Vertices.push_back(z);
+		Vertices.push_back(x);
+		Vertices.push_back(0.0f);
+		Vertices.push_back(z);
+	}
+
+	// Create indices for the top and bottom circles
+	for (int i = 1; i <= vSegments; ++i) {
+		// Top circle
+		Indices.push_back(0); // Center vertex
+		Indices.push_back(i * 4);
+		Indices.push_back((i % vSegments + 1) * 4);
+
+		// Bottom circle
+		Indices.push_back(1); // Center vertex
+		Indices.push_back(i * 4 + 1);
+		Indices.push_back((i % vSegments + 1) * 4 + 1);
+	}
+
+	// Create indices for the side surface
+	for (int i = 0; i < vSegments; ++i) {
+		const int Current = i * 4 + 2;
+		const int Next = (i + 1) % vSegments * 4 + 2;
+
+		Indices.push_back(Current);
+		Indices.push_back(Current + 1);
+		Indices.push_back(Next);
+
+		Indices.push_back(Current + 1);
+		Indices.push_back(Next + 1);
+		Indices.push_back(Next);
+	}
+
+	return CVertexArrayObject::createVAO(Vertices, Indices, std::vector{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
+}
+
+std::shared_ptr<Elaina::CVertexArrayObject> Elaina::CPrimitive::createCone(float vRadius, float vHeight, int vSegments)
+{
+	std::vector<float> vertices;
+	std::vector<GLuint> indices;
+
+	const float HalfHeight = vHeight / 2.0f;
+	const float AngleStep = glm::two_pi<float>() / static_cast<float>(vSegments);
+
+	// Bottom center vertex
+	vertices.push_back(0.0f);
+	vertices.push_back(-HalfHeight);
+	vertices.push_back(0.0f);
+	vertices.push_back(0.0f);
+	vertices.push_back(-1.0f);
+	vertices.push_back(0.0f);
+
+	// Tip vertex
+	vertices.push_back(0.0f);
+	vertices.push_back(HalfHeight);
+	vertices.push_back(0.0f);
+	vertices.push_back(0.0f);
+	vertices.push_back(1.0f);
+	vertices.push_back(0.0f);
+
+	// Create vertices and normals
+	for (int i = 0; i <= vSegments; ++i) {
+		const float Angle = static_cast<float>(i) * AngleStep;
+		float x = vRadius * cos(Angle);
+		float z = vRadius * sin(Angle);
+
+		// Bottom circle
+		vertices.push_back(x);
+		vertices.push_back(-HalfHeight);
+		vertices.push_back(z);
+		vertices.push_back(0.0f);
+		vertices.push_back(-1.0f);
+		vertices.push_back(0.0f);
+
+		// Side vertices
+		vertices.push_back(x);
+		vertices.push_back(-HalfHeight);
+		vertices.push_back(z);
+		vertices.push_back(x);
+		vertices.push_back(vRadius);
+		vertices.push_back(z);
+	}
+
+	// Create indices for the bottom circle
+	for (int i = 1; i <= vSegments; ++i) {
+		indices.push_back(0); // Center vertex
+		indices.push_back(i * 2);
+		indices.push_back((i % vSegments + 1) * 2);
+	}
+
+	// Create indices for the side surface
+	for (int i = 0; i < vSegments; ++i) {
+		const int Current = i * 2 + 2;
+		const int Next = (i + 1) % vSegments * 2 + 2;
+
+		indices.push_back(1); // Tip vertex
+		indices.push_back(Current + 1);
+		indices.push_back(Next + 1);
+	}
+
+	return CVertexArrayObject::createVAO(vertices, indices, std::vector{3, 3}, GL_TRIANGLES, GL_STATIC_DRAW);
 }

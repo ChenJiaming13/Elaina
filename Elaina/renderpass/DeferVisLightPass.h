@@ -4,6 +4,7 @@
 
 namespace Elaina
 {
+	class CNode;
 	class CVertexArrayObject;
 
 	class CDeferVisLightPass final : public CRenderPass
@@ -17,6 +18,9 @@ namespace Elaina
 			size_t vIdxOfPasses) override;
 
 	private:
-		std::shared_ptr<CVertexArrayObject> m_pLightVAO;
+		static glm::mat4 __calcRotationMatrix(const glm::vec3& vCurrDir, const glm::vec3& vTargetDir);
+
+		std::shared_ptr<CVertexArrayObject> m_pPointLightVAO;
+		std::shared_ptr<CNode> m_pArrowNode;
 	};
 }
