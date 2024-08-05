@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "ShaderProgram.h"
-#include "parser/GlslParser.h"
 #include "safe.h"
 
 Elaina::CShaderProgram::CShaderProgram()
@@ -28,8 +27,6 @@ bool Elaina::CShaderProgram::attachShader(const EShaderType& vShaderType, const 
 		return false;
 	}
 
-	CGlslParser::parseUniforms(ShaderCode, m_Uniforms);
-
 	GL_SAFE_CALL(glAttachShader(m_ProgramID, ShaderID));
 	m_ShaderIDs.insert(ShaderID);
 	return true;
@@ -53,44 +50,44 @@ void Elaina::CShaderProgram::use() const
 	GL_SAFE_CALL(glUseProgram(m_ProgramID));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, int vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, int vValue)
 {
-	GL_SAFE_CALL(glUniform1i(glGetUniformLocation(m_ProgramID, vName.c_str()), vValue));
+	GL_SAFE_CALL(glUniform1iv(__getOrCreateUniformID(vName), 1, &vValue));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, bool vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, float vValue)
 {
-	GL_SAFE_CALL(glUniform1i(glGetUniformLocation(m_ProgramID, vName.c_str()), static_cast<int>(vValue)));
+	GL_SAFE_CALL(glUniform1fv(__getOrCreateUniformID(vName), 1, &vValue));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, float vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec2& vValue)
 {
-	GL_SAFE_CALL(glUniform1f(glGetUniformLocation(m_ProgramID, vName.c_str()), vValue));
+	GL_SAFE_CALL(glUniform2fv(__getOrCreateUniformID(vName), 1, &vValue[0]));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec2& vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec3& vValue)
 {
-	GL_SAFE_CALL(glUniform2fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, &vValue[0]));
+	GL_SAFE_CALL(glUniform3fv(__getOrCreateUniformID(vName), 1, &vValue[0]));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec3& vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const std::vector<glm::vec3>& vValues)
 {
-	GL_SAFE_CALL(glUniform3fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, &vValue[0]));
+	GL_SAFE_CALL(glUniform3fv(__getOrCreateUniformID(vName), static_cast<GLsizei>(vValues.size()), &vValues[0].x));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec4& vValue) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::vec4& vValue)
 {
-	GL_SAFE_CALL(glUniform4fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, &vValue[0]));
+	GL_SAFE_CALL(glUniform4fv(__getOrCreateUniformID(vName), 1, &vValue[0]));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat4& vMat) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat4& vMat)
 {
-	GL_SAFE_CALL(glUniformMatrix4fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, GL_FALSE, &vMat[0][0]));
+	GL_SAFE_CALL(glUniformMatrix4fv(__getOrCreateUniformID(vName), 1, GL_FALSE, &vMat[0][0]));
 }
 
-void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat3& vMat) const
+void Elaina::CShaderProgram::setUniform(const std::string& vName, const glm::mat3& vMat)
 {
-	GL_SAFE_CALL(glUniformMatrix3fv(glGetUniformLocation(m_ProgramID, vName.c_str()), 1, GL_FALSE, &vMat[0][0]));
+	GL_SAFE_CALL(glUniformMatrix3fv(__getOrCreateUniformID(vName), 1, GL_FALSE, &vMat[0][0]));
 }
 
 std::shared_ptr<Elaina::CShaderProgram> Elaina::CShaderProgram::createShaderProgram(const std::string& vVertPath, const std::string& vFragPath, const std::string& vGeomPath)
@@ -180,4 +177,16 @@ void Elaina::CShaderProgram::__deleteShaderIDs()
 		GL_SAFE_CALL(glDeleteShader(ShaderID));
 	}
 	m_ShaderIDs.clear();
+}
+
+GLint Elaina::CShaderProgram::__getOrCreateUniformID(const std::string& vName)
+{
+	if (m_ShaderIDMap.contains(vName)) return m_ShaderIDMap[vName];
+	const auto ShaderID = glGetUniformLocation(m_ProgramID, vName.c_str());
+	if (ShaderID == -1)
+	{
+		spdlog::error("uniform {} does not exist or is not set correctly", vName);
+	}
+	m_ShaderIDMap[vName] = ShaderID;
+	return ShaderID;
 }
