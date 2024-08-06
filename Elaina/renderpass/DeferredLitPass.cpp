@@ -20,7 +20,8 @@ Elaina::CDeferredLitPass::CDeferredLitPass(
 	m_pDirShadowMapPass(vDirShadowMapPass),
 	m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB),
 	m_IdxOfDirShadowMapFB(vIdxOfDirShadowMapFB),
-	m_IdxOfPointShadowMapFB(vIdxOfPointShadowMapFB)
+	m_IdxOfPointShadowMapFB(vIdxOfPointShadowMapFB),
+	m_EnablePCF(false), m_HalfSizePCF(1)
 {
 }
 
@@ -73,6 +74,8 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
 	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor * pDirLight->_LightIntensity);
 	m_pShaderProgram->setUniform("uLightMatrix", m_pDirShadowMapPass->calcLightMatrix(pDirLight));
+	m_pShaderProgram->setUniform("uEnablePCF", m_EnablePCF);
+	m_pShaderProgram->setUniform("uHalfSizePCF", m_HalfSizePCF);
 	m_pShaderProgram->setUniform("uPointLightColor", pPointLight->_LightColor * pPointLight->_LightIntensity);
 	m_pShaderProgram->setUniform("uPointLightPosition", pPointLight->_LightPos);
 	m_pShaderProgram->setUniform("uPointFarPlane", pPointLight->_Far);

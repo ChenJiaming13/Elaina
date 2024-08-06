@@ -35,6 +35,7 @@ std::shared_ptr<Elaina::SPbrMaterial> g_PlaneMat = nullptr;
 std::shared_ptr<Elaina::SPbrMaterial> g_ObjMat = nullptr;
 std::shared_ptr<Elaina::CFrameBuffer> g_DirShadowMapFB = nullptr;
 std::shared_ptr<Elaina::CFrameBuffer> g_PointShadowMapFB = nullptr;
+std::shared_ptr<Elaina::CDeferredLitPass> g_DeferredLitPass = nullptr;
 
 class CMyInputHandler final : public Elaina::CInputHandler
 {
@@ -83,7 +84,7 @@ void setRenderPipeline(int vWidth, int vHeight)
 		"shaders\\deferGeo.vert",
 		"shaders\\deferGeo.frag"
 	));
-	const auto& pDeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(Elaina::CShaderProgram::createShaderProgram(
+	g_DeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(Elaina::CShaderProgram::createShaderProgram(
 		"shaders\\deferPbr.vert",
 		"shaders\\deferPbr.frag"
 	), 2, 0, 1, pDirShadowMapPass);
@@ -121,7 +122,7 @@ void setRenderPipeline(int vWidth, int vHeight)
 	g_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
 	g_RenderPipeline->addRenderPass(pPointShadowMapPass, 1, false);
 	g_RenderPipeline->addRenderPass(pDeferredGeoPass, 2);
-	g_RenderPipeline->addRenderPass(pDeferredLitPass, 3);
+	g_RenderPipeline->addRenderPass(g_DeferredLitPass, 3);
 	g_RenderPipeline->addRenderPass(pDeferredSkyBoxPass, 3);
 	g_RenderPipeline->addRenderPass(pVisLightPass, 3);
 }
@@ -158,6 +159,18 @@ void renderUI()
 			{
 				g_DirShadowMapFB->resize(DirShadowMapSize[0], DirShadowMapSize[1]);
 			}
+		}
+		static bool EnablePCF;
+		static int HalfPCFSize;
+		EnablePCF = g_DeferredLitPass->getEnablePCF();
+		HalfPCFSize = g_DeferredLitPass->getHalfSizePCF();
+		if (ImGui::Checkbox("Enable PCF", &EnablePCF))
+		{
+			g_DeferredLitPass->setEnablePCF(EnablePCF);
+		}
+		if (ImGui::DragInt("Half PCF Size", &HalfPCFSize, 1, 0, 5))
+		{
+			g_DeferredLitPass->setHalfSizePCF(HalfPCFSize);
 		}
 		ImGui::PopID();
 	}
@@ -223,6 +236,7 @@ int main()
 
 	const auto& pPlaneNode = createNode(Elaina::CPrimitive::createPlane());
 	const auto& pPlaneNode1 = createNode(Elaina::CPrimitive::createPlane());
+	const auto& pCubeNode = createNode(Elaina::CPrimitive::createCube());
 	//const auto& pPlaneNode2 = createNode(Elaina::CPrimitive::createPlane());
 	pPlaneNode->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
 	pPlaneNode1->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
@@ -230,12 +244,15 @@ int main()
 	pPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
 	pPlaneNode1->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 	pPlaneNode1->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+	pCubeNode->setPosition(glm::vec3(0.0f, -4.0f, 0.0f));
 	setMaterial(pPlaneNode, g_PlaneMat);
 	setMaterial(pPlaneNode1, g_PlaneMat);
+	setMaterial(pCubeNode, g_ObjMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	const auto& pTestNode = std::make_shared<Elaina::CNode>();
 	pRootNode->addChild(pPlaneNode);
 	pRootNode->addChild(pPlaneNode1);
+	pRootNode->addChild(pCubeNode);
 	pRootNode->addChild(pTestNode);
 
 	const std::vector<std::shared_ptr<Elaina::CNode>> Nodes{
@@ -290,6 +307,7 @@ int main()
 		App.swapBuffers();
 	}
 	g_Scene.reset();
+	g_DeferredLitPass.reset();
 	g_RenderPipeline.reset();
 	g_DirShadowMapFB.reset();
 	g_PointShadowMapFB.reset();

@@ -16,6 +16,8 @@ uniform vec3 uLightDir;
 uniform vec3 uLightColor;
 uniform mat4 uLightMatrix;
 uniform sampler2D uDirShadowMapTex;
+uniform bool uEnablePCF;
+uniform int uHalfSizePCF;
 
 // point lights
 uniform vec3 uPointLightColor;
@@ -111,12 +113,30 @@ float calcDirShadow(vec3 pWorldPos, vec3 pNormal, vec3 pLightDir)
     vec4 LightClipSpacePos = uLightMatrix * vec4(pWorldPos, 1.0);
     vec3 LightNDCPos = LightClipSpacePos.xyz / LightClipSpacePos.w;
     LightNDCPos = LightNDCPos * 0.5 + 0.5;
-    float ClosestDepth = texture(uDirShadowMapTex, LightNDCPos.xy).r;
     float CurrDepth = LightNDCPos.z;
-    if (CurrDepth > 1.0) return 0.0;
     float Bias = max(0.05 * (1.0 - dot(pNormal, pLightDir)), 0.005);
-    float Shadow = CurrDepth - Bias > ClosestDepth ? 1.0 : 0.0;
-    return Shadow;
+    if (uEnablePCF)
+    {
+        float Shadow = 0.0;
+        vec2 TexelSize = 1.0 / textureSize(uDirShadowMapTex, 0);
+        for (int x = -uHalfSizePCF; x <= uHalfSizePCF; ++x)
+        {
+            for (int y = -uHalfSizePCF; y <= uHalfSizePCF; ++y)
+            {
+                float DepthPCF = texture(uDirShadowMapTex, LightNDCPos.xy + vec2(x, y) * TexelSize).r;
+                Shadow += CurrDepth - Bias > DepthPCF ? 1.0 : 0.0;
+            }
+        }
+        Shadow /= (2 * uHalfSizePCF + 1) * (2 * uHalfSizePCF + 1);
+        return Shadow;
+    }
+    else
+    {
+        float ClosestDepth = texture(uDirShadowMapTex, LightNDCPos.xy).r;
+        if (CurrDepth > 1.0) return 0.0;
+        float Shadow = CurrDepth - Bias > ClosestDepth ? 1.0 : 0.0;
+        return Shadow;
+    }
 }
 
 float calcPointShadow(vec3 pWorldPos, vec3 pPointLightPos, float pFarPlane, samplerCube pShadowMapTex)

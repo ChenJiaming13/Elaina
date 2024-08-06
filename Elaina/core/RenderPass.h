@@ -11,7 +11,7 @@ namespace Elaina
 	class CRenderPass
 	{
 	public:
-		CRenderPass(const std::shared_ptr<CShaderProgram>& vShaderProgram) :m_pShaderProgram(vShaderProgram) {}
+		explicit CRenderPass(const std::shared_ptr<CShaderProgram>& vShaderProgram) :m_pShaderProgram(vShaderProgram) {}
 		virtual ~CRenderPass() { m_pShaderProgram.reset(); }
 
 		virtual void renderV(
