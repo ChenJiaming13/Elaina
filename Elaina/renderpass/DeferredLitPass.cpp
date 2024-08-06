@@ -10,13 +10,16 @@
 #include "primitive/Primitive.h"
 #include "renderpass/DirShadowMapPass.h"
 #include "safe.h"
+#include "utils/AssetsPath.h"
 
 Elaina::CDeferredLitPass::CDeferredLitPass(
-	const std::shared_ptr<CShaderProgram>& vShaderProgram,
 	size_t vIdxOfDeferredGeoFB, size_t vIdxOfDirShadowMapFB, size_t vIdxOfPointShadowMapFB,
 	const std::shared_ptr<CDirShadowMapPass>& vDirShadowMapPass
 )
-	:CRenderPass(vShaderProgram), m_pQuadVAO(CPrimitive::createQuad()),
+	:CRenderPass(CShaderProgram::createShaderProgram(
+		CAssetsPath::getAssetsPath() + "shaders\\deferPbr.vert", 
+		CAssetsPath::getAssetsPath() + "shaders\\deferPbr.frag")),
+	m_pQuadVAO(CPrimitive::createQuad()),
 	m_pDirShadowMapPass(vDirShadowMapPass),
 	m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB),
 	m_IdxOfDirShadowMapFB(vIdxOfDirShadowMapFB),

@@ -18,7 +18,7 @@ void Elaina::CForwardPbrPass::renderV(
 	
 	const auto& pCamera = vScene->getCamera();
 	const auto& pDirLight = vScene->getDirectionalLight();
-	glm::vec4 SolidColor = pCamera->getSolidColor();
+	const glm::vec4 SolidColor = pCamera->getSolidColor();
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	GL_SAFE_CALL(glClearColor(SolidColor.x, SolidColor.y, SolidColor.z, SolidColor.w));
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));

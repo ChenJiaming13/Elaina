@@ -6,11 +6,11 @@ namespace Elaina
 {
 	class CTextureCube;
 	class CVertexArrayObject;
-	class CDeferredSkyBoxPass : public CRenderPass
+	class CDeferredSkyBoxPass final : public CRenderPass
 	{
 	public:
-		CDeferredSkyBoxPass(const std::shared_ptr<CShaderProgram>& vShaderProgram, const std::shared_ptr<CTextureCube>& vCubeMap, size_t vIdxOfDeferredGeoFB);
-		~CDeferredSkyBoxPass();
+		CDeferredSkyBoxPass(const std::shared_ptr<CTextureCube>& vCubeMap, size_t vIdxOfDeferredGeoFB);
+		~CDeferredSkyBoxPass() override;
 
 		// Inherited via CRenderPass
 		void renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses) override;

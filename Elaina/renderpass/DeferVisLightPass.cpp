@@ -9,9 +9,13 @@
 #include "core/Node.h"
 #include "core/Scene.h"
 #include "light/Light.h"
+#include "utils/AssetsPath.h"
 
-Elaina::CDeferVisLightPass::CDeferVisLightPass(const std::shared_ptr<CShaderProgram>& vShaderProgram)
-	:CRenderPass(vShaderProgram), m_pPointLightVAO(CPrimitive::createSphere()), m_pArrowNode(std::make_shared<CNode>())
+Elaina::CDeferVisLightPass::CDeferVisLightPass()
+	:CRenderPass(CShaderProgram::createShaderProgram(
+		CAssetsPath::getAssetsPath() + "shaders\\visLight.vert", 
+		CAssetsPath::getAssetsPath() + "shaders\\visLight.frag")),
+	m_pPointLightVAO(CPrimitive::createSphere()), m_pArrowNode(std::make_shared<CNode>())
 {
 	const auto& pCylinderMesh = std::make_shared<CMesh>(CPrimitive::createCylinder(0.2f, 2.0f, 32));
 	const auto& pConeMesh = std::make_shared<CMesh>(CPrimitive::createCone(0.4f, 1.0f, 32));

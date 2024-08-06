@@ -8,9 +8,13 @@
 #include "core/Scene.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
+#include "utils/AssetsPath.h"
 
-Elaina::CDeferredSkyBoxPass::CDeferredSkyBoxPass(const std::shared_ptr<CShaderProgram>& vShaderProgram, const std::shared_ptr<CTextureCube>& vCubeMap, size_t vIdxOfDeferredGeoFB)
-	:CRenderPass(vShaderProgram), m_pCubeMap(vCubeMap), m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB), m_pSkyBoxVAO(CPrimitive::createSkyBox())
+Elaina::CDeferredSkyBoxPass::CDeferredSkyBoxPass(const std::shared_ptr<CTextureCube>& vCubeMap, size_t vIdxOfDeferredGeoFB)
+	:CRenderPass(CShaderProgram::createShaderProgram(
+		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.vert", 
+		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.frag")),
+	m_pCubeMap(vCubeMap), m_pSkyBoxVAO(CPrimitive::createSkyBox()), m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB)
 {
 }
 

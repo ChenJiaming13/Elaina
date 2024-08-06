@@ -9,7 +9,7 @@ namespace Elaina
 	class CPointShadowMapPass final : public CRenderPass
 	{
 	public:
-		using CRenderPass::CRenderPass;
+		CPointShadowMapPass();
 
 		void renderV(const std::shared_ptr<CScene>& vScene,
 			const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices,

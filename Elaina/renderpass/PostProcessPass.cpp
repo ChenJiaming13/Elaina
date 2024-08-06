@@ -8,7 +8,7 @@
 #include "safe.h"
 
 Elaina::CPostProcessPass::CPostProcessPass(const std::shared_ptr<CShaderProgram>& vShaderProgram)
-	:Elaina::CRenderPass(vShaderProgram), m_pQuadVAO(Elaina::CPrimitive::createQuad())
+	:CRenderPass(vShaderProgram), m_pQuadVAO(CPrimitive::createQuad())
 {
 }
 

@@ -4,7 +4,7 @@
 
 namespace Elaina
 {
-	class CForwardPbrPass : public CRenderPass
+	class CForwardPbrPass final : public CRenderPass
 	{
 	public:
 		using CRenderPass::CRenderPass;

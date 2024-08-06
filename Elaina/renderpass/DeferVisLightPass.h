@@ -10,7 +10,7 @@ namespace Elaina
 	class CDeferVisLightPass final : public CRenderPass
 	{
 	public:
-		explicit CDeferVisLightPass(const std::shared_ptr<CShaderProgram>& vShaderProgram);
+		CDeferVisLightPass();
 		~CDeferVisLightPass() override;
 
 		void renderV(const std::shared_ptr<CScene>& vScene,

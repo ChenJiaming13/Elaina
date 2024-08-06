@@ -6,11 +6,10 @@ namespace Elaina
 {
 	class CVertexArrayObject;
 	class CDirShadowMapPass;
-	class CDeferredLitPass : public CRenderPass
+	class CDeferredLitPass final : public CRenderPass
 	{
 	public:
 		CDeferredLitPass(
-			const std::shared_ptr<CShaderProgram>& vShaderProgram,
 			size_t vIdxOfDeferredGeoFB,
 			size_t vIdxOfDirShadowMapFB,
 			size_t vIdxOfPointShadowMapFB,

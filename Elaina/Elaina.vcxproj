@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="utils\AssetsPath.h" />
     <ClInclude Include="base\Framebuffer.h" />
     <ClInclude Include="base\RenderBuffer.h" />
     <ClInclude Include="base\ShaderProgram.h" />

@@ -7,10 +7,17 @@
 #include "core/Node.h"
 #include "core/Scene.h"
 #include "light/Light.h"
+#include "utils/AssetsPath.h"
+
+Elaina::CPointShadowMapPass::CPointShadowMapPass() :CRenderPass(CShaderProgram::createShaderProgram(
+	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.vert",
+	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.frag",
+	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.geom"
+)) {}
 
 void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene,
-	const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices,
-	size_t vIdxOfPasses)
+                                          const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices,
+                                          size_t vIdxOfPasses)
 {
 	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
 	const auto& pCurrFrameBuffer = vFrameBuffers[vOutputIndices[vIdxOfPasses]];

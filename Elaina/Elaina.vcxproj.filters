@@ -129,6 +129,9 @@
     <ClInclude Include="renderpass\DeferVisLightPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\AssetsPath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
