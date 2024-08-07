@@ -167,7 +167,7 @@ void CSandbox::__renderUI()
 	{
 		ImGui::PushID(ID++);
 		static bool EnableSkyBoxPass;
-		constexpr size_t IdxOfSkyBoxPass = 3;
+		constexpr size_t IdxOfSkyBoxPass = 4;
 		EnableSkyBoxPass = m_RenderPipeline->getPassEnable(IdxOfSkyBoxPass);
 		if (ImGui::Checkbox("Enable SkyBox Pass", &EnableSkyBoxPass))
 		{

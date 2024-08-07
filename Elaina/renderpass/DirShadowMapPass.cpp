@@ -13,7 +13,7 @@ Elaina::CDirShadowMapPass::CDirShadowMapPass() :CRenderPass(CShaderProgram::crea
 	CAssetsPath::getAssetsPath() + "shaders/shadowMapDir.frag"
 )) {}
 
-void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses)
+void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
 {
 	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));

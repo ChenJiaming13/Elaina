@@ -20,7 +20,7 @@ Elaina::CPostProcessPass::~CPostProcessPass()
 void Elaina::CPostProcessPass::renderV(
 	const std::shared_ptr<CScene>& vScene, 
 	const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, 
-	const std::vector<size_t> vOutputIndices, size_t vIdxOfPasses)
+	const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
 {
 	if (vIdxOfPasses == 0)
 	{
