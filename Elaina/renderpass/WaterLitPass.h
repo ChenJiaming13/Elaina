@@ -3,13 +3,18 @@
 
 namespace Elaina
 {
+	class CShaderProgram;
+	class CFrameBuffer;
 	class CWaterLitPass final : public CRenderPass
 	{
 	public:
 		CWaterLitPass();
 
-		void renderV(const std::shared_ptr<CScene>& vScene,
-			const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices,
-			size_t vIdxOfPasses) override;
+		void renderV(const std::shared_ptr<CScene>& vScene) override;
+		void setLitFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pLitFrameBuffer = vFrameBuffer; }
+
+	private:
+		std::shared_ptr<CShaderProgram> m_pShaderProgram;
+		std::shared_ptr<CFrameBuffer> m_pLitFrameBuffer;
 	};
 }

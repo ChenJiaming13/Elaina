@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Sandbox.h"
 #include "base/Framebuffer.h"
-#include "base/TextureCube.h"
 #include "core/Material.h"
 #include "core/Mesh.h"
 #include "core/Node.h"
@@ -19,13 +18,12 @@
 #include "renderpass/PointShadowMapPass.h"
 #include "renderpass/WaterLitPass.h"
 #include "utils/AssetsPath.h"
-#include "utils/FrameBufferHelper.h"
 
 void CSandbox::init(int vWidth, int vHeight)
 {
 	__setupScene(vWidth, vHeight);
-	//__setupDeferredRenderPipeline(vWidth, vHeight);
-	__setupForwardRenderPipeline(vWidth, vHeight);
+	__setupDeferredRenderPipeline(vWidth, vHeight);
+	//__setupForwardRenderPipeline(vWidth, vHeight);
 }
 
 void CSandbox::render(float vCurrTime, float vDeltaTime)
@@ -33,18 +31,18 @@ void CSandbox::render(float vCurrTime, float vDeltaTime)
 	m_pObjNode->clearChilds();
 	m_pObjNode->addChild(m_pNodes[m_IndexOfNodes]);
 	m_pObjNode->setRotation(glm::vec3(1.0f, 1.0f, 1.0f) * vCurrTime * 5.0f);
-	m_RenderPipeline->render(m_Scene);
+	m_pRenderPipeline->render(m_pScene);
 	__renderUI();
 }
 
 void CSandbox::onWindowSizeChange(int vWidth, int vHeight)
 {
-	if (m_RenderPipeline != nullptr) m_RenderPipeline->resize(vWidth, vHeight);
+	if (m_pRenderPipeline != nullptr) m_pRenderPipeline->onWindowSizeChange(vWidth, vHeight);
 }
 
 void CSandbox::__setupScene(int vWidth, int vHeight)
 {
-	m_Scene = std::make_shared<Elaina::CScene>();
+	m_pScene = std::make_shared<Elaina::CScene>();
 	__setupMaterials();
 	__setupNodes();
 	__setupCamera(vWidth, vHeight);
@@ -54,76 +52,79 @@ void CSandbox::__setupScene(int vWidth, int vHeight)
 void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 {
 	m_IsDeferredPipeline = true;
-	const auto& pDirShadowMapPass = std::make_shared<Elaina::CDirShadowMapPass>();
-	const auto& pPointShadowMapPass = std::make_shared<Elaina::CPointShadowMapPass>();
-	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>();
-	m_DeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(2, 0, 1, pDirShadowMapPass);
-	const auto& pSkyBoxTex = std::make_shared<Elaina::CTextureCube>(std::array{
+	const auto& SkyBoxFiles = std::array{
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\right.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\left.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\top.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\bottom.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\front.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\back.jpg"
-	});
-	pSkyBoxTex->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	pSkyBoxTex->setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	pSkyBoxTex->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	pSkyBoxTex->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	pSkyBoxTex->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	const auto& pDeferredSkyBoxPass = std::make_shared<Elaina::CDeferredSkyBoxPass>(pSkyBoxTex, 2);
+	};
 
+	m_pDirShadowMapPass = std::make_shared<Elaina::CDirShadowMapPass>();
+	m_pPointShadowMapPass = std::make_shared<Elaina::CPointShadowMapPass>();
+	m_pDeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(true);
+	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>();
+	const auto& pDeferredSkyBoxPass = std::make_shared<Elaina::CDeferredSkyBoxPass>(SkyBoxFiles);
 	const auto& pVisLightPass = std::make_shared<Elaina::CDeferVisLightPass>();
 
-	m_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	m_DirShadowMapFB = Elaina::CFrameBufferHelper::createDepthOnlyFrameBuffer(1024, 1024);
-	m_PointShadowMapFB = Elaina::CFrameBufferHelper::createPointLightShadowFrameBuffer(512, 512);
-	m_RenderPipeline->addFrameBuffer(m_DirShadowMapFB);
-	m_RenderPipeline->addFrameBuffer(m_PointShadowMapFB);
-	m_RenderPipeline->addFrameBuffer(Elaina::CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector<int>(4, 3)));
-	m_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
-	m_RenderPipeline->addRenderPass(pDirShadowMapPass, 0, false);
-	m_RenderPipeline->addRenderPass(pPointShadowMapPass, 1, false);
-	m_RenderPipeline->addRenderPass(pDeferredGeoPass, 2);
-	m_RenderPipeline->addRenderPass(m_DeferredLitPass, 3);
-	m_RenderPipeline->addRenderPass(pDeferredSkyBoxPass, 3);
-	m_RenderPipeline->addRenderPass(pVisLightPass, 3);
+	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
+	m_pRenderPipeline->addRenderPass(m_pDirShadowMapPass);
+	m_pRenderPipeline->addRenderPass(m_pPointShadowMapPass);
+	m_pRenderPipeline->addRenderPass(pDeferredGeoPass);
+	m_pRenderPipeline->addRenderPass(m_pDeferredLitPass);
+	m_pRenderPipeline->addRenderPass(pDeferredSkyBoxPass);
+	m_pRenderPipeline->addRenderPass(pVisLightPass);
+	m_pRenderPipeline->init(vWidth, vHeight);
+
+	m_pDeferredLitPass->setGeoPositionTex(pDeferredGeoPass->getGeoPositionTex());
+	m_pDeferredLitPass->setGeoNormalTex(pDeferredGeoPass->getGeoNormalTex());
+	m_pDeferredLitPass->setGeoDepthTex(pDeferredGeoPass->getGeoDepthTex());
+	m_pDeferredLitPass->setGeoAlbedoTex(pDeferredGeoPass->getGeoAlbedoTex());
+	m_pDeferredLitPass->setGeoPbrPropsTex(pDeferredGeoPass->getGeoPbrPropsTex());
+	m_pDeferredLitPass->setDirShadowMapTex(m_pDirShadowMapPass->getShadowMap());
+	m_pDeferredLitPass->setPointShadowMapTex(m_pPointShadowMapPass->getShadowMap());
+	pDeferredSkyBoxPass->setGeoFrameBuffer(pDeferredGeoPass->getFrameBuffer());
+	pDeferredSkyBoxPass->setLitFrameBuffer(m_pDeferredLitPass->getFrameBuffer());
+	pVisLightPass->setLitFrameBuffer(m_pDeferredLitPass->getFrameBuffer());
 }
 
 void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 {
 	m_IsDeferredPipeline = false;
-	const auto& pForwardLitPass = std::make_shared<Elaina::CForwardLitPass>();
+	const auto& pForwardLitPass = std::make_shared<Elaina::CForwardLitPass>(true);
 	const auto& pWaterLitPass = std::make_shared<Elaina::CWaterLitPass>();
-	m_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	m_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
-	m_RenderPipeline->addRenderPass(pForwardLitPass, 0);
-	m_RenderPipeline->addRenderPass(pWaterLitPass, 0);
+	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
+	m_pRenderPipeline->addRenderPass(pForwardLitPass);
+	m_pRenderPipeline->addRenderPass(pWaterLitPass);
+	m_pRenderPipeline->init(vWidth, vHeight);
+
+	pWaterLitPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
 }
 
 void CSandbox::__setupMaterials()
 {
-	m_PlaneMat = std::make_shared<Elaina::SPbrMaterial>();
-	m_PlaneMat->_Albedo = glm::vec3(1.0f, 1.0f, 1.0f);
-	m_PlaneMat->_Metallic = 1.0f;
-	m_PlaneMat->_Roughness = 0.6f;
-	m_PlaneMat->_Ao = 1.0f;
+	m_pPlaneMat = std::make_shared<Elaina::SPbrMaterial>();
+	m_pPlaneMat->_Albedo = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_pPlaneMat->_Metallic = 1.0f;
+	m_pPlaneMat->_Roughness = 0.6f;
+	m_pPlaneMat->_Ao = 1.0f;
 
-	m_ObjMat = std::make_shared<Elaina::SPbrMaterial>();
-	m_ObjMat->_Albedo = glm::vec3(1.0f, 0.0f, 0.0f);
-	m_ObjMat->_Metallic = 0.5f;
-	m_ObjMat->_Roughness = 1.0f;
-	m_ObjMat->_Ao = 0.1f;
+	m_pObjMat = std::make_shared<Elaina::SPbrMaterial>();
+	m_pObjMat->_Albedo = glm::vec3(1.0f, 0.0f, 0.0f);
+	m_pObjMat->_Metallic = 0.5f;
+	m_pObjMat->_Roughness = 1.0f;
+	m_pObjMat->_Ao = 0.1f;
 
-	m_PhongMat = std::make_shared<Elaina::SPhongMaterial>();
-	m_PhongMat->_Color = glm::vec3(0.0f, 1.0f, 1.0f);
-	m_PhongMat->_Ambient = 0.2f;
-	m_PhongMat->_Specular = 0.5f;
-	m_PhongMat->_Glossy = 64.0f;
+	m_pPhongMat = std::make_shared<Elaina::SPhongMaterial>();
+	m_pPhongMat->_Color = glm::vec3(0.0f, 1.0f, 1.0f);
+	m_pPhongMat->_Ambient = 0.2f;
+	m_pPhongMat->_Specular = 0.5f;
+	m_pPhongMat->_Glossy = 64.0f;
 
-	m_CheckerMat = std::make_shared<Elaina::SCheckerMaterial>();
+	m_pCheckerMat = std::make_shared<Elaina::SCheckerMaterial>();
 
-	m_WaterMat = std::make_shared<Elaina::SWaterMaterial>();
+	m_pWaterMat = std::make_shared<Elaina::SWaterMaterial>();
 }
 
 void CSandbox::__setupCamera(int vWidth, int vHeight)
@@ -131,7 +132,7 @@ void CSandbox::__setupCamera(int vWidth, int vHeight)
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, static_cast<float>(vWidth) / static_cast<float>(vHeight));
 	m_pCameraController = std::make_shared<Elaina::CArcballController>();
 	m_pCameraController->control(pCamera);
-	m_Scene->setCamera(pCamera);
+	m_pScene->setCamera(pCamera);
 }
 
 void CSandbox::__setupLights() const
@@ -147,8 +148,8 @@ void CSandbox::__setupLights() const
 	pPointLight->_LightIntensity = 1000.0f;
 	pPointLight->_LightPos = glm::vec3(0.0f, 0.0f, 5.0f);
 
-	m_Scene->setDirectionalLight(pDirLight);
-	m_Scene->setPointLight(pPointLight);
+	m_pScene->setDirectionalLight(pDirLight);
+	m_pScene->setPointLight(pPointLight);
 }
 
 void CSandbox::__setupNodes()
@@ -167,15 +168,15 @@ void CSandbox::__setupNodes()
 	pPlaneNode1->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
 	pWaterPlaneNode->setPosition(glm::vec3(0.0f, -3.0f, 0.0f));
 	pCubeNode->setPosition(glm::vec3(0.0f, -4.0f, 0.0f));
-	__setMaterial(pPlaneNode, m_CheckerMat);
-	__setMaterial(pPlaneNode1, m_PlaneMat);
-	__setMaterial(pCubeNode, m_PhongMat);
-	__setMaterial(pWaterPlaneNode, m_WaterMat);
+	__setMaterial(pPlaneNode, m_pPlaneMat);
+	__setMaterial(pPlaneNode1, m_pPlaneMat);
+	__setMaterial(pCubeNode, m_pObjMat);
+	__setMaterial(pWaterPlaneNode, m_pWaterMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	m_pObjNode = std::make_shared<Elaina::CNode>();
 	pRootNode->addChild(pPlaneNode);
 	pRootNode->addChild(pPlaneNode1);
-	pRootNode->addChild(pWaterPlaneNode);
+	//pRootNode->addChild(pWaterPlaneNode);
 	pRootNode->addChild(pCubeNode);
 	pRootNode->addChild(m_pObjNode);
 
@@ -185,8 +186,8 @@ void CSandbox::__setupNodes()
 		__createNode(Elaina::CPrimitive::createSphere()),
 		Elaina::CModelLoader::loadGltfFile(Elaina::CAssetsPath::getAssetsPath() + "trimesh/dragon.gltf")
 	};
-	for (const auto& pNode : m_pNodes) __setMaterial(pNode, m_ObjMat);
-	m_Scene->setRootNode(pRootNode);
+	for (const auto& pNode : m_pNodes) __setMaterial(pNode, m_pObjMat);
+	m_pScene->setRootNode(pRootNode);
 }
 
 void CSandbox::__renderUI()
@@ -200,10 +201,10 @@ void CSandbox::__renderUI()
 			ImGui::PushID(ID++);
 			static bool EnableSkyBoxPass;
 			constexpr size_t IdxOfSkyBoxPass = 4;
-			EnableSkyBoxPass = m_RenderPipeline->getPassEnable(IdxOfSkyBoxPass);
+			EnableSkyBoxPass = m_pRenderPipeline->getPassEnable(IdxOfSkyBoxPass);
 			if (ImGui::Checkbox("Enable SkyBox Pass", &EnableSkyBoxPass))
 			{
-				m_RenderPipeline->setPassEnable(IdxOfSkyBoxPass, EnableSkyBoxPass);
+				m_pRenderPipeline->setPassEnable(IdxOfSkyBoxPass, EnableSkyBoxPass);
 			}
 			ImGui::PopID();
 		}
@@ -211,30 +212,29 @@ void CSandbox::__renderUI()
 		{
 			ImGui::PushID(ID++);
 			static int DirShadowMapSize[] = { 0, 0 };
-			DirShadowMapSize[0] = m_DirShadowMapFB->getWidth();
-			DirShadowMapSize[1] = m_DirShadowMapFB->getHeight();
-			ImGui::ColorEdit3("Light Color", &m_Scene->getDirectionalLight()->_LightColor.x);
-			ImGui::DragFloat("Light Intensity", &m_Scene->getDirectionalLight()->_LightIntensity, 0.01f);
-			ImGui::DragFloat3("Light Direction", &m_Scene->getDirectionalLight()->_LightDir.x, 0.01f);
-			ImGui::DragFloat3("Light Position", &m_Scene->getDirectionalLight()->_LightPos.x, 0.01f);
+			m_pDirShadowMapPass->getShadowMapSize(DirShadowMapSize[0], DirShadowMapSize[1]);
+			ImGui::ColorEdit3("Light Color", &m_pScene->getDirectionalLight()->_LightColor.x);
+			ImGui::DragFloat("Light Intensity", &m_pScene->getDirectionalLight()->_LightIntensity, 0.01f);
+			ImGui::DragFloat3("Light Direction", &m_pScene->getDirectionalLight()->_LightDir.x, 0.01f);
+			ImGui::DragFloat3("Light Position", &m_pScene->getDirectionalLight()->_LightPos.x, 0.01f);
 			if (ImGui::DragInt2("Shadow Map Size", DirShadowMapSize, 5.0f))
 			{
 				if (DirShadowMapSize[0] > 0 && DirShadowMapSize[1] > 0)
 				{
-					m_DirShadowMapFB->resize(DirShadowMapSize[0], DirShadowMapSize[1]);
+					m_pDirShadowMapPass->setShadowMapSize(DirShadowMapSize[0], DirShadowMapSize[1]);
 				}
 			}
 			static bool EnablePCF;
 			static int HalfPCFSize;
-			EnablePCF = m_DeferredLitPass->getEnablePCF();
-			HalfPCFSize = m_DeferredLitPass->getHalfSizePCF();
+			EnablePCF = m_pDeferredLitPass->getEnablePCF();
+			HalfPCFSize = m_pDeferredLitPass->getHalfSizePCF();
 			if (ImGui::Checkbox("Enable PCF", &EnablePCF))
 			{
-				m_DeferredLitPass->setEnablePCF(EnablePCF);
+				m_pDeferredLitPass->setEnablePCF(EnablePCF);
 			}
 			if (ImGui::DragInt("Half PCF Size", &HalfPCFSize, 1, 0, 5))
 			{
-				m_DeferredLitPass->setHalfSizePCF(HalfPCFSize);
+				m_pDeferredLitPass->setHalfSizePCF(HalfPCFSize);
 			}
 			ImGui::PopID();
 		}
@@ -242,15 +242,15 @@ void CSandbox::__renderUI()
 		{
 			ImGui::PushID(ID++);
 			static int PointShadowMapSize = 0;
-			PointShadowMapSize = m_PointShadowMapFB->getWidth();
-			ImGui::ColorEdit3("Light Color", &m_Scene->getPointLight()->_LightColor.x);
-			ImGui::DragFloat("Light Intensity", &m_Scene->getPointLight()->_LightIntensity, 0.01f);
-			ImGui::DragFloat3("Light Position", &m_Scene->getPointLight()->_LightPos.x, 0.01f);
+			m_pPointShadowMapPass->setShadowMapSize(PointShadowMapSize, PointShadowMapSize);
+			ImGui::ColorEdit3("Light Color", &m_pScene->getPointLight()->_LightColor.x);
+			ImGui::DragFloat("Light Intensity", &m_pScene->getPointLight()->_LightIntensity, 0.01f);
+			ImGui::DragFloat3("Light Position", &m_pScene->getPointLight()->_LightPos.x, 0.01f);
 			if (ImGui::DragInt("Shadow Map Size", &PointShadowMapSize, 5.0f))
 			{
 				if (PointShadowMapSize > 0)
 				{
-					m_PointShadowMapFB->resize(PointShadowMapSize, PointShadowMapSize);
+					m_pPointShadowMapPass->setShadowMapSize(PointShadowMapSize, PointShadowMapSize);
 				}
 			}
 			ImGui::PopID();
@@ -259,10 +259,10 @@ void CSandbox::__renderUI()
 	if (ImGui::CollapsingHeader("Obj PBR Material"))
 	{
 		ImGui::PushID(ID++);
-		ImGui::ColorEdit3("Albedo", &m_ObjMat->_Albedo.x);
-		ImGui::DragFloat("Metallic", &m_ObjMat->_Metallic, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("Roughness", &m_ObjMat->_Roughness, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("Ao", &m_ObjMat->_Ao, 0.01f, 0.0f, 1.0f);
+		ImGui::ColorEdit3("Albedo", &m_pObjMat->_Albedo.x);
+		ImGui::DragFloat("Metallic", &m_pObjMat->_Metallic, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Roughness", &m_pObjMat->_Roughness, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Ao", &m_pObjMat->_Ao, 0.01f, 0.0f, 1.0f);
 		if (ImGui::Button("Switch Model"))
 		{
 			m_IndexOfNodes = (m_IndexOfNodes + 1) % m_pNodes.size();
@@ -272,27 +272,27 @@ void CSandbox::__renderUI()
 	if (ImGui::CollapsingHeader("Plane PBR Material"))
 	{
 		ImGui::PushID(ID);
-		ImGui::ColorEdit3("Albedo", &m_PlaneMat->_Albedo.x);
-		ImGui::DragFloat("Metallic", &m_PlaneMat->_Metallic, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("Roughness", &m_PlaneMat->_Roughness, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("Ao", &m_PlaneMat->_Ao, 0.01f, 0.0f, 1.0f);
+		ImGui::ColorEdit3("Albedo", &m_pPlaneMat->_Albedo.x);
+		ImGui::DragFloat("Metallic", &m_pPlaneMat->_Metallic, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Roughness", &m_pPlaneMat->_Roughness, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Ao", &m_pPlaneMat->_Ao, 0.01f, 0.0f, 1.0f);
 		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Phong Material"))
 	{
 		ImGui::PushID(ID);
-		ImGui::ColorEdit3("Color", &m_PhongMat->_Color.x);
-		ImGui::DragFloat("Ambient", &m_PhongMat->_Ambient, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("Specular", &m_PhongMat->_Specular, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("Glossy", &m_PhongMat->_Glossy, 1.0f, 0.0f, 128.0f);
+		ImGui::ColorEdit3("Color", &m_pPhongMat->_Color.x);
+		ImGui::DragFloat("Ambient", &m_pPhongMat->_Ambient, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Specular", &m_pPhongMat->_Specular, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Glossy", &m_pPhongMat->_Glossy, 1.0f, 0.0f, 128.0f);
 		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Checker Material"))
 	{
 		ImGui::PushID(ID);
-		ImGui::ColorEdit3("PrimaryColor", &m_CheckerMat->_PrimaryColor.x);
-		ImGui::ColorEdit3("SecondaryColor", &m_CheckerMat->_SecondaryColor.x);
-		ImGui::DragFloat("Scale", &m_CheckerMat->_Scale, 0.1f, 0.0f, 10.0f);
+		ImGui::ColorEdit3("PrimaryColor", &m_pCheckerMat->_PrimaryColor.x);
+		ImGui::ColorEdit3("SecondaryColor", &m_pCheckerMat->_SecondaryColor.x);
+		ImGui::DragFloat("Scale", &m_pCheckerMat->_Scale, 0.1f, 0.0f, 10.0f);
 		ImGui::PopID();
 	}
 	ImGui::End();

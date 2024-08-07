@@ -2,6 +2,7 @@
 #include "DeferVisLightPass.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
+#include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
 #include "base/VertexArrayObject.h"
 #include "core/Camera.h"
@@ -11,9 +12,10 @@
 #include "light/Light.h"
 #include "utils/AssetsPath.h"
 
-Elaina::CDeferVisLightPass::CDeferVisLightPass()
-	:CRenderPass(CShaderProgram::createShaderProgram(
-		CAssetsPath::getAssetsPath() + "shaders\\visLight.vert", 
+Elaina::CDeferVisLightPass::CDeferVisLightPass():
+	m_pLitFrameBuffer(nullptr),
+	m_pShaderProgram(CShaderProgram::createShaderProgram(
+		CAssetsPath::getAssetsPath() + "shaders\\visLight.vert",
 		CAssetsPath::getAssetsPath() + "shaders\\visLight.frag")),
 	m_pPointLightVAO(CPrimitive::createSphere()), m_pArrowNode(std::make_shared<CNode>())
 {
@@ -34,12 +36,10 @@ Elaina::CDeferVisLightPass::~CDeferVisLightPass()
 	m_pPointLightVAO.reset();
 }
 
-void Elaina::CDeferVisLightPass::renderV(
-	const std::shared_ptr<CScene>& vScene,
-	const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, 
-	const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
+void Elaina::CDeferVisLightPass::renderV(const std::shared_ptr<CScene>& vScene)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
+	m_pLitFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight()));
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	const std::vector<std::shared_ptr<SLight>> pLights
 	{

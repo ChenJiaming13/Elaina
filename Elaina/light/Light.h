@@ -24,8 +24,15 @@ namespace Elaina
 	struct SDirectionalLight final : SLight
 	{
 		glm::vec3 _LightDir;
+		// light frustum
+		float _Width = 10.0f;
+		float _Height = 10.0f;
+		float _Near = 0.1f;
+		float _Far = 20.0f;
 
 		[[nodiscard]] ELightType getLightType() const override { return ELightType::DIRECTIONAL; }
+
+		[[nodiscard]] glm::mat4 getLightMatrix() const;
 	};
 
 	struct SPointLight final : SLight

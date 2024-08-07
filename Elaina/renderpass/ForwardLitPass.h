@@ -4,18 +4,24 @@
 
 namespace Elaina
 {
+	class CShaderProgram;
+	class CFrameBuffer;
 	class CForwardLitPass final : public CRenderPass
 	{
 	public:
-		CForwardLitPass();
+		explicit CForwardLitPass(bool vIsFinalPass);
 		~CForwardLitPass() override;
 
-		// Inherited via CRenderPass
-		void renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses) override;
+		void initV(int vWidth, int vHeight) override;
+		void onWindowSizeChangeV(int vWidth, int vHeight) override;
+		void renderV(const std::shared_ptr<CScene>& vScene) override;
+		[[nodiscard]] const auto& getFrameBuffer() const { return m_pFrameBuffer; }
 
 	private:
+		std::shared_ptr<CFrameBuffer> m_pFrameBuffer;
 		std::shared_ptr<CShaderProgram> m_pShaderProgramPBR;
 		std::shared_ptr<CShaderProgram> m_pShaderProgramPhong;
 		std::shared_ptr<CShaderProgram> m_pShaderProgramChecker;
+		bool m_IsFinalPass;
 	};
 }

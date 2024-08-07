@@ -8,20 +8,24 @@
 #include "core/Scene.h"
 #include "light/Light.h"
 #include "utils/AssetsPath.h"
+#include "utils/FrameBufferHelper.h"
 
-Elaina::CPointShadowMapPass::CPointShadowMapPass() :CRenderPass(CShaderProgram::createShaderProgram(
+Elaina::CPointShadowMapPass::CPointShadowMapPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.vert",
 	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.frag",
 	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.geom"
 )) {}
 
-void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene,
-                                          const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices,
-                                          size_t vIdxOfPasses)
+void Elaina::CPointShadowMapPass::initV(int vWidth, int vHeight)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
-	const auto& pCurrFrameBuffer = vFrameBuffers[vOutputIndices[vIdxOfPasses]];
-	m_Aspect = static_cast<float>(pCurrFrameBuffer->getWidth()) / static_cast<float>(pCurrFrameBuffer->getHeight());
+	m_pFrameBuffer = CFrameBufferHelper::createPointLightShadowFrameBuffer(512, 512);
+}
+
+void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene)
+{
+	m_pFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pFrameBuffer->getWidth(), m_pFrameBuffer->getHeight()));
+	m_Aspect = static_cast<float>(m_pFrameBuffer->getWidth()) / static_cast<float>(m_pFrameBuffer->getHeight());
 	const auto& pPointLight = vScene->getPointLight();
 	__updateShadowTransforms(pPointLight);
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
@@ -41,6 +45,17 @@ void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene,
 			pMesh->draw();
 		}
 	});
+}
+
+void Elaina::CPointShadowMapPass::getShadowMapSize(int& voWidth, int& voHeight) const
+{
+	voWidth = m_pFrameBuffer->getWidth();
+	voHeight = m_pFrameBuffer->getHeight();
+}
+
+void Elaina::CPointShadowMapPass::setShadowMapSize(int vWidth, int vHeight) const
+{
+	m_pFrameBuffer->resize(vWidth, vHeight);
 }
 
 void Elaina::CPointShadowMapPass::__updateShadowTransforms(const std::shared_ptr<SPointLight>& vPointLight)

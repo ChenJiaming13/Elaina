@@ -6,18 +6,22 @@ namespace Elaina
 {
 	class CTextureCube;
 	class CVertexArrayObject;
+	class CFrameBuffer;
+	class CShaderProgram;
 	class CDeferredSkyBoxPass final : public CRenderPass
 	{
 	public:
-		CDeferredSkyBoxPass(const std::shared_ptr<CTextureCube>& vCubeMap, size_t vIdxOfDeferredGeoFB);
-		~CDeferredSkyBoxPass() override;
+		explicit CDeferredSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles);
 
-		// Inherited via CRenderPass
-		void renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses) override;
+		void renderV(const std::shared_ptr<CScene>& vScene) override;
+		void setGeoFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pGeoFrameBuffer = vFrameBuffer; }
+		void setLitFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pLitFrameBuffer = vFrameBuffer; }
 
 	private:
 		std::shared_ptr<CTextureCube> m_pCubeMap;
 		std::shared_ptr<CVertexArrayObject>m_pSkyBoxVAO;
-		size_t m_IdxOfDeferredGeoFB;
+		std::shared_ptr<CFrameBuffer> m_pGeoFrameBuffer = nullptr;
+		std::shared_ptr<CFrameBuffer> m_pLitFrameBuffer = nullptr;
+		std::shared_ptr<CShaderProgram> m_pShaderProgram;
 	};
 }

@@ -8,36 +8,39 @@
 #include "core/Scene.h"
 #include "light/Light.h"
 #include "primitive/Primitive.h"
-#include "renderpass/DirShadowMapPass.h"
 #include "safe.h"
 #include "utils/AssetsPath.h"
+#include "utils/FrameBufferHelper.h"
 
-Elaina::CDeferredLitPass::CDeferredLitPass(
-	size_t vIdxOfDeferredGeoFB, size_t vIdxOfDirShadowMapFB, size_t vIdxOfPointShadowMapFB,
-	const std::shared_ptr<CDirShadowMapPass>& vDirShadowMapPass
-)
-	:CRenderPass(CShaderProgram::createShaderProgram(
-		CAssetsPath::getAssetsPath() + "shaders\\deferPbr.vert", 
+Elaina::CDeferredLitPass::CDeferredLitPass(bool vIsFinalPass):
+	m_pShaderProgram(CShaderProgram::createShaderProgram(
+		CAssetsPath::getAssetsPath() + "shaders\\deferPbr.vert",
 		CAssetsPath::getAssetsPath() + "shaders\\deferPbr.frag")),
 	m_pQuadVAO(CPrimitive::createQuad()),
-	m_pDirShadowMapPass(vDirShadowMapPass),
-	m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB),
-	m_IdxOfDirShadowMapFB(vIdxOfDirShadowMapFB),
-	m_IdxOfPointShadowMapFB(vIdxOfPointShadowMapFB),
+	m_pFrameBuffer(nullptr),
+	m_IsFinalPass(vIsFinalPass),
 	m_EnablePCF(false), m_HalfSizePCF(1)
-{
-}
+{}
 
 Elaina::CDeferredLitPass::~CDeferredLitPass()
 {
 	m_pQuadVAO.reset();
-	m_pDirShadowMapPass.reset();
+	m_pFrameBuffer.reset();
+	m_pShaderProgram.reset();
 }
 
-void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
+void Elaina::CDeferredLitPass::initV(int vWidth, int vHeight)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
-	
+	if (m_IsFinalPass)
+		m_pFrameBuffer = CFrameBuffer::getDefaultFrameBuffer();
+	else
+		m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector{ 3 });
+}
+
+void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene)
+{
+	m_pFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pFrameBuffer->getWidth(), m_pFrameBuffer->getHeight()));
 	const auto& pCamera = vScene->getCamera();
 	const auto& pDirLight = vScene->getDirectionalLight();
 	const auto& pPointLight = vScene->getPointLight();
@@ -47,23 +50,20 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	GL_SAFE_CALL(glClearColor(SolidColor.x, SolidColor.y, SolidColor.z, SolidColor.w));
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	const auto& pDeferredGeoFB = vFrameBuffers[m_IdxOfDeferredGeoFB];
-	const auto& pDirShadowMapFB = vFrameBuffers[m_IdxOfDirShadowMapFB];
-	const auto& pPointShadowMapFB = vFrameBuffers[m_IdxOfPointShadowMapFB];
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE0));
-	pDeferredGeoFB->getAttachment(GL_COLOR_ATTACHMENT0)->bind();
+	m_pGeoPositionTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE1));
-	pDeferredGeoFB->getAttachment(GL_COLOR_ATTACHMENT1)->bind();
+	m_pGeoNormalTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE2));
-	pDeferredGeoFB->getAttachment(GL_COLOR_ATTACHMENT2)->bind();
+	m_pGeoAlbedoTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE3));
-	pDeferredGeoFB->getAttachment(GL_COLOR_ATTACHMENT3)->bind();
+	m_pGeoPbrPropsTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE4));
-	pDeferredGeoFB->getAttachment(GL_DEPTH_ATTACHMENT)->bind();
+	m_pGeoDepthTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE5));
-	pDirShadowMapFB->getAttachment(GL_DEPTH_ATTACHMENT)->bind();
+	m_pDirShadowMapTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE6));
-	pPointShadowMapFB->getAttachment(GL_DEPTH_ATTACHMENT)->bind();
+	m_pPointShadowMapTex->bind();
 
 	m_pShaderProgram->use();
 	m_pShaderProgram->setUniform("uPositionTex", 0);
@@ -76,7 +76,7 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 	m_pShaderProgram->setUniform("uViewPos", pCamera->getWorldPos());
 	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
 	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor * pDirLight->_LightIntensity);
-	m_pShaderProgram->setUniform("uLightMatrix", m_pDirShadowMapPass->calcLightMatrix(pDirLight));
+	m_pShaderProgram->setUniform("uLightMatrix", pDirLight->getLightMatrix());
 	m_pShaderProgram->setUniform("uEnablePCF", m_EnablePCF);
 	m_pShaderProgram->setUniform("uHalfSizePCF", m_HalfSizePCF);
 	m_pShaderProgram->setUniform("uPointLightColor", pPointLight->_LightColor * pPointLight->_LightIntensity);
@@ -85,4 +85,9 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene, co
 
 	m_pQuadVAO->bind();
 	m_pQuadVAO->draw();
+}
+
+void Elaina::CDeferredLitPass::onWindowSizeChangeV(int vWidth, int vHeight)
+{
+	m_pFrameBuffer->resize(vWidth, vHeight);
 }

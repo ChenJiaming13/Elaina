@@ -17,15 +17,15 @@ namespace Elaina
 
 		void create();
 		void bind(GLenum vTarget = GL_FRAMEBUFFER) const;
-		void unbind(GLenum vTarget = GL_FRAMEBUFFER) const;
 		int getWidth() const { return m_Width; }
 		int getHeight() const { return m_Height; }
 		void resize(int vWidth, int vHeight);
 		void setAttachment(GLenum vAttachmentType, const std::shared_ptr<CTexture>& vTexture, GLint vTextureLevel = 0);
 		void setAttachment(GLenum vAttachmentType, const std::shared_ptr<CRenderBuffer>& vRenderBuffer);
 		const std::shared_ptr<CTexture>& getAttachment(GLenum vAttachmentType);
-		void setDrawAttachments(const std::vector<GLenum>& vAttachmentsType) const;
-		
+
+		static void unbind(GLenum vTarget = GL_FRAMEBUFFER);
+		static void setDrawAttachments(const std::vector<GLenum>& vAttachmentsType);
 		static bool checkComplete();
 		static void setColorBufferEmpty();
 		static const std::shared_ptr<CFrameBuffer>& getDefaultFrameBuffer();

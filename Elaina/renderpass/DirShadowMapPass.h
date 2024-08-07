@@ -1,24 +1,28 @@
 #pragma once
 
+#include "base/Framebuffer.h"
 #include "core/RenderPass.h"
 
 namespace Elaina
 {
 	class CShaderProgram;
-	struct SDirectionalLight;
+	class CFrameBuffer;
 	class CDirShadowMapPass final : public CRenderPass
 	{
 	public:
 		CDirShadowMapPass();
 
-		// Inherited via CRenderPass
-		void renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses) override;
-		[[nodiscard]] glm::mat4 calcLightMatrix(const std::shared_ptr<SDirectionalLight>& vLight) const;
+		void initV(int vWidth, int vHeight) override;
+		void renderV(const std::shared_ptr<CScene>& vScene) override;
+		void getShadowMapSize(int& voWidth, int& voHeight) const;
+		[[nodiscard]] const auto& getShadowMap() const
+		{
+			return m_pFrameBuffer->getAttachment(GL_DEPTH_ATTACHMENT);
+		}
+		void setShadowMapSize(int vWidth, int vHeight) const;
 
 	private:
-		float m_Width = 10.0f;
-		float m_Height = 10.0f;
-		float m_Near = 0.1f;
-		float m_Far = 20.0f;
+		std::shared_ptr<CShaderProgram> m_pShaderProgram;
+		std::shared_ptr<CFrameBuffer> m_pFrameBuffer;
 	};
 }

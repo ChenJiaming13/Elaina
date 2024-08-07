@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="renderpass\WaterReflectPass.h" />
     <ClInclude Include="utils\AssetsPath.h" />
     <ClInclude Include="base\Framebuffer.h" />
     <ClInclude Include="base\RenderBuffer.h" />
@@ -199,12 +200,13 @@
     <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\GlfwWindow.cpp" />
     <ClCompile Include="core\Node.cpp" />
-    <ClCompile Include="core\RenderPass.cpp" />
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="base\Texture.cpp" />
+    <ClCompile Include="light\Light.cpp" />
     <ClCompile Include="renderpass\DeferVisLightPass.cpp" />
     <ClCompile Include="renderpass\PointShadowMapPass.cpp" />
+    <ClCompile Include="renderpass\WaterReflectPass.cpp" />
     <ClCompile Include="utils\FrameBufferHelper.cpp" />
     <ClCompile Include="ui\ImGui.cpp" />
     <ClCompile Include="renderpass\DeferredSkyBoxPass.cpp" />

@@ -10,38 +10,36 @@
 #include "safe.h"
 #include "utils/AssetsPath.h"
 
-Elaina::CDeferredSkyBoxPass::CDeferredSkyBoxPass(const std::shared_ptr<CTextureCube>& vCubeMap, size_t vIdxOfDeferredGeoFB)
-	:CRenderPass(CShaderProgram::createShaderProgram(
-		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.vert", 
-		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.frag")),
-	m_pCubeMap(vCubeMap), m_pSkyBoxVAO(CPrimitive::createSkyBox()), m_IdxOfDeferredGeoFB(vIdxOfDeferredGeoFB)
+Elaina::CDeferredSkyBoxPass::CDeferredSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles) :
+	m_pCubeMap(nullptr),
+	m_pSkyBoxVAO(CPrimitive::createSkyBox()), m_pShaderProgram(CShaderProgram::createShaderProgram(
+		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.vert",
+		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.frag"))
 {
+	m_pCubeMap = std::make_shared<CTextureCube>(vCubeMapFiles);
+	m_pCubeMap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_pCubeMap->setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_pCubeMap->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_pCubeMap->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_pCubeMap->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-Elaina::CDeferredSkyBoxPass::~CDeferredSkyBoxPass()
+void Elaina::CDeferredSkyBoxPass::renderV(const std::shared_ptr<CScene>& vScene)
 {
-	m_pCubeMap.reset();
-	m_pSkyBoxVAO.reset();
-}
-
-void Elaina::CDeferredSkyBoxPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
-{
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
-	
 	// copy depth buffer
-	const auto& pDeferredGeoFB = vFrameBuffers[m_IdxOfDeferredGeoFB];
-	const auto& pCurrFB = vFrameBuffers[vOutputIndices[vIdxOfPasses]];
-	pDeferredGeoFB->bind(GL_READ_FRAMEBUFFER);
-	pCurrFB->bind(GL_DRAW_FRAMEBUFFER);
+	m_pGeoFrameBuffer->bind(GL_READ_FRAMEBUFFER);
+	m_pLitFrameBuffer->bind(GL_DRAW_FRAMEBUFFER);
 	GL_SAFE_CALL(glBlitFramebuffer(
-		0, 0, pDeferredGeoFB->getWidth(), pDeferredGeoFB->getHeight(),
-		0, 0, pCurrFB->getWidth(), pCurrFB->getHeight(),
+		0, 0, m_pGeoFrameBuffer->getWidth(), m_pGeoFrameBuffer->getHeight(),
+		0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight(),
 		GL_DEPTH_BUFFER_BIT, GL_NEAREST
 	));
-	pDeferredGeoFB->unbind(GL_READ_FRAMEBUFFER);
-	pCurrFB->unbind(GL_DRAW_FRAMEBUFFER);
+	m_pGeoFrameBuffer->unbind(GL_READ_FRAMEBUFFER);
+	m_pLitFrameBuffer->unbind(GL_DRAW_FRAMEBUFFER);
 	
 	// render skybox
+	m_pLitFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight()));
 	const auto& pCamera = vScene->getCamera();
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	GL_SAFE_CALL(glDepthFunc(GL_LEQUAL));

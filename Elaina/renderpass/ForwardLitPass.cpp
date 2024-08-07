@@ -8,9 +8,11 @@
 #include "core/Camera.h"
 #include "light/Light.h"
 #include "safe.h"
+#include "base/Framebuffer.h"
 #include "utils/AssetsPath.h"
+#include "utils/FrameBufferHelper.h"
 
-Elaina::CForwardLitPass::CForwardLitPass() :CRenderPass(nullptr),
+Elaina::CForwardLitPass::CForwardLitPass(bool vIsFinalPass):
 	m_pShaderProgramPBR(CShaderProgram::createShaderProgram(
 		CAssetsPath::getAssetsPath() + "shaders/forwardPbr.vert",
 		CAssetsPath::getAssetsPath() + "shaders/forwardPbr.frag"
@@ -22,7 +24,8 @@ Elaina::CForwardLitPass::CForwardLitPass() :CRenderPass(nullptr),
 	m_pShaderProgramChecker(CShaderProgram::createShaderProgram(
 		CAssetsPath::getAssetsPath() + "shaders/forwardChecker.vert",
 		CAssetsPath::getAssetsPath() + "shaders/forwardChecker.frag"
-	))
+	)),
+	m_IsFinalPass(vIsFinalPass)
 {}
 
 Elaina::CForwardLitPass::~CForwardLitPass()
@@ -32,13 +35,23 @@ Elaina::CForwardLitPass::~CForwardLitPass()
 	m_pShaderProgramPhong.reset();
 }
 
-void Elaina::CForwardLitPass::renderV(
-	const std::shared_ptr<CScene>& vScene, 
-	const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, 
-	const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
+void Elaina::CForwardLitPass::initV(int vWidth, int vHeight)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
-	
+	if (m_IsFinalPass)
+		m_pFrameBuffer = CFrameBuffer::getDefaultFrameBuffer();
+	else
+		m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector{ 3 });
+}
+
+void Elaina::CForwardLitPass::onWindowSizeChangeV(int vWidth, int vHeight)
+{
+	m_pFrameBuffer->resize(vWidth, vHeight);
+}
+
+void Elaina::CForwardLitPass::renderV(const std::shared_ptr<CScene>& vScene)
+{
+	m_pFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pFrameBuffer->getWidth(), m_pFrameBuffer->getHeight()));
 	const auto& pCamera = vScene->getCamera();
 	const auto& pDirLight = vScene->getDirectionalLight();
 	const glm::vec4 SolidColor = pCamera->getSolidColor();

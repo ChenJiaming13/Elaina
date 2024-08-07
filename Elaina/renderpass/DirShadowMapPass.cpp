@@ -6,21 +6,29 @@
 #include "core/Mesh.h"
 #include "light/Light.h"
 #include "safe.h"
+#include "base/Framebuffer.h"
 #include "utils/AssetsPath.h"
+#include "utils/FrameBufferHelper.h"
 
-Elaina::CDirShadowMapPass::CDirShadowMapPass() :CRenderPass(CShaderProgram::createShaderProgram(
+Elaina::CDirShadowMapPass::CDirShadowMapPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders/shadowMapDir.vert",
 	CAssetsPath::getAssetsPath() + "shaders/shadowMapDir.frag"
 )) {}
 
-void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
+void Elaina::CDirShadowMapPass::initV(int vWidth, int vHeight)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
+	m_pFrameBuffer = CFrameBufferHelper::createDepthOnlyFrameBuffer(1024, 1024);
+}
+
+void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene)
+{
+	m_pFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pFrameBuffer->getWidth(), m_pFrameBuffer->getHeight()));
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	m_pShaderProgram->use();
-	m_pShaderProgram->setUniform("uLightMatrix", calcLightMatrix(vScene->getDirectionalLight()));
+	m_pShaderProgram->setUniform("uLightMatrix", vScene->getDirectionalLight()->getLightMatrix());
 	CNode::traverse(vScene->getRootNode(), [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		m_pShaderProgram->setUniform("uModel", vNode->getModelMatrix());
 		for (const auto& pMesh : vNode->getMeshes())
@@ -30,9 +38,13 @@ void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene, c
 	});
 }
 
-glm::mat4 Elaina::CDirShadowMapPass::calcLightMatrix(const std::shared_ptr<SDirectionalLight>& vLight) const
+void Elaina::CDirShadowMapPass::getShadowMapSize(int& voWidth, int& voHeight) const
 {
-	const glm::mat4 ViewMat = glm::lookAt(vLight->_LightPos, vLight->_LightPos + vLight->_LightDir, glm::vec3(0.0f, 1.0f, 0.0f));
-	const glm::mat4 ProjMat = glm::ortho(-m_Width * 0.5f, m_Width * 0.5f, -m_Height * 0.5f, m_Height * 0.5f, m_Near, m_Far);
-	return ProjMat * ViewMat;
+	voWidth = m_pFrameBuffer->getWidth();
+	voHeight = m_pFrameBuffer->getHeight();
+}
+
+void Elaina::CDirShadowMapPass::setShadowMapSize(int vWidth, int vHeight) const
+{
+	m_pFrameBuffer->resize(vWidth, vHeight);
 }

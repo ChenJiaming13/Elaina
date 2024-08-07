@@ -6,19 +6,27 @@ namespace Elaina
 {
 	class CVertexArrayObject;
 	class CDirShadowMapPass;
+	class CFrameBuffer;
+	class CShaderProgram;
+	class CTexture;
 	class CDeferredLitPass final : public CRenderPass
 	{
 	public:
-		CDeferredLitPass(
-			size_t vIdxOfDeferredGeoFB,
-			size_t vIdxOfDirShadowMapFB,
-			size_t vIdxOfPointShadowMapFB,
-			const std::shared_ptr<CDirShadowMapPass>& vDirShadowMapPass
-		);
+		explicit CDeferredLitPass(bool vIsFinalPass);
 		~CDeferredLitPass() override;
 
-		// Inherited via CRenderPass
-		void renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses) override;
+		void initV(int vWidth, int vHeight) override;
+		void renderV(const std::shared_ptr<CScene>& vScene) override;
+		void onWindowSizeChangeV(int vWidth, int vHeight) override;
+
+		void setGeoPositionTex(const std::shared_ptr<CTexture>& vTexture) { m_pGeoPositionTex = vTexture; }
+		void setGeoNormalTex(const std::shared_ptr<CTexture>& vTexture) { m_pGeoNormalTex = vTexture; }
+		void setGeoAlbedoTex(const std::shared_ptr<CTexture>& vTexture) { m_pGeoAlbedoTex = vTexture; }
+		void setGeoPbrPropsTex(const std::shared_ptr<CTexture>& vTexture) { m_pGeoPbrPropsTex = vTexture; }
+		void setGeoDepthTex(const std::shared_ptr<CTexture>& vTexture) { m_pGeoDepthTex = vTexture; }
+		void setDirShadowMapTex(const std::shared_ptr<CTexture>& vTexture) { m_pDirShadowMapTex = vTexture; }
+		void setPointShadowMapTex(const std::shared_ptr<CTexture>& vTexture) { m_pPointShadowMapTex = vTexture; }
+
 		void setEnablePCF(bool vEnablePCF) { m_EnablePCF = vEnablePCF; }
 		void setHalfSizePCF(int vHalfSizePCF)
 		{
@@ -27,14 +35,21 @@ namespace Elaina
 		}
 		[[nodiscard]] bool getEnablePCF() const { return m_EnablePCF; }
 		[[nodiscard]] int getHalfSizePCF() const { return m_HalfSizePCF; }
+		[[nodiscard]] const auto& getFrameBuffer() const { return m_pFrameBuffer; }
 
 	private:
+		std::shared_ptr<CShaderProgram> m_pShaderProgram;
 		std::shared_ptr<CVertexArrayObject> m_pQuadVAO;
-		std::shared_ptr<CDirShadowMapPass> m_pDirShadowMapPass;
-		size_t m_IdxOfDeferredGeoFB;
-		size_t m_IdxOfDirShadowMapFB;
-		size_t m_IdxOfPointShadowMapFB;
+		std::shared_ptr<CFrameBuffer> m_pFrameBuffer;
+		bool m_IsFinalPass;
 		bool m_EnablePCF;
 		int m_HalfSizePCF;
+		std::shared_ptr<CTexture> m_pGeoPositionTex = nullptr;
+		std::shared_ptr<CTexture> m_pGeoNormalTex = nullptr;
+		std::shared_ptr<CTexture> m_pGeoAlbedoTex = nullptr;
+		std::shared_ptr<CTexture> m_pGeoPbrPropsTex = nullptr;
+		std::shared_ptr<CTexture> m_pGeoDepthTex = nullptr;
+		std::shared_ptr<CTexture> m_pDirShadowMapTex = nullptr;
+		std::shared_ptr<CTexture> m_pPointShadowMapTex = nullptr;
 	};
 }

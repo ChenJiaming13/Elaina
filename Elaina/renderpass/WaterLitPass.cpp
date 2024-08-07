@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "WaterLitPass.h"
-
+#include "safe.h"
+#include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
 #include "core/Camera.h"
 #include "core/Material.h"
@@ -9,16 +10,15 @@
 #include "core/Scene.h"
 #include "utils/AssetsPath.h"
 
-Elaina::CWaterLitPass::CWaterLitPass() :CRenderPass(CShaderProgram::createShaderProgram(
+Elaina::CWaterLitPass::CWaterLitPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders/forwardWater.vert",
 	CAssetsPath::getAssetsPath() + "shaders/forwardWater.frag"
 )) {}
 
-void Elaina::CWaterLitPass::renderV(const std::shared_ptr<CScene>& vScene,
-	const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices,
-	size_t vIdxOfPasses)
+void Elaina::CWaterLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
+	m_pLitFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight()));
 	const auto& pCamera = vScene->getCamera();
 	m_pShaderProgram->use();
 	m_pShaderProgram->setUniform("uView", pCamera->getViewMatrix());

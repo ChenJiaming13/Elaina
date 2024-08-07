@@ -1,11 +1,12 @@
 #include "pch.h"
+#include <ranges>
 #include "FrameBuffer.h"
 #include "Texture.h"
 #include "RenderBuffer.h"
 #include "safe.h"
 
 Elaina::CFrameBuffer::CFrameBuffer()
-	:m_FrameBufferID(0), m_Width(0), m_Height(0), m_TexturesMap{}, m_RenderBuffersMap{}
+	:m_FrameBufferID(0), m_TexturesMap{}, m_RenderBuffersMap{}, m_Width(0), m_Height(0)
 {
 }
 
@@ -25,19 +26,21 @@ void Elaina::CFrameBuffer::bind(GLenum vTarget) const
 	GL_SAFE_CALL(glBindFramebuffer(vTarget, m_FrameBufferID));
 }
 
-void Elaina::CFrameBuffer::unbind(GLenum vTarget) const
+void Elaina::CFrameBuffer::unbind(GLenum vTarget)
 {
 	GL_SAFE_CALL(glBindFramebuffer(vTarget, 0));
 }
 
 void Elaina::CFrameBuffer::resize(int vWidth, int vHeight)
 {
+	if (vWidth <= 0 || vHeight <= 0) return;
+	if (m_Width == vWidth && m_Height == vHeight) return;
 	m_Width = vWidth;
 	m_Height = vHeight;
-	for (const auto& Pair : m_TexturesMap)
-		Pair.second->resize(vWidth, vHeight);
-	for (const auto& Pair : m_RenderBuffersMap)
-		Pair.second->resize(vWidth, vHeight);
+	for (const auto& val : m_TexturesMap | std::views::values)
+		val->resize(vWidth, vHeight);
+	for (const auto& val : m_RenderBuffersMap | std::views::values)
+		val->resize(vWidth, vHeight);
 }
 
 void Elaina::CFrameBuffer::setAttachment(GLenum vAttachmentType, const std::shared_ptr<CTexture>& vTexture, GLint vTextureLevel)
@@ -73,16 +76,16 @@ const std::shared_ptr<Elaina::CTexture>& Elaina::CFrameBuffer::getAttachment(GLe
 	return m_TexturesMap[vAttachmentType];
 }
 
-void Elaina::CFrameBuffer::setDrawAttachments(const std::vector<GLenum>& vAttachmentsType) const
+void Elaina::CFrameBuffer::setDrawAttachments(const std::vector<GLenum>& vAttachmentsType)
 {
-	GL_SAFE_CALL(glDrawBuffers((GLsizei)vAttachmentsType.size(), vAttachmentsType.data()));
+	GL_SAFE_CALL(glDrawBuffers(static_cast<GLsizei>(vAttachmentsType.size()), vAttachmentsType.data()));
 }
 
 bool Elaina::CFrameBuffer::checkComplete()
 {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		spdlog::warn("curr binded framebuffer is not complete!");
+		spdlog::warn("curr bind framebuffer is not complete!");
 		return false;
 	}
 	return true;
@@ -96,7 +99,7 @@ void Elaina::CFrameBuffer::setColorBufferEmpty()
 
 const std::shared_ptr<Elaina::CFrameBuffer>& Elaina::CFrameBuffer::getDefaultFrameBuffer()
 {
-	static std::shared_ptr<CFrameBuffer> pDefaultFrameBuffer = std::make_shared<CFrameBuffer>();
+	static auto pDefaultFrameBuffer = std::make_shared<CFrameBuffer>();
 	return pDefaultFrameBuffer;
 }
 

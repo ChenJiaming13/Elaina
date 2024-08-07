@@ -135,6 +135,9 @@
     <ClInclude Include="renderpass\WaterLitPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="renderpass\WaterReflectPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -191,9 +194,6 @@
     <ClCompile Include="renderpass\PostProcessPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\RenderPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="renderpass\ForwardLitPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -231,6 +231,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\WaterLitPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderpass\WaterReflectPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="light\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

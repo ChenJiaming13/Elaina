@@ -7,21 +7,15 @@
 
 namespace Elaina
 {
-	struct SWaterMaterial;
-}
-
-namespace Elaina
-{
-	struct SCheckerMaterial;
-}
-
-namespace Elaina
-{
 	struct SMaterial;
 	struct SPbrMaterial;
 	struct SPhongMaterial;
+	struct SWaterMaterial;
+	struct SCheckerMaterial;
 	class CVertexArrayObject;
 	class CDeferredLitPass;
+	class CDirShadowMapPass;
+	class CPointShadowMapPass;
 	class CFrameBuffer;
 	class CRenderPipeline;
 	class CCameraController;
@@ -51,16 +45,16 @@ private:
 	static std::shared_ptr<Elaina::CNode> __createNode(const std::shared_ptr<Elaina::CVertexArrayObject>& vVAO);
 	static void __setMaterial(const std::shared_ptr<Elaina::CNode>& vRootNode, const std::shared_ptr<Elaina::SMaterial>& vMaterial);
 
-	std::shared_ptr<Elaina::CScene> m_Scene;
-	std::shared_ptr<Elaina::CRenderPipeline> m_RenderPipeline;
-	std::shared_ptr<Elaina::SPbrMaterial> m_PlaneMat;
-	std::shared_ptr<Elaina::SPbrMaterial> m_ObjMat;
-	std::shared_ptr<Elaina::SPhongMaterial> m_PhongMat;
-	std::shared_ptr<Elaina::SCheckerMaterial> m_CheckerMat;
-	std::shared_ptr<Elaina::SWaterMaterial> m_WaterMat;
-	std::shared_ptr<Elaina::CFrameBuffer> m_DirShadowMapFB;
-	std::shared_ptr<Elaina::CFrameBuffer> m_PointShadowMapFB;
-	std::shared_ptr<Elaina::CDeferredLitPass> m_DeferredLitPass;
+	std::shared_ptr<Elaina::CScene> m_pScene;
+	std::shared_ptr<Elaina::CRenderPipeline> m_pRenderPipeline;
+	std::shared_ptr<Elaina::SPbrMaterial> m_pPlaneMat;
+	std::shared_ptr<Elaina::SPbrMaterial> m_pObjMat;
+	std::shared_ptr<Elaina::SPhongMaterial> m_pPhongMat;
+	std::shared_ptr<Elaina::SCheckerMaterial> m_pCheckerMat;
+	std::shared_ptr<Elaina::SWaterMaterial> m_pWaterMat;
+	std::shared_ptr<Elaina::CDeferredLitPass> m_pDeferredLitPass;
+	std::shared_ptr<Elaina::CDirShadowMapPass> m_pDirShadowMapPass;
+	std::shared_ptr<Elaina::CPointShadowMapPass> m_pPointShadowMapPass;
 	std::shared_ptr<Elaina::CCameraController> m_pCameraController;
 	std::shared_ptr<Elaina::CNode> m_pObjNode;
 	std::vector<std::shared_ptr<Elaina::CNode>> m_pNodes;

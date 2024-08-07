@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DeferredGeoPass.h"
-#include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
 #include "core/Camera.h"
 #include "core/Scene.h"
@@ -9,19 +8,26 @@
 #include "core/Material.h"
 #include "safe.h"
 #include "utils/AssetsPath.h"
+#include "utils/FrameBufferHelper.h"
 
-Elaina::CDeferredGeoPass::CDeferredGeoPass() :CRenderPass(CShaderProgram::createShaderProgram(
+Elaina::CDeferredGeoPass::CDeferredGeoPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders/deferGeo.vert",
 	CAssetsPath::getAssetsPath() + "shaders/deferGeo.frag"
-)) {}
+)), m_pFrameBuffer(nullptr) {}
 
-void Elaina::CDeferredGeoPass::renderV(const std::shared_ptr<CScene>& vScene, const std::vector<std::shared_ptr<CFrameBuffer>>& vFrameBuffers, const std::vector<size_t>& vOutputIndices, size_t vIdxOfPasses)
+void Elaina::CDeferredGeoPass::initV(int vWidth, int vHeight)
 {
-	CRenderPass::renderV(vScene, vFrameBuffers, vOutputIndices, vIdxOfPasses);
-	const auto& pCamera = vScene->getCamera();
+	m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector<int>(4, 3));
+}
+
+void Elaina::CDeferredGeoPass::renderV(const std::shared_ptr<CScene>& vScene)
+{
+	m_pFrameBuffer->bind();
+	GL_SAFE_CALL(glViewport(0, 0, m_pFrameBuffer->getWidth(), m_pFrameBuffer->getHeight()));
 	GL_SAFE_CALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	const auto& pCamera = vScene->getCamera();
 	m_pShaderProgram->use();
 	m_pShaderProgram->setUniform("uView", pCamera->getViewMatrix());
 	m_pShaderProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
@@ -39,4 +45,9 @@ void Elaina::CDeferredGeoPass::renderV(const std::shared_ptr<CScene>& vScene, co
 			pMesh->draw();
 		}
 	});
+}
+
+void Elaina::CDeferredGeoPass::onWindowSizeChangeV(int vWidth, int vHeight)
+{
+	m_pFrameBuffer->resize(vWidth, vHeight);
 }
