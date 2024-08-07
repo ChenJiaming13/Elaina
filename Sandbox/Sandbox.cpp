@@ -15,7 +15,7 @@
 #include "renderpass/DeferredSkyBoxPass.h"
 #include "renderpass/DeferVisLightPass.h"
 #include "renderpass/DirShadowMapPass.h"
-#include "renderpass/ForwardPbrPass.h"
+#include "renderpass/ForwardLitPass.h"
 #include "renderpass/PointShadowMapPass.h"
 #include "utils/AssetsPath.h"
 #include "utils/FrameBufferHelper.h"
@@ -23,8 +23,8 @@
 void CSandbox::init(int vWidth, int vHeight)
 {
 	__setupScene(vWidth, vHeight);
-	__setupDeferredRenderPipeline(vWidth, vHeight);
-	//__setupForwardRenderPipeline(vWidth, vHeight);
+	//__setupDeferredRenderPipeline(vWidth, vHeight);
+	__setupForwardRenderPipeline(vWidth, vHeight);
 }
 
 void CSandbox::render(float vCurrTime, float vDeltaTime)
@@ -57,7 +57,7 @@ void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 	const auto& pPointShadowMapPass = std::make_shared<Elaina::CPointShadowMapPass>();
 	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>();
 	m_DeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(2, 0, 1, pDirShadowMapPass);
-	const auto& pSkyBoxTex = std::make_shared<Elaina::CTextureCube>(std::array<std::string, 6>{
+	const auto& pSkyBoxTex = std::make_shared<Elaina::CTextureCube>(std::array{
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\right.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\left.jpg",
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\top.jpg",
@@ -92,10 +92,10 @@ void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 {
 	m_IsDeferredPipeline = false;
-	const auto& pForwardPbrPass = std::make_shared<Elaina::CForwardPbrPass>();
+	const auto& pForwardLitPass = std::make_shared<Elaina::CForwardLitPass>();
 	m_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	m_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
-	m_RenderPipeline->addRenderPass(pForwardPbrPass, 0);
+	m_RenderPipeline->addRenderPass(pForwardLitPass, 0);
 }
 
 void CSandbox::__setupMaterials()
@@ -111,6 +111,14 @@ void CSandbox::__setupMaterials()
 	m_ObjMat->_Metallic = 0.5f;
 	m_ObjMat->_Roughness = 1.0f;
 	m_ObjMat->_Ao = 0.1f;
+
+	m_PhongMat = std::make_shared<Elaina::SPhongMaterial>();
+	m_PhongMat->_Color = glm::vec3(0.0f, 1.0f, 1.0f);
+	m_PhongMat->_Ambient = 0.2f;
+	m_PhongMat->_Specular = 0.5f;
+	m_PhongMat->_Glossy = 64.0f;
+
+	m_CheckerMat = std::make_shared<Elaina::SCheckerMaterial>();
 }
 
 void CSandbox::__setupCamera(int vWidth, int vHeight)
@@ -151,9 +159,9 @@ void CSandbox::__setupNodes()
 	pPlaneNode1->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 	pPlaneNode1->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
 	pCubeNode->setPosition(glm::vec3(0.0f, -4.0f, 0.0f));
-	__setMaterial(pPlaneNode, m_PlaneMat);
+	__setMaterial(pPlaneNode, m_CheckerMat);
 	__setMaterial(pPlaneNode1, m_PlaneMat);
-	__setMaterial(pCubeNode, m_ObjMat);
+	__setMaterial(pCubeNode, m_PhongMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	m_pObjNode = std::make_shared<Elaina::CNode>();
 	pRootNode->addChild(pPlaneNode);
@@ -258,6 +266,23 @@ void CSandbox::__renderUI()
 		ImGui::DragFloat("Metallic", &m_PlaneMat->_Metallic, 0.01f, 0.0f, 1.0f);
 		ImGui::DragFloat("Roughness", &m_PlaneMat->_Roughness, 0.01f, 0.0f, 1.0f);
 		ImGui::DragFloat("Ao", &m_PlaneMat->_Ao, 0.01f, 0.0f, 1.0f);
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Phong Material"))
+	{
+		ImGui::PushID(ID);
+		ImGui::ColorEdit3("Color", &m_PhongMat->_Color.x);
+		ImGui::DragFloat("Ambient", &m_PhongMat->_Ambient, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Specular", &m_PhongMat->_Specular, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Glossy", &m_PhongMat->_Glossy, 1.0f, 0.0f, 128.0f);
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Checker Material"))
+	{
+		ImGui::PushID(ID);
+		ImGui::ColorEdit3("PrimaryColor", &m_CheckerMat->_PrimaryColor.x);
+		ImGui::ColorEdit3("SecondaryColor", &m_CheckerMat->_SecondaryColor.x);
+		ImGui::DragFloat("Scale", &m_CheckerMat->_Scale, 0.1f, 0.0f, 10.0f);
 		ImGui::PopID();
 	}
 	ImGui::End();

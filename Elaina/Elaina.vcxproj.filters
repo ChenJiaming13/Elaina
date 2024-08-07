@@ -90,7 +90,7 @@
     <ClInclude Include="renderpass\PostProcessPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="renderpass\ForwardPbrPass.h">
+    <ClInclude Include="renderpass\ForwardLitPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="parser\GlslParser.h">
@@ -191,7 +191,7 @@
     <ClCompile Include="core\RenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderpass\ForwardPbrPass.cpp">
+    <ClCompile Include="renderpass\ForwardLitPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="parser\GlslParser.cpp">
@@ -204,9 +204,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\DirShadowMapPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="base\TextureCube.cpp">

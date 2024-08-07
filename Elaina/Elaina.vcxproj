@@ -174,7 +174,7 @@
     <ClInclude Include="renderpass\DeferredLitPass.h" />
     <ClInclude Include="renderpass\DeferredGeoPass.h" />
     <ClInclude Include="parser\GlslParser.h" />
-    <ClInclude Include="renderpass\ForwardPbrPass.h" />
+    <ClInclude Include="renderpass\ForwardLitPass.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="core\Mesh.h" />
     <ClInclude Include="light\Light.h" />
@@ -201,7 +201,6 @@
     <ClCompile Include="core\RenderPass.cpp" />
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
-    <ClCompile Include="core\Material.cpp" />
     <ClCompile Include="base\Texture.cpp" />
     <ClCompile Include="renderpass\DeferVisLightPass.cpp" />
     <ClCompile Include="renderpass\PointShadowMapPass.cpp" />
@@ -212,7 +211,7 @@
     <ClCompile Include="renderpass\DeferredLitPass.cpp" />
     <ClCompile Include="renderpass\DeferredGeoPass.cpp" />
     <ClCompile Include="parser\GlslParser.cpp" />
-    <ClCompile Include="renderpass\ForwardPbrPass.cpp" />
+    <ClCompile Include="renderpass\ForwardLitPass.cpp" />
     <ClCompile Include="loader\ModelLoader.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

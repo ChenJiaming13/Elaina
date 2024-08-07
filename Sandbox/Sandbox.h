@@ -7,8 +7,14 @@
 
 namespace Elaina
 {
+	struct SCheckerMaterial;
+}
+
+namespace Elaina
+{
 	struct SMaterial;
 	struct SPbrMaterial;
+	struct SPhongMaterial;
 	class CVertexArrayObject;
 	class CDeferredLitPass;
 	class CFrameBuffer;
@@ -44,6 +50,8 @@ private:
 	std::shared_ptr<Elaina::CRenderPipeline> m_RenderPipeline;
 	std::shared_ptr<Elaina::SPbrMaterial> m_PlaneMat;
 	std::shared_ptr<Elaina::SPbrMaterial> m_ObjMat;
+	std::shared_ptr<Elaina::SPhongMaterial> m_PhongMat;
+	std::shared_ptr<Elaina::SCheckerMaterial> m_CheckerMat;
 	std::shared_ptr<Elaina::CFrameBuffer> m_DirShadowMapFB;
 	std::shared_ptr<Elaina::CFrameBuffer> m_PointShadowMapFB;
 	std::shared_ptr<Elaina::CDeferredLitPass> m_DeferredLitPass;
