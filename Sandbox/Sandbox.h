@@ -29,7 +29,8 @@ public:
 
 private:
 	void __setupScene(int vWidth, int vHeight);
-	void __setupRenderPipeline(int vWidth, int vHeight);
+	void __setupDeferredRenderPipeline(int vWidth, int vHeight);
+	void __setupForwardRenderPipeline(int vWidth, int vHeight);
 	void __setupMaterials();
 	void __setupCamera(int vWidth, int vHeight);
 	void __setupLights() const;
@@ -50,4 +51,5 @@ private:
 	std::shared_ptr<Elaina::CNode> m_pObjNode;
 	std::vector<std::shared_ptr<Elaina::CNode>> m_pNodes;
 	size_t m_IndexOfNodes = 0;
+	bool m_IsDeferredPipeline = true;
 };

@@ -8,6 +8,12 @@
 #include "core/Camera.h"
 #include "light/Light.h"
 #include "safe.h"
+#include "utils/AssetsPath.h"
+
+Elaina::CForwardPbrPass::CForwardPbrPass() :CRenderPass(CShaderProgram::createShaderProgram(
+	CAssetsPath::getAssetsPath() + "shaders/forwardPbr.vert",
+	CAssetsPath::getAssetsPath() + "shaders/forwardPbr.frag"
+)) {}
 
 void Elaina::CForwardPbrPass::renderV(
 	const std::shared_ptr<CScene>& vScene, 
@@ -28,8 +34,7 @@ void Elaina::CForwardPbrPass::renderV(
 	m_pShaderProgram->setUniform("uProjection", pCamera->getProjectionMatrix());
 	m_pShaderProgram->setUniform("uCamPos", pCamera->getWorldPos());
 	m_pShaderProgram->setUniform("uLightDir", pDirLight->_LightDir);
-	//m_pShaderProgram->setUniform("uLightPosition", pDirLight->_LightPos);
-	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor);
+	m_pShaderProgram->setUniform("uLightColor", pDirLight->_LightColor * pDirLight->_LightIntensity);
 	
 	CNode::traverse(vScene->getRootNode(), [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		m_pShaderProgram->setUniform("uModel", vNode->getModelMatrix());

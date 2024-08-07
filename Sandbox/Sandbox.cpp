@@ -15,6 +15,7 @@
 #include "renderpass/DeferredSkyBoxPass.h"
 #include "renderpass/DeferVisLightPass.h"
 #include "renderpass/DirShadowMapPass.h"
+#include "renderpass/ForwardPbrPass.h"
 #include "renderpass/PointShadowMapPass.h"
 #include "utils/AssetsPath.h"
 #include "utils/FrameBufferHelper.h"
@@ -22,7 +23,8 @@
 void CSandbox::init(int vWidth, int vHeight)
 {
 	__setupScene(vWidth, vHeight);
-	__setupRenderPipeline(vWidth, vHeight);
+	__setupDeferredRenderPipeline(vWidth, vHeight);
+	//__setupForwardRenderPipeline(vWidth, vHeight);
 }
 
 void CSandbox::render(float vCurrTime, float vDeltaTime)
@@ -48,8 +50,9 @@ void CSandbox::__setupScene(int vWidth, int vHeight)
 	__setupLights();
 }
 
-void CSandbox::__setupRenderPipeline(int vWidth, int vHeight)
+void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 {
+	m_IsDeferredPipeline = true;
 	const auto& pDirShadowMapPass = std::make_shared<Elaina::CDirShadowMapPass>();
 	const auto& pPointShadowMapPass = std::make_shared<Elaina::CPointShadowMapPass>();
 	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>();
@@ -84,6 +87,15 @@ void CSandbox::__setupRenderPipeline(int vWidth, int vHeight)
 	m_RenderPipeline->addRenderPass(m_DeferredLitPass, 3);
 	m_RenderPipeline->addRenderPass(pDeferredSkyBoxPass, 3);
 	m_RenderPipeline->addRenderPass(pVisLightPass, 3);
+}
+
+void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
+{
+	m_IsDeferredPipeline = false;
+	const auto& pForwardPbrPass = std::make_shared<Elaina::CForwardPbrPass>();
+	m_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
+	m_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
+	m_RenderPipeline->addRenderPass(pForwardPbrPass, 0);
 }
 
 void CSandbox::__setupMaterials()
@@ -163,65 +175,68 @@ void CSandbox::__renderUI()
 {
 	int ID = 0;
 	ImGui::Begin("Inspector");
-	if (ImGui::CollapsingHeader("Render Pipeline"))
+	if (m_IsDeferredPipeline)
 	{
-		ImGui::PushID(ID++);
-		static bool EnableSkyBoxPass;
-		constexpr size_t IdxOfSkyBoxPass = 4;
-		EnableSkyBoxPass = m_RenderPipeline->getPassEnable(IdxOfSkyBoxPass);
-		if (ImGui::Checkbox("Enable SkyBox Pass", &EnableSkyBoxPass))
+		if (ImGui::CollapsingHeader("Render Pipeline"))
 		{
-			m_RenderPipeline->setPassEnable(IdxOfSkyBoxPass, EnableSkyBoxPass);
-		}
-		ImGui::PopID();
-	}
-	if (ImGui::CollapsingHeader("Directional Light"))
-	{
-		ImGui::PushID(ID++);
-		static int DirShadowMapSize[] = { 0, 0 };
-		DirShadowMapSize[0] = m_DirShadowMapFB->getWidth();
-		DirShadowMapSize[1] = m_DirShadowMapFB->getHeight();
-		ImGui::ColorEdit3("Light Color", &m_Scene->getDirectionalLight()->_LightColor.x);
-		ImGui::DragFloat("Light Intensity", &m_Scene->getDirectionalLight()->_LightIntensity, 0.01f);
-		ImGui::DragFloat3("Light Direction", &m_Scene->getDirectionalLight()->_LightDir.x, 0.01f);
-		ImGui::DragFloat3("Light Position", &m_Scene->getDirectionalLight()->_LightPos.x, 0.01f);
-		if (ImGui::DragInt2("Shadow Map Size", DirShadowMapSize, 5.0f))
-		{
-			if (DirShadowMapSize[0] > 0 && DirShadowMapSize[1] > 0)
+			ImGui::PushID(ID++);
+			static bool EnableSkyBoxPass;
+			constexpr size_t IdxOfSkyBoxPass = 4;
+			EnableSkyBoxPass = m_RenderPipeline->getPassEnable(IdxOfSkyBoxPass);
+			if (ImGui::Checkbox("Enable SkyBox Pass", &EnableSkyBoxPass))
 			{
-				m_DirShadowMapFB->resize(DirShadowMapSize[0], DirShadowMapSize[1]);
+				m_RenderPipeline->setPassEnable(IdxOfSkyBoxPass, EnableSkyBoxPass);
 			}
+			ImGui::PopID();
 		}
-		static bool EnablePCF;
-		static int HalfPCFSize;
-		EnablePCF = m_DeferredLitPass->getEnablePCF();
-		HalfPCFSize = m_DeferredLitPass->getHalfSizePCF();
-		if (ImGui::Checkbox("Enable PCF", &EnablePCF))
+		if (ImGui::CollapsingHeader("Directional Light"))
 		{
-			m_DeferredLitPass->setEnablePCF(EnablePCF);
-		}
-		if (ImGui::DragInt("Half PCF Size", &HalfPCFSize, 1, 0, 5))
-		{
-			m_DeferredLitPass->setHalfSizePCF(HalfPCFSize);
-		}
-		ImGui::PopID();
-	}
-	if (ImGui::CollapsingHeader("Point Light"))
-	{
-		ImGui::PushID(ID++);
-		static int PointShadowMapSize = 0;
-		PointShadowMapSize = m_PointShadowMapFB->getWidth();
-		ImGui::ColorEdit3("Light Color", &m_Scene->getPointLight()->_LightColor.x);
-		ImGui::DragFloat("Light Intensity", &m_Scene->getPointLight()->_LightIntensity, 0.01f);
-		ImGui::DragFloat3("Light Position", &m_Scene->getPointLight()->_LightPos.x, 0.01f);
-		if (ImGui::DragInt("Shadow Map Size", &PointShadowMapSize, 5.0f))
-		{
-			if (PointShadowMapSize > 0)
+			ImGui::PushID(ID++);
+			static int DirShadowMapSize[] = { 0, 0 };
+			DirShadowMapSize[0] = m_DirShadowMapFB->getWidth();
+			DirShadowMapSize[1] = m_DirShadowMapFB->getHeight();
+			ImGui::ColorEdit3("Light Color", &m_Scene->getDirectionalLight()->_LightColor.x);
+			ImGui::DragFloat("Light Intensity", &m_Scene->getDirectionalLight()->_LightIntensity, 0.01f);
+			ImGui::DragFloat3("Light Direction", &m_Scene->getDirectionalLight()->_LightDir.x, 0.01f);
+			ImGui::DragFloat3("Light Position", &m_Scene->getDirectionalLight()->_LightPos.x, 0.01f);
+			if (ImGui::DragInt2("Shadow Map Size", DirShadowMapSize, 5.0f))
 			{
-				m_PointShadowMapFB->resize(PointShadowMapSize, PointShadowMapSize);
+				if (DirShadowMapSize[0] > 0 && DirShadowMapSize[1] > 0)
+				{
+					m_DirShadowMapFB->resize(DirShadowMapSize[0], DirShadowMapSize[1]);
+				}
 			}
+			static bool EnablePCF;
+			static int HalfPCFSize;
+			EnablePCF = m_DeferredLitPass->getEnablePCF();
+			HalfPCFSize = m_DeferredLitPass->getHalfSizePCF();
+			if (ImGui::Checkbox("Enable PCF", &EnablePCF))
+			{
+				m_DeferredLitPass->setEnablePCF(EnablePCF);
+			}
+			if (ImGui::DragInt("Half PCF Size", &HalfPCFSize, 1, 0, 5))
+			{
+				m_DeferredLitPass->setHalfSizePCF(HalfPCFSize);
+			}
+			ImGui::PopID();
 		}
-		ImGui::PopID();
+		if (ImGui::CollapsingHeader("Point Light"))
+		{
+			ImGui::PushID(ID++);
+			static int PointShadowMapSize = 0;
+			PointShadowMapSize = m_PointShadowMapFB->getWidth();
+			ImGui::ColorEdit3("Light Color", &m_Scene->getPointLight()->_LightColor.x);
+			ImGui::DragFloat("Light Intensity", &m_Scene->getPointLight()->_LightIntensity, 0.01f);
+			ImGui::DragFloat3("Light Position", &m_Scene->getPointLight()->_LightPos.x, 0.01f);
+			if (ImGui::DragInt("Shadow Map Size", &PointShadowMapSize, 5.0f))
+			{
+				if (PointShadowMapSize > 0)
+				{
+					m_PointShadowMapFB->resize(PointShadowMapSize, PointShadowMapSize);
+				}
+			}
+			ImGui::PopID();
+		}
 	}
 	if (ImGui::CollapsingHeader("Obj PBR Material"))
 	{
