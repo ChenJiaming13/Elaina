@@ -7,6 +7,11 @@
 
 namespace Elaina
 {
+	struct SWaterMaterial;
+}
+
+namespace Elaina
+{
 	struct SCheckerMaterial;
 }
 
@@ -52,6 +57,7 @@ private:
 	std::shared_ptr<Elaina::SPbrMaterial> m_ObjMat;
 	std::shared_ptr<Elaina::SPhongMaterial> m_PhongMat;
 	std::shared_ptr<Elaina::SCheckerMaterial> m_CheckerMat;
+	std::shared_ptr<Elaina::SWaterMaterial> m_WaterMat;
 	std::shared_ptr<Elaina::CFrameBuffer> m_DirShadowMapFB;
 	std::shared_ptr<Elaina::CFrameBuffer> m_PointShadowMapFB;
 	std::shared_ptr<Elaina::CDeferredLitPass> m_DeferredLitPass;

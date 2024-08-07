@@ -8,6 +8,7 @@ namespace Elaina
 		PBR,
 		PHONG,
 		CHECKER,
+		WATER,
 	};
 
 	struct SMaterial
@@ -40,5 +41,10 @@ namespace Elaina
 		glm::vec3 _PrimaryColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 _SecondaryColor = glm::vec3(0.5f, 0.5f, 0.5f);
 		float _Scale = 1.0f;
+	};
+
+	struct SWaterMaterial final : SMaterial
+	{
+		[[nodiscard]] EMaterialType getMaterialType() const override { return EMaterialType::WATER; }
 	};
 }

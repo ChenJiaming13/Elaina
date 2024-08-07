@@ -17,6 +17,7 @@
 #include "renderpass/DirShadowMapPass.h"
 #include "renderpass/ForwardLitPass.h"
 #include "renderpass/PointShadowMapPass.h"
+#include "renderpass/WaterLitPass.h"
 #include "utils/AssetsPath.h"
 #include "utils/FrameBufferHelper.h"
 
@@ -93,9 +94,11 @@ void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 {
 	m_IsDeferredPipeline = false;
 	const auto& pForwardLitPass = std::make_shared<Elaina::CForwardLitPass>();
+	const auto& pWaterLitPass = std::make_shared<Elaina::CWaterLitPass>();
 	m_RenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	m_RenderPipeline->addFrameBuffer(Elaina::CFrameBuffer::getDefaultFrameBuffer());
 	m_RenderPipeline->addRenderPass(pForwardLitPass, 0);
+	m_RenderPipeline->addRenderPass(pWaterLitPass, 0);
 }
 
 void CSandbox::__setupMaterials()
@@ -119,6 +122,8 @@ void CSandbox::__setupMaterials()
 	m_PhongMat->_Glossy = 64.0f;
 
 	m_CheckerMat = std::make_shared<Elaina::SCheckerMaterial>();
+
+	m_WaterMat = std::make_shared<Elaina::SWaterMaterial>();
 }
 
 void CSandbox::__setupCamera(int vWidth, int vHeight)
@@ -150,22 +155,27 @@ void CSandbox::__setupNodes()
 {
 	const auto& pPlaneNode = __createNode(Elaina::CPrimitive::createPlane());
 	const auto& pPlaneNode1 = __createNode(Elaina::CPrimitive::createPlane());
+	const auto& pWaterPlaneNode = __createNode(Elaina::CPrimitive::createPlane());
 	const auto& pCubeNode = __createNode(Elaina::CPrimitive::createCube());
 	//const auto& pPlaneNode2 = createNode(Elaina::CPrimitive::createPlane());
 	pPlaneNode->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
 	pPlaneNode1->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
+	pWaterPlaneNode->setScale(glm::vec3(8.0f, 1.0f, 8.0f));
 	//pPlaneNode2->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
 	pPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
 	pPlaneNode1->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 	pPlaneNode1->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+	pWaterPlaneNode->setPosition(glm::vec3(0.0f, -3.0f, 0.0f));
 	pCubeNode->setPosition(glm::vec3(0.0f, -4.0f, 0.0f));
 	__setMaterial(pPlaneNode, m_CheckerMat);
 	__setMaterial(pPlaneNode1, m_PlaneMat);
 	__setMaterial(pCubeNode, m_PhongMat);
+	__setMaterial(pWaterPlaneNode, m_WaterMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	m_pObjNode = std::make_shared<Elaina::CNode>();
 	pRootNode->addChild(pPlaneNode);
 	pRootNode->addChild(pPlaneNode1);
+	pRootNode->addChild(pWaterPlaneNode);
 	pRootNode->addChild(pCubeNode);
 	pRootNode->addChild(m_pObjNode);
 

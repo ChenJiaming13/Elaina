@@ -185,6 +185,7 @@
     <ClInclude Include="safe.h" />
     <ClInclude Include="core\Scene.h" />
     <ClInclude Include="base\TextureCube.h" />
+    <ClInclude Include="renderpass\WaterLitPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\Framebuffer.cpp" />
@@ -223,6 +224,7 @@
     <ClCompile Include="primitive\Primitive.cpp" />
     <ClCompile Include="core\Scene.cpp" />
     <ClCompile Include="base\TextureCube.cpp" />
+    <ClCompile Include="renderpass\WaterLitPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vendor\glad\glad.vcxproj">
