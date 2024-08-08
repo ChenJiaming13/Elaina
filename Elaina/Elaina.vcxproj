@@ -167,7 +167,6 @@
     <ClInclude Include="base\Texture.h" />
     <ClInclude Include="renderpass\VisLightPass.h" />
     <ClInclude Include="renderpass\PointShadowMapPass.h" />
-    <ClInclude Include="utils\FrameBufferHelper.h" />
     <ClInclude Include="ui\ImGui.h" />
     <ClInclude Include="renderpass\SkyBoxPass.h" />
     <ClInclude Include="renderpass\DirShadowMapPass.h" />
@@ -205,7 +204,6 @@
     <ClCompile Include="light\Light.cpp" />
     <ClCompile Include="renderpass\VisLightPass.cpp" />
     <ClCompile Include="renderpass\PointShadowMapPass.cpp" />
-    <ClCompile Include="utils\FrameBufferHelper.cpp" />
     <ClCompile Include="ui\ImGui.cpp" />
     <ClCompile Include="renderpass\SkyBoxPass.cpp" />
     <ClCompile Include="renderpass\DirShadowMapPass.cpp" />

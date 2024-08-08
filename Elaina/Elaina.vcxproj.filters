@@ -120,9 +120,6 @@
     <ClInclude Include="base\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\FrameBufferHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="renderpass\PointShadowMapPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -216,9 +213,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="base\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\FrameBufferHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\PointShadowMapPass.cpp">

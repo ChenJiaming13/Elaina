@@ -30,6 +30,7 @@ namespace Elaina
 		static void setColorBufferEmpty();
 		static const std::shared_ptr<CFrameBuffer>& getDefaultFrameBuffer();
 		static void initDefaultFrameBuffer(int vWidth, int vHeight, GLuint vFrameBufferID = 0);
+		static std::shared_ptr<CFrameBuffer> createFrameBuffer(int vWidth, int vHeight, const std::vector<int>& vColorBufferChannels);
 		static void blit(
 			const std::shared_ptr<CFrameBuffer>& vSrcFrameBuffer,
 			const std::shared_ptr<CFrameBuffer>& vDstFrameBuffer,

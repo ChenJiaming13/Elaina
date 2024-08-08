@@ -8,8 +8,8 @@
 #include "light/Light.h"
 #include "safe.h"
 #include "base/Framebuffer.h"
+#include "base/Texture2D.h"
 #include "utils/AssetsPath.h"
-#include "utils/FrameBufferHelper.h"
 
 Elaina::CDirShadowMapPass::CDirShadowMapPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders/shadowMapDir.vert",
@@ -18,7 +18,21 @@ Elaina::CDirShadowMapPass::CDirShadowMapPass() :m_pShaderProgram(CShaderProgram:
 
 void Elaina::CDirShadowMapPass::initV(int vWidth, int vHeight)
 {
-	m_pFrameBuffer = CFrameBufferHelper::createDepthOnlyFrameBuffer(1024, 1024);
+	const auto& pDepthTex = std::make_shared<CTexture2D>(1024, 1024, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+	pDepthTex->setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	pDepthTex->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	pDepthTex->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	pDepthTex->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	constexpr GLfloat BorderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	pDepthTex->setParameter(GL_TEXTURE_BORDER_COLOR, BorderColor);
+
+	m_pFrameBuffer = std::make_shared<CFrameBuffer>();
+	m_pFrameBuffer->create();
+	m_pFrameBuffer->bind();
+	m_pFrameBuffer->setAttachment(GL_DEPTH_ATTACHMENT, pDepthTex, 0);
+	CFrameBuffer::setColorBufferEmpty();
+	CFrameBuffer::checkComplete();
+	CFrameBuffer::unbind();
 }
 
 void Elaina::CDirShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene)

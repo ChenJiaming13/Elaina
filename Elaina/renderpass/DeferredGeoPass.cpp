@@ -8,7 +8,6 @@
 #include "core/Material.h"
 #include "safe.h"
 #include "utils/AssetsPath.h"
-#include "utils/FrameBufferHelper.h"
 
 Elaina::CDeferredGeoPass::CDeferredGeoPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders/deferGeo.vert",
@@ -17,7 +16,7 @@ Elaina::CDeferredGeoPass::CDeferredGeoPass() :m_pShaderProgram(CShaderProgram::c
 
 void Elaina::CDeferredGeoPass::initV(int vWidth, int vHeight)
 {
-	m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector<int>(4, 3));
+	m_pFrameBuffer = CFrameBuffer::createFrameBuffer(vWidth, vHeight, std::vector<int>(4, 3));
 }
 
 void Elaina::CDeferredGeoPass::renderV(const std::shared_ptr<CScene>& vScene)

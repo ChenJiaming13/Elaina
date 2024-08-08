@@ -10,7 +10,6 @@
 #include "safe.h"
 #include "base/Framebuffer.h"
 #include "utils/AssetsPath.h"
-#include "utils/FrameBufferHelper.h"
 
 Elaina::CForwardLitPass::CForwardLitPass(bool vIsFinalPass):
 	m_pShaderProgramPBR(CShaderProgram::createShaderProgram(
@@ -40,7 +39,7 @@ void Elaina::CForwardLitPass::initV(int vWidth, int vHeight)
 	if (m_IsFinalPass)
 		m_pFrameBuffer = CFrameBuffer::getDefaultFrameBuffer();
 	else
-		m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector{ 3 });
+		m_pFrameBuffer = CFrameBuffer::createFrameBuffer(vWidth, vHeight, std::vector{ 3 });
 }
 
 void Elaina::CForwardLitPass::onWindowSizeChangeV(int vWidth, int vHeight)

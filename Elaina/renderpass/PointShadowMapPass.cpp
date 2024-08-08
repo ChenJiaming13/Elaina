@@ -3,13 +3,13 @@
 #include "safe.h"
 #include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
+#include "base/TextureCube.h"
 #include "core/Mesh.h"
 #include "core/Node.h"
 #include "core/Scene.h"
 #include "core/Material.h"
 #include "light/Light.h"
 #include "utils/AssetsPath.h"
-#include "utils/FrameBufferHelper.h"
 
 Elaina::CPointShadowMapPass::CPointShadowMapPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders\\shadowMapPoint.vert",
@@ -19,7 +19,20 @@ Elaina::CPointShadowMapPass::CPointShadowMapPass() :m_pShaderProgram(CShaderProg
 
 void Elaina::CPointShadowMapPass::initV(int vWidth, int vHeight)
 {
-	m_pFrameBuffer = CFrameBufferHelper::createPointLightShadowFrameBuffer(512, 512);
+	const auto& pDepthTex = std::make_shared<CTextureCube>(512, 512, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+	pDepthTex->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	pDepthTex->setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	pDepthTex->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	pDepthTex->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	pDepthTex->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	m_pFrameBuffer = std::make_shared<CFrameBuffer>();
+	m_pFrameBuffer->create();
+	m_pFrameBuffer->bind();
+	m_pFrameBuffer->setAttachment(GL_DEPTH_ATTACHMENT, pDepthTex, 0);
+	CFrameBuffer::setColorBufferEmpty();
+	CFrameBuffer::checkComplete();
+	CFrameBuffer::unbind();
 }
 
 void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene)

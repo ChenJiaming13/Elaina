@@ -6,7 +6,6 @@
 #include "base/VertexArrayObject.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
-#include "utils/FrameBufferHelper.h"
 
 Elaina::CPostProcessPass::CPostProcessPass(const std::shared_ptr<CShaderProgram>& vShaderProgram, bool vIsFinalPass) :
 	m_pQuadVAO(CPrimitive::createQuad()), m_pShaderProgram(vShaderProgram), m_IsFinalPass(vIsFinalPass)
@@ -40,10 +39,11 @@ bool Elaina::CPostProcessPass::validateV() const
 
 void Elaina::CPostProcessPass::initV(int vWidth, int vHeight)
 {
+	// TODO: save memory when has many post-process pass
 	if (m_IsFinalPass)
 		m_pFrameBuffer = CFrameBuffer::getDefaultFrameBuffer();
 	else
-		m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector{ 3 });
+		m_pFrameBuffer = CFrameBuffer::createFrameBuffer(vWidth, vHeight, std::vector{ 3 });
 }
 
 void Elaina::CPostProcessPass::onWindowSizeChangeV(int vWidth, int vHeight)

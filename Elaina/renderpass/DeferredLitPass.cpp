@@ -10,7 +10,6 @@
 #include "primitive/Primitive.h"
 #include "safe.h"
 #include "utils/AssetsPath.h"
-#include "utils/FrameBufferHelper.h"
 
 Elaina::CDeferredLitPass::CDeferredLitPass(bool vIsFinalPass):
 	m_pShaderProgram(CShaderProgram::createShaderProgram(
@@ -34,7 +33,7 @@ void Elaina::CDeferredLitPass::initV(int vWidth, int vHeight)
 	if (m_IsFinalPass)
 		m_pFrameBuffer = CFrameBuffer::getDefaultFrameBuffer();
 	else
-		m_pFrameBuffer = CFrameBufferHelper::createColorAndDepthFrameBuffer(vWidth, vHeight, std::vector{ 3 });
+		m_pFrameBuffer = CFrameBuffer::createFrameBuffer(vWidth, vHeight, std::vector{ 3 });
 }
 
 void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene)
