@@ -34,3 +34,16 @@ void Elaina::CRenderPipeline::addRenderPass(const std::shared_ptr<CRenderPass>& 
 	m_RenderPasses.push_back(vRenderPass);
 	m_EnablePasses.push_back(true);
 }
+
+void Elaina::CRenderPipeline::validate() const
+{
+	for (size_t i = 0; i < m_RenderPasses.size(); ++i)
+	{
+		if (!m_RenderPasses[i]->validateV())
+		{
+			spdlog::error("idx of {} render passes validate failed", i);
+			throw std::runtime_error("validate failed");
+		}
+	}
+	spdlog::info("render pipeline validate success");
+}

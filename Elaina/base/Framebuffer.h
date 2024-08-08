@@ -30,7 +30,13 @@ namespace Elaina
 		static void setColorBufferEmpty();
 		static const std::shared_ptr<CFrameBuffer>& getDefaultFrameBuffer();
 		static void initDefaultFrameBuffer(int vWidth, int vHeight, GLuint vFrameBufferID = 0);
-	
+		static void blit(
+			const std::shared_ptr<CFrameBuffer>& vSrcFrameBuffer,
+			const std::shared_ptr<CFrameBuffer>& vDstFrameBuffer,
+			GLbitfield vMask,
+			GLenum vFilter = GL_NEAREST
+		);
+
 	private:
 		GLuint m_FrameBufferID;
 		std::unordered_map<GLenum, std::shared_ptr<CTexture>> m_TexturesMap;

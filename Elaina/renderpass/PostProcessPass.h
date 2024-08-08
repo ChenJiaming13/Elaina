@@ -16,6 +16,7 @@ namespace Elaina
 		void onWindowSizeChangeV(int vWidth, int vHeight) override;
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
 		void setLastFrameBuffer(const std::shared_ptr<CFrameBuffer>& vLastFrameBuffer) { m_pLastFrameBuffer = vLastFrameBuffer; }
+		[[nodiscard]] bool validateV() const override;
 
 	private:
 		std::shared_ptr<CVertexArrayObject> m_pQuadVAO;

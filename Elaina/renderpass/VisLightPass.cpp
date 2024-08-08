@@ -75,6 +75,16 @@ void Elaina::CVisLightPass::renderV(const std::shared_ptr<CScene>& vScene)
 	}
 }
 
+bool Elaina::CVisLightPass::validateV() const
+{
+	if (m_pLitFrameBuffer == nullptr)
+	{
+		spdlog::error("[VisLightPass] Lit frame buffer miss");
+		return false;
+	}
+	return true;
+}
+
 glm::mat4 Elaina::CVisLightPass::__calcRotationMatrix(const glm::vec3& vCurrDir, const glm::vec3& vTargetDir)
 {
 	const glm::vec3 CurrDir = glm::normalize(vCurrDir);

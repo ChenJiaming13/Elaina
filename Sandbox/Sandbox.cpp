@@ -64,7 +64,7 @@ void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 	m_pPointShadowMapPass = std::make_shared<Elaina::CPointShadowMapPass>();
 	m_pDeferredLitPass = std::make_shared<Elaina::CDeferredLitPass>(true);
 	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>();
-	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles, true);
+	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles);
 	const auto& pVisLightPass = std::make_shared<Elaina::CVisLightPass>();
 
 	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
@@ -76,23 +76,20 @@ void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 	m_pRenderPipeline->addRenderPass(pVisLightPass);
 	m_pRenderPipeline->init(vWidth, vHeight);
 
-	m_pDeferredLitPass->setGeoPositionTex(pDeferredGeoPass->getGeoPositionTex());
-	m_pDeferredLitPass->setGeoNormalTex(pDeferredGeoPass->getGeoNormalTex());
-	m_pDeferredLitPass->setGeoDepthTex(pDeferredGeoPass->getGeoDepthTex());
-	m_pDeferredLitPass->setGeoAlbedoTex(pDeferredGeoPass->getGeoAlbedoTex());
-	m_pDeferredLitPass->setGeoPbrPropsTex(pDeferredGeoPass->getGeoPbrPropsTex());
+	m_pDeferredLitPass->setGeoFrameBuffer(pDeferredGeoPass->getFrameBuffer());
 	m_pDeferredLitPass->setDirShadowMapTex(m_pDirShadowMapPass->getShadowMap());
 	m_pDeferredLitPass->setPointShadowMapTex(m_pPointShadowMapPass->getShadowMap());
-	pSkyBoxPass->setGeoFrameBuffer(pDeferredGeoPass->getFrameBuffer());
 	pSkyBoxPass->setLitFrameBuffer(m_pDeferredLitPass->getFrameBuffer());
 	pVisLightPass->setLitFrameBuffer(m_pDeferredLitPass->getFrameBuffer());
+
+	m_pRenderPipeline->validate();
 }
 
 void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 {
 	m_IsDeferredPipeline = false;
 	const auto& pForwardLitPass = std::make_shared<Elaina::CForwardLitPass>(true);
-	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles, false);
+	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles);
 	const auto& pVisLightPass = std::make_shared<Elaina::CVisLightPass>();
 	const auto& pWaterLitPass = std::make_shared<Elaina::CWaterLitPass>();
 	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
@@ -105,6 +102,8 @@ void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 	pSkyBoxPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
 	pVisLightPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
 	pWaterLitPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
+
+	m_pRenderPipeline->validate();
 }
 
 void CSandbox::__setupMaterials()

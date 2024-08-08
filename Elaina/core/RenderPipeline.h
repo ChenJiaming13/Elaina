@@ -16,6 +16,7 @@ namespace Elaina
 		void onWindowSizeChange(int vWidth, int vHeight) const;
 		void render(const std::shared_ptr<CScene>& vScene) const;
 		void addRenderPass(const std::shared_ptr<CRenderPass>& vRenderPass);
+		void validate() const;
 		void setPassEnable(size_t vIdxOfPasses, bool vEnable) { m_EnablePasses[vIdxOfPasses] = vEnable; }
 		[[nodiscard]] bool getPassEnable(size_t vIdxOfPasses) const { return m_EnablePasses[vIdxOfPasses]; }
 

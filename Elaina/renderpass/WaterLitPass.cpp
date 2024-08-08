@@ -35,3 +35,13 @@ void Elaina::CWaterLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 		}
 	});
 }
+
+bool Elaina::CWaterLitPass::validateV() const
+{
+	if (m_pLitFrameBuffer == nullptr)
+	{
+		spdlog::error("[WaterLit Pass] Lit frame buffer miss");
+		return false;
+	}
+	return true;
+}

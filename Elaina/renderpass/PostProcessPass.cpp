@@ -28,6 +28,16 @@ void Elaina::CPostProcessPass::renderV(const std::shared_ptr<CScene>& vScene)
 	m_pQuadVAO->draw();
 }
 
+bool Elaina::CPostProcessPass::validateV() const
+{
+	if (m_pShaderProgram == nullptr)
+	{
+		spdlog::error("[PostProcessPass] shader program miss");
+		return false;
+	}
+	return true;
+}
+
 void Elaina::CPostProcessPass::initV(int vWidth, int vHeight)
 {
 	if (m_IsFinalPass)

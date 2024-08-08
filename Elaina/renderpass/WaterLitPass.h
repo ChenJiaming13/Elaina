@@ -12,6 +12,7 @@ namespace Elaina
 
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
 		void setLitFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pLitFrameBuffer = vFrameBuffer; }
+		[[nodiscard]] bool validateV() const override;
 
 	private:
 		std::shared_ptr<CShaderProgram> m_pShaderProgram;

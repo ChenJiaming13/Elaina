@@ -51,15 +51,15 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE0));
-	m_pGeoPositionTex->bind();
+	m_pGeoFrameBuffer->getAttachment(GL_COLOR_ATTACHMENT0)->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE1));
-	m_pGeoNormalTex->bind();
+	m_pGeoFrameBuffer->getAttachment(GL_COLOR_ATTACHMENT1)->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE2));
-	m_pGeoAlbedoTex->bind();
+	m_pGeoFrameBuffer->getAttachment(GL_COLOR_ATTACHMENT2)->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE3));
-	m_pGeoPbrPropsTex->bind();
+	m_pGeoFrameBuffer->getAttachment(GL_COLOR_ATTACHMENT3)->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE4));
-	m_pGeoDepthTex->bind();
+	m_pGeoFrameBuffer->getAttachment(GL_DEPTH_ATTACHMENT)->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE5));
 	m_pDirShadowMapTex->bind();
 	GL_SAFE_CALL(glActiveTexture(GL_TEXTURE6));
@@ -85,9 +85,32 @@ void Elaina::CDeferredLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 
 	m_pQuadVAO->bind();
 	m_pQuadVAO->draw();
+
+	// copy depth buffer from geo frame buffer
+	CFrameBuffer::blit(m_pGeoFrameBuffer, m_pFrameBuffer, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 }
 
 void Elaina::CDeferredLitPass::onWindowSizeChangeV(int vWidth, int vHeight)
 {
 	m_pFrameBuffer->resize(vWidth, vHeight);
+}
+
+bool Elaina::CDeferredLitPass::validateV() const
+{
+	if (m_pGeoFrameBuffer == nullptr)
+	{
+		spdlog::error("[DeferredLitPass] Deferred Geo frame buffer miss!");
+		return false;
+	}
+	if (m_pDirShadowMapTex == nullptr)
+	{
+		spdlog::error("[DeferredLitPass] Dir shadow map miss");
+		return false;
+	}
+	if (m_pPointShadowMapTex == nullptr)
+	{
+		spdlog::error("[DeferredLitPass] Point shadow map miss");
+		return false;
+	}
+	return true;
 }

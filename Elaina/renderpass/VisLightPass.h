@@ -15,6 +15,7 @@ namespace Elaina
 
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
 		void setLitFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pLitFrameBuffer = vFrameBuffer; }
+		[[nodiscard]] bool validateV() const override;
 
 	private:
 		static glm::mat4 __calcRotationMatrix(const glm::vec3& vCurrDir, const glm::vec3& vTargetDir);

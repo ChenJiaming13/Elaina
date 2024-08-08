@@ -109,3 +109,18 @@ void Elaina::CFrameBuffer::initDefaultFrameBuffer(int vWidth, int vHeight, GLuin
 	getDefaultFrameBuffer()->m_Height = vHeight;
 	getDefaultFrameBuffer()->m_FrameBufferID = vFrameBufferID;
 }
+
+void Elaina::CFrameBuffer::blit(const std::shared_ptr<CFrameBuffer>& vSrcFrameBuffer,
+	const std::shared_ptr<CFrameBuffer>& vDstFrameBuffer, GLbitfield vMask, GLenum vFilter)
+{
+
+	vSrcFrameBuffer->bind(GL_READ_FRAMEBUFFER);
+	vDstFrameBuffer->bind(GL_DRAW_FRAMEBUFFER);
+	GL_SAFE_CALL(glBlitFramebuffer(
+		0, 0, vSrcFrameBuffer->getWidth(), vSrcFrameBuffer->getHeight(),
+		0, 0, vDstFrameBuffer->getWidth(), vDstFrameBuffer->getHeight(),
+		vMask, vFilter
+	));
+	vSrcFrameBuffer->unbind(GL_READ_FRAMEBUFFER);
+	vDstFrameBuffer->unbind(GL_DRAW_FRAMEBUFFER);
+}
