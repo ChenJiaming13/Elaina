@@ -12,22 +12,22 @@ void Elaina::CFPSController::control(const std::shared_ptr<CCamera>& vCamera)
 	__updateCamera();
 }
 
-void Elaina::CFPSController::onKeyDown(int vKey)
+void Elaina::CFPSController::onKeyDownV(int vKey)
 {
 	m_Keys.insert(vKey);
 }
 
-void Elaina::CFPSController::onKeyUp(int vKey)
+void Elaina::CFPSController::onKeyUpV(int vKey)
 {
 	m_Keys.erase(vKey);
 }
 
-void Elaina::CFPSController::onMouseButtonDown(int vKey)
+void Elaina::CFPSController::onMouseButtonDownV(int vKey)
 {
 	if (vKey == HIVE_MOUSE_BUTTON_LEFT) m_IsLeftBtnPressed = true;
 }
 
-void Elaina::CFPSController::onMouseButtonUp(int vKey)
+void Elaina::CFPSController::onMouseButtonUpV(int vKey)
 {
 	if (vKey == HIVE_MOUSE_BUTTON_LEFT)
 	{
@@ -71,7 +71,7 @@ void Elaina::CFPSController::update(float vDeltaTime)
 	}
 }
 
-void Elaina::CFPSController::onMouseMove(float vPosX, float vPosY)
+void Elaina::CFPSController::onMouseMoveV(float vPosX, float vPosY)
 {
 	if (!m_IsLeftBtnPressed) return;
 	static float LastPosX, LastPosY;
@@ -93,7 +93,7 @@ void Elaina::CFPSController::onMouseMove(float vPosX, float vPosY)
 	__updateCamera();
 }
 
-void Elaina::CFPSController::onMouseScroll(float vOffsetX, float vOffsetY)
+void Elaina::CFPSController::onMouseScrollV(float vOffsetX, float vOffsetY)
 {
 	if (m_pCamera->getCameraType() == CCamera::ECameraType::PERSP)
 	{

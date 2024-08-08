@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DeferVisLightPass.h"
+#include "VisLightPass.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
 #include "base/Framebuffer.h"
@@ -12,7 +12,7 @@
 #include "light/Light.h"
 #include "utils/AssetsPath.h"
 
-Elaina::CDeferVisLightPass::CDeferVisLightPass():
+Elaina::CVisLightPass::CVisLightPass():
 	m_pLitFrameBuffer(nullptr),
 	m_pShaderProgram(CShaderProgram::createShaderProgram(
 		CAssetsPath::getAssetsPath() + "shaders\\visLight.vert",
@@ -31,12 +31,7 @@ Elaina::CDeferVisLightPass::CDeferVisLightPass():
 	m_pArrowNode->addChild(pConeNode);
 }
 
-Elaina::CDeferVisLightPass::~CDeferVisLightPass()
-{
-	m_pPointLightVAO.reset();
-}
-
-void Elaina::CDeferVisLightPass::renderV(const std::shared_ptr<CScene>& vScene)
+void Elaina::CVisLightPass::renderV(const std::shared_ptr<CScene>& vScene)
 {
 	m_pLitFrameBuffer->bind();
 	GL_SAFE_CALL(glViewport(0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight()));
@@ -80,7 +75,7 @@ void Elaina::CDeferVisLightPass::renderV(const std::shared_ptr<CScene>& vScene)
 	}
 }
 
-glm::mat4 Elaina::CDeferVisLightPass::__calcRotationMatrix(const glm::vec3& vCurrDir, const glm::vec3& vTargetDir)
+glm::mat4 Elaina::CVisLightPass::__calcRotationMatrix(const glm::vec3& vCurrDir, const glm::vec3& vTargetDir)
 {
 	const glm::vec3 CurrDir = glm::normalize(vCurrDir);
 	const glm::vec3 TargetDir = glm::normalize(vTargetDir);

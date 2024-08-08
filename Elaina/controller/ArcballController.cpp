@@ -14,13 +14,13 @@ void Elaina::CArcballController::control(const std::shared_ptr<CCamera>& vCamera
 	__updateCamera();
 }
 
-void Elaina::CArcballController::onMouseButtonDown(int vKey)
+void Elaina::CArcballController::onMouseButtonDownV(int vKey)
 {
 	if (vKey == HIVE_MOUSE_BUTTON_LEFT) m_IsLeftBtnPressed = true;
 	else if (vKey == HIVE_MOUSE_BUTTON_RIGHT) m_IsRightBtnPressed = true;
 }
 
-void Elaina::CArcballController::onMouseButtonUp(int vKey)
+void Elaina::CArcballController::onMouseButtonUpV(int vKey)
 {
 	if (vKey == HIVE_MOUSE_BUTTON_LEFT)
 	{
@@ -34,7 +34,7 @@ void Elaina::CArcballController::onMouseButtonUp(int vKey)
 	}
 }
 
-void Elaina::CArcballController::onMouseMove(float vPosX, float vPosY)
+void Elaina::CArcballController::onMouseMoveV(float vPosX, float vPosY)
 {
 	if (!m_IsLeftBtnPressed && !m_IsRightBtnPressed) return;
 	static float LastPosX, LastPosY;
@@ -66,7 +66,7 @@ void Elaina::CArcballController::onMouseMove(float vPosX, float vPosY)
 	}
 }
 
-void Elaina::CArcballController::onMouseScroll(float vOffsetX, float vOffsetY)
+void Elaina::CArcballController::onMouseScrollV(float vOffsetX, float vOffsetY)
 {
 	if (m_pCamera->getCameraType() == CCamera::ECameraType::PERSP)
 	{

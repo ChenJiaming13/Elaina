@@ -30,7 +30,7 @@ public:
 	void render(float vCurrTime, float vDeltaTime);
 	[[nodiscard]] const auto& getCameraController() const { return m_pCameraController; }
 
-	void onWindowSizeChange(int vWidth, int vHeight) override;
+	void onWindowSizeChangeV(int vWidth, int vHeight) override;
 
 private:
 	void __setupScene(int vWidth, int vHeight);
@@ -60,4 +60,5 @@ private:
 	std::vector<std::shared_ptr<Elaina::CNode>> m_pNodes;
 	size_t m_IndexOfNodes = 0;
 	bool m_IsDeferredPipeline = true;
+	std::array<std::string, 6> m_SkyBoxFiles;
 };

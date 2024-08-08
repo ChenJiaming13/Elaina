@@ -8,10 +8,10 @@ namespace Elaina
 	class CVertexArrayObject;
 	class CFrameBuffer;
 	class CShaderProgram;
-	class CDeferredSkyBoxPass final : public CRenderPass
+	class CSkyBoxPass final : public CRenderPass
 	{
 	public:
-		explicit CDeferredSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles);
+		explicit CSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles, bool vIsDeferred);
 
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
 		void setGeoFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pGeoFrameBuffer = vFrameBuffer; }
@@ -23,5 +23,6 @@ namespace Elaina
 		std::shared_ptr<CFrameBuffer> m_pGeoFrameBuffer = nullptr;
 		std::shared_ptr<CFrameBuffer> m_pLitFrameBuffer = nullptr;
 		std::shared_ptr<CShaderProgram> m_pShaderProgram;
+		bool m_IsDeferred;
 	};
 }

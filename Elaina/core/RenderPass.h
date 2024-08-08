@@ -16,7 +16,3 @@ namespace Elaina
 		virtual void onWindowSizeChangeV(int vWidth, int vHeight) {}
 	};
 }
-
-
-//pFrameBuffer->bind();
-//GL_SAFE_CALL(glViewport(0, 0, pFrameBuffer->getWidth(), pFrameBuffer->getHeight()));

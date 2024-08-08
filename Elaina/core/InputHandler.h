@@ -7,13 +7,13 @@ namespace Elaina
 	public:
 		virtual ~CInputHandler() = default;
 
-		virtual void onWindowSizeChange(int vWidth, int vHeight) {}
-		virtual void onKeyDown(int vKey) {}
-		virtual void onKeyUp(int vKey) {}
-		virtual void onMouseButtonDown(int vKey) {}
-		virtual void onMouseButtonUp(int vKey) {}
-		virtual void onMouseMove(float vPosX, float vPosY) {}
-		virtual void onMouseScroll(float vOffsetX, float vOffsetY) {}
+		virtual void onWindowSizeChangeV(int vWidth, int vHeight) {}
+		virtual void onKeyDownV(int vKey) {}
+		virtual void onKeyUpV(int vKey) {}
+		virtual void onMouseButtonDownV(int vKey) {}
+		virtual void onMouseButtonUpV(int vKey) {}
+		virtual void onMouseMoveV(float vPosX, float vPosY) {}
+		virtual void onMouseScrollV(float vOffsetX, float vOffsetY) {}
 	};
 
 	constexpr auto HIVE_MOUSE_BUTTON_LEFT = 0;

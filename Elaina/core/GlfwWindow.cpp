@@ -11,7 +11,7 @@ void Elaina::CGlfwWindow::__windowSizeChangeCallback(GLFWwindow* vWindow, int vW
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
-		pInputHandler->onWindowSizeChange(vWidth, vHeight);
+		pInputHandler->onWindowSizeChangeV(vWidth, vHeight);
 	}
 }
 
@@ -22,8 +22,8 @@ void Elaina::CGlfwWindow::__mouseButtonCallback(GLFWwindow* vWindow, int vButton
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
-		if (vAction == GLFW_PRESS) pInputHandler->onMouseButtonDown(vButton);
-		else if (vAction == GLFW_RELEASE) pInputHandler->onMouseButtonUp(vButton);
+		if (vAction == GLFW_PRESS) pInputHandler->onMouseButtonDownV(vButton);
+		else if (vAction == GLFW_RELEASE) pInputHandler->onMouseButtonUpV(vButton);
 	}
 }
 
@@ -34,7 +34,7 @@ void Elaina::CGlfwWindow::__mouseScrollCallback(GLFWwindow* vWindow, double vXof
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
-		pInputHandler->onMouseScroll((float)vXoffset, (float)vYoffset);
+		pInputHandler->onMouseScrollV((float)vXoffset, (float)vYoffset);
 	}
 }
 
@@ -45,7 +45,7 @@ void Elaina::CGlfwWindow::__mouseMoveCallback(GLFWwindow* vWindow, double vXpos,
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
-		pInputHandler->onMouseMove((float)vXpos, (float)vYpos);
+		pInputHandler->onMouseMoveV((float)vXpos, (float)vYpos);
 	}
 }
 
@@ -56,8 +56,8 @@ void Elaina::CGlfwWindow::__keyCallback(GLFWwindow* vWindow, int vKey, int vScan
 	for (const auto& pInputHandler : pApp->m_InputHandlers)
 	{
 		if (pInputHandler == nullptr) continue;
-		if (vAction == GLFW_PRESS) pInputHandler->onKeyDown(vKey);
-		else if (vAction == GLFW_RELEASE) pInputHandler->onKeyUp(vKey);
+		if (vAction == GLFW_PRESS) pInputHandler->onKeyDownV(vKey);
+		else if (vAction == GLFW_RELEASE) pInputHandler->onKeyUpV(vKey);
 	}
 }
 

@@ -8,11 +8,10 @@ namespace Elaina
 	class CVertexArrayObject;
 	class CFrameBuffer;
 	class CShaderProgram;
-	class CDeferVisLightPass final : public CRenderPass
+	class CVisLightPass final : public CRenderPass
 	{
 	public:
-		CDeferVisLightPass();
-		~CDeferVisLightPass() override;
+		CVisLightPass();
 
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
 		void setLitFrameBuffer(const std::shared_ptr<CFrameBuffer>& vFrameBuffer) { m_pLitFrameBuffer = vFrameBuffer; }

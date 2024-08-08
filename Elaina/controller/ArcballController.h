@@ -9,10 +9,10 @@ namespace Elaina
 	public:
 		CArcballController();
 		void control(const std::shared_ptr<CCamera>& vCamera) override;
-		void onMouseButtonDown(int vKey) override;
-		void onMouseButtonUp(int vKey) override;
-		void onMouseMove(float vPosX, float vPosY) override;
-		void onMouseScroll(float vOffsetX, float vOffsetY) override;
+		void onMouseButtonDownV(int vKey) override;
+		void onMouseButtonUpV(int vKey) override;
+		void onMouseMoveV(float vPosX, float vPosY) override;
+		void onMouseScrollV(float vOffsetX, float vOffsetY) override;
 	
 	private:
 		void __updateCamera();

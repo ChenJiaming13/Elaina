@@ -13,7 +13,7 @@ namespace Elaina
 		virtual void init() {}
 		virtual void control(const std::shared_ptr<CCamera>& vCamera) { m_pCamera = vCamera; }
 		virtual void update(float vDeltaTime) {}
-		void onWindowSizeChange(int vWidth, int vHeight) override { m_pCamera->setViewport(vWidth, vHeight); }
+		void onWindowSizeChangeV(int vWidth, int vHeight) override { m_pCamera->setViewport(vWidth, vHeight); }
 
 	protected:
 		std::shared_ptr<CCamera> m_pCamera;

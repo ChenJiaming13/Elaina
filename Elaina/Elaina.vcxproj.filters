@@ -111,7 +111,7 @@
     <ClInclude Include="base\TextureCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="renderpass\DeferredSkyBoxPass.h">
+    <ClInclude Include="renderpass\SkyBoxPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ui\ImGui.h">
@@ -126,7 +126,7 @@
     <ClInclude Include="renderpass\PointShadowMapPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="renderpass\DeferVisLightPass.h">
+    <ClInclude Include="renderpass\VisLightPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\AssetsPath.h">
@@ -212,7 +212,7 @@
     <ClCompile Include="base\TextureCube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderpass\DeferredSkyBoxPass.cpp">
+    <ClCompile Include="renderpass\SkyBoxPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ui\ImGui.cpp">
@@ -227,7 +227,7 @@
     <ClCompile Include="renderpass\PointShadowMapPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderpass\DeferVisLightPass.cpp">
+    <ClCompile Include="renderpass\VisLightPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="renderpass\WaterLitPass.cpp">

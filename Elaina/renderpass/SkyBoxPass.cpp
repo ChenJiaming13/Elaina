@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DeferredSkyboxPass.h"
+#include "SkyboxPass.h"
 #include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
 #include "base/VertexArrayObject.h"
@@ -10,11 +10,11 @@
 #include "safe.h"
 #include "utils/AssetsPath.h"
 
-Elaina::CDeferredSkyBoxPass::CDeferredSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles) :
+Elaina::CSkyBoxPass::CSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles, bool vIsDeferred) :
 	m_pCubeMap(nullptr),
 	m_pSkyBoxVAO(CPrimitive::createSkyBox()), m_pShaderProgram(CShaderProgram::createShaderProgram(
 		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.vert",
-		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.frag"))
+		CAssetsPath::getAssetsPath() + "shaders\\deferSkyBox.frag")), m_IsDeferred(vIsDeferred)
 {
 	m_pCubeMap = std::make_shared<CTextureCube>(vCubeMapFiles);
 	m_pCubeMap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -24,19 +24,21 @@ Elaina::CDeferredSkyBoxPass::CDeferredSkyBoxPass(const std::array<std::string, 6
 	m_pCubeMap->setParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void Elaina::CDeferredSkyBoxPass::renderV(const std::shared_ptr<CScene>& vScene)
+void Elaina::CSkyBoxPass::renderV(const std::shared_ptr<CScene>& vScene)
 {
-	// copy depth buffer
-	m_pGeoFrameBuffer->bind(GL_READ_FRAMEBUFFER);
-	m_pLitFrameBuffer->bind(GL_DRAW_FRAMEBUFFER);
-	GL_SAFE_CALL(glBlitFramebuffer(
-		0, 0, m_pGeoFrameBuffer->getWidth(), m_pGeoFrameBuffer->getHeight(),
-		0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight(),
-		GL_DEPTH_BUFFER_BIT, GL_NEAREST
-	));
-	m_pGeoFrameBuffer->unbind(GL_READ_FRAMEBUFFER);
-	m_pLitFrameBuffer->unbind(GL_DRAW_FRAMEBUFFER);
-	
+	if (m_IsDeferred)
+	{
+		// copy depth buffer
+		m_pGeoFrameBuffer->bind(GL_READ_FRAMEBUFFER);
+		m_pLitFrameBuffer->bind(GL_DRAW_FRAMEBUFFER);
+		GL_SAFE_CALL(glBlitFramebuffer(
+			0, 0, m_pGeoFrameBuffer->getWidth(), m_pGeoFrameBuffer->getHeight(),
+			0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight(),
+			GL_DEPTH_BUFFER_BIT, GL_NEAREST
+		));
+		m_pGeoFrameBuffer->unbind(GL_READ_FRAMEBUFFER);
+		m_pLitFrameBuffer->unbind(GL_DRAW_FRAMEBUFFER);
+	}
 	// render skybox
 	m_pLitFrameBuffer->bind();
 	GL_SAFE_CALL(glViewport(0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight()));
