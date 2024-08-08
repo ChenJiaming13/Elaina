@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "WaterLitPass.h"
+#include "WaterPass.h"
 #include "safe.h"
 #include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
@@ -10,12 +10,12 @@
 #include "core/Scene.h"
 #include "utils/AssetsPath.h"
 
-Elaina::CWaterLitPass::CWaterLitPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
+Elaina::CWaterPass::CWaterPass() :m_pShaderProgram(CShaderProgram::createShaderProgram(
 	CAssetsPath::getAssetsPath() + "shaders/forwardWater.vert",
 	CAssetsPath::getAssetsPath() + "shaders/forwardWater.frag"
 )) {}
 
-void Elaina::CWaterLitPass::renderV(const std::shared_ptr<CScene>& vScene)
+void Elaina::CWaterPass::renderV(const std::shared_ptr<CScene>& vScene)
 {
 	m_pLitFrameBuffer->bind();
 	GL_SAFE_CALL(glViewport(0, 0, m_pLitFrameBuffer->getWidth(), m_pLitFrameBuffer->getHeight()));
@@ -36,7 +36,7 @@ void Elaina::CWaterLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	});
 }
 
-bool Elaina::CWaterLitPass::validateV() const
+bool Elaina::CWaterPass::validateV() const
 {
 	if (m_pLitFrameBuffer == nullptr)
 	{

@@ -6,6 +6,7 @@
 #include "core/Mesh.h"
 #include "core/Node.h"
 #include "core/Scene.h"
+#include "core/Material.h"
 #include "light/Light.h"
 #include "utils/AssetsPath.h"
 #include "utils/FrameBufferHelper.h"
@@ -42,6 +43,9 @@ void Elaina::CPointShadowMapPass::renderV(const std::shared_ptr<CScene>& vScene)
 		m_pShaderProgram->setUniform("uModel", vNode->getModelMatrix());
 		for (const auto& pMesh : vNode->getMeshes())
 		{
+			if (pMesh->getMaterial()->getMaterialType() == EMaterialType::UNKNOWN ||
+				pMesh->getMaterial()->getMaterialType() == EMaterialType::WATER)
+				continue;
 			pMesh->draw();
 		}
 	});

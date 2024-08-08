@@ -146,7 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="renderpass\WaterReflectPass.h" />
     <ClInclude Include="utils\AssetsPath.h" />
     <ClInclude Include="base\Framebuffer.h" />
     <ClInclude Include="base\RenderBuffer.h" />
@@ -186,7 +185,7 @@
     <ClInclude Include="safe.h" />
     <ClInclude Include="core\Scene.h" />
     <ClInclude Include="base\TextureCube.h" />
-    <ClInclude Include="renderpass\WaterLitPass.h" />
+    <ClInclude Include="renderpass\WaterPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\Framebuffer.cpp" />
@@ -206,7 +205,6 @@
     <ClCompile Include="light\Light.cpp" />
     <ClCompile Include="renderpass\VisLightPass.cpp" />
     <ClCompile Include="renderpass\PointShadowMapPass.cpp" />
-    <ClCompile Include="renderpass\WaterReflectPass.cpp" />
     <ClCompile Include="utils\FrameBufferHelper.cpp" />
     <ClCompile Include="ui\ImGui.cpp" />
     <ClCompile Include="renderpass\SkyBoxPass.cpp" />
@@ -226,7 +224,7 @@
     <ClCompile Include="primitive\Primitive.cpp" />
     <ClCompile Include="core\Scene.cpp" />
     <ClCompile Include="base\TextureCube.cpp" />
-    <ClCompile Include="renderpass\WaterLitPass.cpp" />
+    <ClCompile Include="renderpass\WaterPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vendor\glad\glad.vcxproj">
