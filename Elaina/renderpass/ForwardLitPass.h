@@ -16,6 +16,8 @@ namespace Elaina
 		void onWindowSizeChangeV(int vWidth, int vHeight) override;
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
 		[[nodiscard]] const auto& getFrameBuffer() const { return m_pFrameBuffer; }
+		void setEnableClipPlane(bool vEnableClipPlane) { m_EnableClipPlane = vEnableClipPlane; }
+		void setClipPlane(const glm::vec4& vClipPlane) { m_ClipPlane = vClipPlane; }
 
 	private:
 		std::shared_ptr<CFrameBuffer> m_pFrameBuffer;
@@ -23,5 +25,7 @@ namespace Elaina
 		std::shared_ptr<CShaderProgram> m_pShaderProgramPhong;
 		std::shared_ptr<CShaderProgram> m_pShaderProgramChecker;
 		bool m_IsFinalPass;
+		bool m_EnableClipPlane = false;
+		glm::vec4 m_ClipPlane;
 	};
 }

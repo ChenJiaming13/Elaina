@@ -57,6 +57,8 @@ void Elaina::CForwardLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	GL_SAFE_CALL(glEnable(GL_DEPTH_TEST));
 	GL_SAFE_CALL(glClearColor(SolidColor.x, SolidColor.y, SolidColor.z, SolidColor.w));
 	GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	if (m_EnableClipPlane) GL_SAFE_CALL(glEnable(GL_CLIP_DISTANCE0));
+	else GL_SAFE_CALL(glDisable(GL_CLIP_DISTANCE0));
 	
 	m_pShaderProgramPBR->use();
 	m_pShaderProgramPBR->setUniform("uView", pCamera->getViewMatrix());
@@ -64,6 +66,11 @@ void Elaina::CForwardLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	m_pShaderProgramPBR->setUniform("uCamPos", pCamera->getWorldPos());
 	m_pShaderProgramPBR->setUniform("uLightDir", pDirLight->_LightDir);
 	m_pShaderProgramPBR->setUniform("uLightColor", pDirLight->_LightColor * pDirLight->_LightIntensity);
+	m_pShaderProgramPBR->setUniform("uEnableClipPlane", m_EnableClipPlane);
+	if (m_EnableClipPlane)
+	{
+		m_pShaderProgramPBR->setUniform("uClipPlane", m_ClipPlane);
+	}
 	
 	CNode::traverse(vScene->getRootNode(), [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		m_pShaderProgramPBR->setUniform("uModel", vNode->getModelMatrix());
@@ -86,6 +93,11 @@ void Elaina::CForwardLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	m_pShaderProgramPhong->setUniform("uViewPos", pCamera->getWorldPos());
 	m_pShaderProgramPhong->setUniform("uLightDir", pDirLight->_LightDir);
 	m_pShaderProgramPhong->setUniform("uLightColor", pDirLight->_LightColor);
+	m_pShaderProgramPhong->setUniform("uEnableClipPlane", m_EnableClipPlane);
+	if (m_EnableClipPlane)
+	{
+		m_pShaderProgramPhong->setUniform("uClipPlane", m_ClipPlane);
+	}
 
 	CNode::traverse(vScene->getRootNode(), [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		m_pShaderProgramPhong->setUniform("uModel", vNode->getModelMatrix());
@@ -105,6 +117,11 @@ void Elaina::CForwardLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	m_pShaderProgramChecker->use();
 	m_pShaderProgramChecker->setUniform("uView", pCamera->getViewMatrix());
 	m_pShaderProgramChecker->setUniform("uProjection", pCamera->getProjectionMatrix());
+	m_pShaderProgramChecker->setUniform("uEnableClipPlane", m_EnableClipPlane);
+	if (m_EnableClipPlane)
+	{
+		m_pShaderProgramChecker->setUniform("uClipPlane", m_ClipPlane);
+	}
 
 	CNode::traverse(vScene->getRootNode(), [&](const std::shared_ptr<Elaina::CNode>& vNode) {
 		m_pShaderProgramChecker->setUniform("uModel", vNode->getModelMatrix());

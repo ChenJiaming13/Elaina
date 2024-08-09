@@ -5,7 +5,10 @@ uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
 
+out vec4 vClipPos;
+
 void main()
 {
-    gl_Position = uProjection * uView * uModel * vec4(iPos, 1.0);
+    vClipPos = uProjection * uView * uModel * vec4(iPos, 1.0);
+    gl_Position = vClipPos;
 }

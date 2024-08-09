@@ -1,13 +1,11 @@
 #include "pch.h"
 #include "Sandbox.h"
-#include "base/Framebuffer.h"
 #include "core/Material.h"
 #include "core/Mesh.h"
 #include "core/Node.h"
 #include "core/RenderPipeline.h"
 #include "core/Scene.h"
 #include "light/Light.h"
-#include "loader/ModelLoader.h"
 #include "primitive/Primitive.h"
 #include "renderpass/DeferredGeoPass.h"
 #include "renderpass/DeferredLitPass.h"
@@ -16,7 +14,7 @@
 #include "renderpass/DirShadowMapPass.h"
 #include "renderpass/ForwardLitPass.h"
 #include "renderpass/PointShadowMapPass.h"
-#include "renderpass/WaterPass.h"
+#include "renderpass/WaterLitPass.h"
 #include "utils/AssetsPath.h"
 
 void CSandbox::init(int vWidth, int vHeight)
@@ -30,8 +28,8 @@ void CSandbox::init(int vWidth, int vHeight)
 		Elaina::CAssetsPath::getAssetsPath() + "skybox\\back.jpg"
 	};
 	__setupScene(vWidth, vHeight);
-	__setupDeferredRenderPipeline(vWidth, vHeight);
-	//__setupForwardRenderPipeline(vWidth, vHeight);
+	//__setupDeferredRenderPipeline(vWidth, vHeight);
+	__setupForwardRenderPipeline(vWidth, vHeight);
 }
 
 void CSandbox::render(float vCurrTime, float vDeltaTime)
@@ -66,7 +64,7 @@ void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 	const auto& pDeferredGeoPass = std::make_shared<Elaina::CDeferredGeoPass>();
 	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles);
 	const auto& pVisLightPass = std::make_shared<Elaina::CVisLightPass>();
-	const auto& pWaterPass = std::make_shared<Elaina::CWaterPass>();
+	const auto& pWaterPass = std::make_shared<Elaina::CWaterLitPass>();
 
 	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	m_pRenderPipeline->addRenderPass(m_pDirShadowMapPass);
@@ -91,22 +89,76 @@ void CSandbox::__setupDeferredRenderPipeline(int vWidth, int vHeight)
 void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 {
 	m_IsDeferredPipeline = false;
-	const auto& pForwardLitPass = std::make_shared<Elaina::CForwardLitPass>(true);
+	const auto& pForwardLitPass1 = std::make_shared<Elaina::CForwardLitPass>(false);
+	const auto& pForwardLitPass2 = std::make_shared<Elaina::CForwardLitPass>(false);
+	const auto& pForwardLitPass3 = std::make_shared<Elaina::CForwardLitPass>(true);
 	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles);
 	const auto& pVisLightPass = std::make_shared<Elaina::CVisLightPass>();
-	const auto& pWaterPass = std::make_shared<Elaina::CWaterPass>();
+	const auto& pWaterPass = std::make_shared<Elaina::CWaterLitPass>();
 	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
-	m_pRenderPipeline->addRenderPass(pForwardLitPass);
+	static float Distance;
+	m_pRenderPipeline->addRenderPass(pForwardLitPass1,
+		[=, this](const std::shared_ptr<Elaina::CScene>& vScene)
+		{
+			const auto& pCamera = vScene->getCamera();
+			glm::vec3 Front = pCamera->getFront();
+			Front.y = -Front.y;
+			pCamera->setFront(Front);
+
+			glm::vec3 CamPos = pCamera->getWorldPos();
+			Distance = 2.0f * (CamPos.y - m_WaterPlaneHeight);
+			CamPos.y -= Distance;
+			pCamera->setWorldPos(CamPos);
+
+			pSkyBoxPass->setLitFrameBuffer(pForwardLitPass1->getFrameBuffer());
+			pVisLightPass->setLitFrameBuffer(pForwardLitPass1->getFrameBuffer());
+		},
+		nullptr
+	);
+	m_pRenderPipeline->addRenderPass(pSkyBoxPass);
+	m_pRenderPipeline->addRenderPass(pVisLightPass);
+	m_pRenderPipeline->addRenderPass(pForwardLitPass2,
+		[=, this](const std::shared_ptr<Elaina::CScene>& vScene)
+		{
+			const auto& pCamera = vScene->getCamera();
+			glm::vec3 Front = pCamera->getFront();
+			Front.y = -Front.y;
+			pCamera->setFront(Front);
+
+			glm::vec3 CamPos = pCamera->getWorldPos();
+			CamPos.y += Distance;
+			pCamera->setWorldPos(CamPos);
+
+			pSkyBoxPass->setLitFrameBuffer(pForwardLitPass2->getFrameBuffer());
+			pVisLightPass->setLitFrameBuffer(pForwardLitPass2->getFrameBuffer());
+		},
+		nullptr
+	);
+	m_pRenderPipeline->addRenderPass(pSkyBoxPass);
+	m_pRenderPipeline->addRenderPass(pVisLightPass);
+	m_pRenderPipeline->addRenderPass(pForwardLitPass3,
+		nullptr,
+		[=](const std::shared_ptr<Elaina::CScene>& vScene)
+		{
+			pSkyBoxPass->setLitFrameBuffer(pForwardLitPass3->getFrameBuffer());
+			pVisLightPass->setLitFrameBuffer(pForwardLitPass3->getFrameBuffer());
+		}
+	);
 	m_pRenderPipeline->addRenderPass(pSkyBoxPass);
 	m_pRenderPipeline->addRenderPass(pVisLightPass);
 	m_pRenderPipeline->addRenderPass(pWaterPass);
 	m_pRenderPipeline->init(vWidth, vHeight);
 
-	pSkyBoxPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
-	pVisLightPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
-	pWaterPass->setLitFrameBuffer(pForwardLitPass->getFrameBuffer());
+	pForwardLitPass1->setEnableClipPlane(true);
+	pForwardLitPass1->setClipPlane(pWaterPass->getReflectClipPlane());
+	pForwardLitPass2->setEnableClipPlane(true);
+	pForwardLitPass2->setClipPlane(pWaterPass->getRefractClipPlane());
+	pForwardLitPass3->setEnableClipPlane(false);
+	pWaterPass->setLitFrameBuffer(pForwardLitPass3->getFrameBuffer());
+	pWaterPass->setReflectFrameBuffer(pForwardLitPass1->getFrameBuffer());
+	pWaterPass->setRefractFrameBuffer(pForwardLitPass2->getFrameBuffer());
 
-	m_pRenderPipeline->validate();
+	//m_pRenderPipeline->validate();
 }
 
 void CSandbox::__setupMaterials()
@@ -130,8 +182,6 @@ void CSandbox::__setupMaterials()
 	m_pPhongMat->_Glossy = 64.0f;
 
 	m_pCheckerMat = std::make_shared<Elaina::SCheckerMaterial>();
-
-	m_pWaterMat = std::make_shared<Elaina::SWaterMaterial>();
 }
 
 void CSandbox::__setupCamera(int vWidth, int vHeight)
@@ -163,25 +213,20 @@ void CSandbox::__setupNodes()
 {
 	const auto& pHorizontalPlaneNode = __createNode(Elaina::CPrimitive::createPlane());
 	const auto& pVerticalPlaneNode = __createNode(Elaina::CPrimitive::createPlane());
-	const auto& pWaterPlaneNode = __createNode(Elaina::CPrimitive::createPlane());
 	const auto& pCubeNode = __createNode(Elaina::CPrimitive::createCube());
 	pHorizontalPlaneNode->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
 	pHorizontalPlaneNode->setPosition(glm::vec3(0.0f, -5.0f, 0.0f));
 	pVerticalPlaneNode->setScale(glm::vec3(10.0f, 1.0f, 10.0f));
 	pVerticalPlaneNode->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 	pVerticalPlaneNode->setRotation(glm::vec3(90.0f, 0.0f, 0.0f));
-	pWaterPlaneNode->setScale(glm::vec3(8.0f, 1.0f, 8.0f));
-	pWaterPlaneNode->setPosition(glm::vec3(0.0f, -3.0f, 0.0f));
 	pCubeNode->setPosition(glm::vec3(0.0f, -4.0f, 0.0f));
-	__setMaterial(pHorizontalPlaneNode, m_pPlaneMat);
+	__setMaterial(pHorizontalPlaneNode, m_pCheckerMat);
 	__setMaterial(pVerticalPlaneNode, m_pPlaneMat);
 	__setMaterial(pCubeNode, m_pObjMat);
-	__setMaterial(pWaterPlaneNode, m_pWaterMat);
 	const auto& pRootNode = std::make_shared<Elaina::CNode>();
 	m_pObjNode = std::make_shared<Elaina::CNode>();
 	pRootNode->addChild(pHorizontalPlaneNode);
 	pRootNode->addChild(pVerticalPlaneNode);
-	pRootNode->addChild(pWaterPlaneNode);
 	pRootNode->addChild(pCubeNode);
 	pRootNode->addChild(m_pObjNode);
 
@@ -189,7 +234,7 @@ void CSandbox::__setupNodes()
 		__createNode(Elaina::CPrimitive::createTorus()),
 		__createNode(Elaina::CPrimitive::createCube()),
 		__createNode(Elaina::CPrimitive::createSphere()),
-		Elaina::CModelLoader::loadGltfFile(Elaina::CAssetsPath::getAssetsPath() + "trimesh/dragon.gltf")
+		//Elaina::CModelLoader::loadGltfFile(Elaina::CAssetsPath::getAssetsPath() + "trimesh/dragon.gltf")
 	};
 	for (const auto& pNode : m_pNodes) __setMaterial(pNode, m_pObjMat);
 	m_pScene->setRootNode(pRootNode);

@@ -129,7 +129,7 @@
     <ClInclude Include="utils\AssetsPath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="renderpass\WaterPass.h">
+    <ClInclude Include="renderpass\WaterLitPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -221,7 +221,7 @@
     <ClCompile Include="renderpass\VisLightPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderpass\WaterPass.cpp">
+    <ClCompile Include="renderpass\WaterLitPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="light\Light.cpp">

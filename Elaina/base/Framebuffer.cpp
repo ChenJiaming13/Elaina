@@ -79,6 +79,11 @@ void Elaina::CFrameBuffer::setAttachment(GLenum vAttachmentType, const std::shar
 
 const std::shared_ptr<Elaina::CTexture>& Elaina::CFrameBuffer::getAttachment(GLenum vAttachmentType)
 {
+	if (m_FrameBufferID == getDefaultFrameBuffer()->m_FrameBufferID)
+	{
+		spdlog::error("cannot get attachment from default framebuffer");
+		throw std::runtime_error("get attachment failed");
+	}
 	return m_TexturesMap[vAttachmentType];
 }
 
