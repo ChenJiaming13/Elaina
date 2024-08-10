@@ -30,5 +30,6 @@ namespace Elaina
 		std::shared_ptr<CTexture2D> m_pDuDvMap;
 		glm::mat4 m_ModelMatrix;
 		float m_WaterHeight;
+		float m_MoveSpeed = 0.03f;
 	};
 }
