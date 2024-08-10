@@ -262,46 +262,52 @@ void CSandbox::__renderUI()
 	if (ImGui::CollapsingHeader("Directional Light"))
 	{
 		ImGui::PushID(ID++);
-		static int DirShadowMapSize[] = { 0, 0 };
-		m_pDirShadowMapPass->getShadowMapSize(DirShadowMapSize[0], DirShadowMapSize[1]);
 		ImGui::ColorEdit3("Light Color", &m_pScene->getDirectionalLight()->_LightColor.x);
 		ImGui::DragFloat("Light Intensity", &m_pScene->getDirectionalLight()->_LightIntensity, 0.01f);
 		ImGui::DragFloat3("Light Direction", &m_pScene->getDirectionalLight()->_LightDir.x, 0.01f);
 		ImGui::DragFloat3("Light Position", &m_pScene->getDirectionalLight()->_LightPos.x, 0.01f);
-		if (ImGui::DragInt2("Shadow Map Size", DirShadowMapSize, 5.0f))
+		if (m_IsDeferredPipeline)
 		{
-			if (DirShadowMapSize[0] > 0 && DirShadowMapSize[1] > 0)
+			static int DirShadowMapSize[] = { 0, 0 };
+			m_pDirShadowMapPass->getShadowMapSize(DirShadowMapSize[0], DirShadowMapSize[1]);
+			if (ImGui::DragInt2("Shadow Map Size", DirShadowMapSize, 5.0f))
 			{
-				m_pDirShadowMapPass->setShadowMapSize(DirShadowMapSize[0], DirShadowMapSize[1]);
+				if (DirShadowMapSize[0] > 0 && DirShadowMapSize[1] > 0)
+				{
+					m_pDirShadowMapPass->setShadowMapSize(DirShadowMapSize[0], DirShadowMapSize[1]);
+				}
 			}
-		}
-		static bool EnablePCF;
-		static int HalfPCFSize;
-		EnablePCF = m_pDeferredLitPass->getEnablePCF();
-		HalfPCFSize = m_pDeferredLitPass->getHalfSizePCF();
-		if (ImGui::Checkbox("Enable PCF", &EnablePCF))
-		{
-			m_pDeferredLitPass->setEnablePCF(EnablePCF);
-		}
-		if (ImGui::DragInt("Half PCF Size", &HalfPCFSize, 1, 0, 5))
-		{
-			m_pDeferredLitPass->setHalfSizePCF(HalfPCFSize);
+			static bool EnablePCF;
+			static int HalfPCFSize;
+			EnablePCF = m_pDeferredLitPass->getEnablePCF();
+			HalfPCFSize = m_pDeferredLitPass->getHalfSizePCF();
+			if (ImGui::Checkbox("Enable PCF", &EnablePCF))
+			{
+				m_pDeferredLitPass->setEnablePCF(EnablePCF);
+			}
+			if (ImGui::DragInt("Half PCF Size", &HalfPCFSize, 1, 0, 5))
+			{
+				m_pDeferredLitPass->setHalfSizePCF(HalfPCFSize);
+			}
 		}
 		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Point Light"))
 	{
 		ImGui::PushID(ID++);
-		static int PointShadowMapSize = 0;
-		m_pPointShadowMapPass->getShadowMapSize(PointShadowMapSize, PointShadowMapSize);
 		ImGui::ColorEdit3("Light Color", &m_pScene->getPointLight()->_LightColor.x);
 		ImGui::DragFloat("Light Intensity", &m_pScene->getPointLight()->_LightIntensity, 0.01f);
 		ImGui::DragFloat3("Light Position", &m_pScene->getPointLight()->_LightPos.x, 0.01f);
-		if (ImGui::DragInt("Shadow Map Size", &PointShadowMapSize, 5.0f))
+		if (m_IsDeferredPipeline)
 		{
-			if (PointShadowMapSize > 0)
+			static int PointShadowMapSize = 0;
+			m_pPointShadowMapPass->getShadowMapSize(PointShadowMapSize, PointShadowMapSize);
+			if (ImGui::DragInt("Shadow Map Size", &PointShadowMapSize, 5.0f))
 			{
-				m_pPointShadowMapPass->setShadowMapSize(PointShadowMapSize, PointShadowMapSize);
+				if (PointShadowMapSize > 0)
+				{
+					m_pPointShadowMapPass->setShadowMapSize(PointShadowMapSize, PointShadowMapSize);
+				}
 			}
 		}
 		ImGui::PopID();

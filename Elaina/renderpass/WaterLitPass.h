@@ -6,6 +6,7 @@ namespace Elaina
 	class CShaderProgram;
 	class CFrameBuffer;
 	class CVertexArrayObject;
+	class CTexture2D;
 	class CWaterLitPass final : public CRenderPass
 	{
 	public:
@@ -26,6 +27,7 @@ namespace Elaina
 		std::shared_ptr<CFrameBuffer> m_pReflectFrameBuffer;
 		std::shared_ptr<CFrameBuffer> m_pRefractFrameBuffer;
 		std::shared_ptr<CVertexArrayObject> m_pWaterPlaneVAO;
+		std::shared_ptr<CTexture2D> m_pDuDvMap;
 		glm::mat4 m_ModelMatrix;
 		float m_WaterHeight;
 	};
