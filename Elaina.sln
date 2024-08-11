@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinygltf", "vendor\tinygltf\tinygltf.vcxproj", "{85292B36-F86A-41F7-803B-A413690B8AB0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SurfaceSplatting", "SurfaceSplatting\SurfaceSplatting.vcxproj", "{3A52F96D-7A76-4FB4-855E-BFA41AED8188}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +55,10 @@ Global
 		{85292B36-F86A-41F7-803B-A413690B8AB0}.Debug|x64.Build.0 = Debug|x64
 		{85292B36-F86A-41F7-803B-A413690B8AB0}.Release|x64.ActiveCfg = Release|x64
 		{85292B36-F86A-41F7-803B-A413690B8AB0}.Release|x64.Build.0 = Release|x64
+		{3A52F96D-7A76-4FB4-855E-BFA41AED8188}.Debug|x64.ActiveCfg = Debug|x64
+		{3A52F96D-7A76-4FB4-855E-BFA41AED8188}.Debug|x64.Build.0 = Debug|x64
+		{3A52F96D-7A76-4FB4-855E-BFA41AED8188}.Release|x64.ActiveCfg = Release|x64
+		{3A52F96D-7A76-4FB4-855E-BFA41AED8188}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
