@@ -11,6 +11,7 @@ uniform vec3 uCamPos;
 uniform mat4 uView;
 uniform mat4 uProjection;
 uniform float uRadiusScale;
+uniform float uForwardFactor;
 
 out vec2 vUv;
 out vec3 vNormal;
@@ -52,7 +53,7 @@ void main()
 	if (uDepthPrepass)
     {
 		vec3 ViewDir = normalize(WorldPos - uCamPos);
-		WorldPos += ViewDir * ScaledRadius * 0.5; // why?
+		WorldPos += ViewDir * ScaledRadius * uForwardFactor; // why?
 	}
 	gl_Position = uProjection * uView * vec4(WorldPos, 1.0);
 }
