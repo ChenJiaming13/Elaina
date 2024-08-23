@@ -94,7 +94,7 @@ void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 	const auto& pForwardLitPass3 = std::make_shared<Elaina::CForwardLitPass>(true);
 	const auto& pSkyBoxPass = std::make_shared<Elaina::CSkyBoxPass>(m_SkyBoxFiles);
 	const auto& pVisLightPass = std::make_shared<Elaina::CVisLightPass>();
-	const auto& pWaterPass = std::make_shared<Elaina::CWaterLitPass>();
+	m_pWaterPass = std::make_shared<Elaina::CWaterLitPass>();
 	m_pRenderPipeline = std::make_shared<Elaina::CRenderPipeline>();
 	static float Distance;
 	m_pRenderPipeline->addRenderPass(pForwardLitPass1,
@@ -146,17 +146,17 @@ void CSandbox::__setupForwardRenderPipeline(int vWidth, int vHeight)
 	);
 	m_pRenderPipeline->addRenderPass(pSkyBoxPass);
 	m_pRenderPipeline->addRenderPass(pVisLightPass);
-	m_pRenderPipeline->addRenderPass(pWaterPass);
+	m_pRenderPipeline->addRenderPass(m_pWaterPass);
 	m_pRenderPipeline->init(vWidth, vHeight);
 
 	pForwardLitPass1->setEnableClipPlane(true);
-	pForwardLitPass1->setClipPlane(pWaterPass->getReflectClipPlane());
+	pForwardLitPass1->setClipPlane(m_pWaterPass->getReflectClipPlane());
 	pForwardLitPass2->setEnableClipPlane(true);
-	pForwardLitPass2->setClipPlane(pWaterPass->getRefractClipPlane());
+	pForwardLitPass2->setClipPlane(m_pWaterPass->getRefractClipPlane());
 	pForwardLitPass3->setEnableClipPlane(false);
-	pWaterPass->setLitFrameBuffer(pForwardLitPass3->getFrameBuffer());
-	pWaterPass->setReflectFrameBuffer(pForwardLitPass1->getFrameBuffer());
-	pWaterPass->setRefractFrameBuffer(pForwardLitPass2->getFrameBuffer());
+	m_pWaterPass->setLitFrameBuffer(pForwardLitPass3->getFrameBuffer());
+	m_pWaterPass->setReflectFrameBuffer(pForwardLitPass1->getFrameBuffer());
+	m_pWaterPass->setRefractFrameBuffer(pForwardLitPass2->getFrameBuffer());
 
 	//m_pRenderPipeline->validate();
 }
@@ -350,6 +350,13 @@ void CSandbox::__renderUI()
 		ImGui::ColorEdit3("SecondaryColor", &m_pCheckerMat->_SecondaryColor.x);
 		ImGui::DragFloat("Scale", &m_pCheckerMat->_Scale, 0.1f, 0.0f, 10.0f);
 		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Water"))
+	{
+		ImGui::DragFloat("Move Speed", &m_pWaterPass->_MoveSpeed, 0.001f, 0.0f, 10.0f);
+		ImGui::DragFloat("Tilling", &m_pWaterPass->_Tilling, 0.001f, 0.0f, 10.0f);
+		ImGui::DragFloat("Wave Length", &m_pWaterPass->_WaveLength, 0.001f, 0.0f, 10.0f);
+		ImGui::ColorEdit3("Water Color", &m_pWaterPass->_WaterColor.x);
 	}
 	ImGui::End();
 }

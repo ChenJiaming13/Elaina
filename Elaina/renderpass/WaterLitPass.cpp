@@ -51,16 +51,16 @@ void Elaina::CWaterLitPass::renderV(const std::shared_ptr<CScene>& vScene)
 	m_pShaderProgram->setUniform("uReflectTex", 0);
 	m_pShaderProgram->setUniform("uRefractTex", 1);
 	m_pShaderProgram->setUniform("uDuDvMap", 2);
-	m_pShaderProgram->setUniform("uTilling", 6.0f);
-	m_pShaderProgram->setUniform("uWaveLength", 0.02f);
-	m_pShaderProgram->setUniform("uWaterColor", glm::vec3(0.0f, 0.3f, 0.5f));
+	m_pShaderProgram->setUniform("uTilling", _Tilling);
+	m_pShaderProgram->setUniform("uWaveLength", _WaveLength);
+	m_pShaderProgram->setUniform("uWaterColor", _WaterColor);
 	m_pShaderProgram->setUniform("uCamPos", pCamera->getWorldPos());
 
 	static float CurrTime = 0.0f;
 	static float LastTime = 0.0f;
 	static float MoveFactor = 0.0f;
 	CurrTime = static_cast<float>(glfwGetTime());
-	MoveFactor += m_MoveSpeed * (CurrTime - LastTime);
+	MoveFactor += _MoveSpeed * (CurrTime - LastTime);
 	if (MoveFactor >= 1.0f) MoveFactor = 0.0f;
 	LastTime = CurrTime;
 	m_pShaderProgram->setUniform("uMoveFactor", MoveFactor);

@@ -10,6 +10,11 @@ namespace Elaina
 	class CWaterLitPass final : public CRenderPass
 	{
 	public:
+		float _MoveSpeed = 0.03f;
+		float _Tilling = 6.0f;
+		float _WaveLength = 0.02f;
+		glm::vec3 _WaterColor = glm::vec3(0.0f, 0.3f, 0.5f);
+
 		CWaterLitPass();
 
 		void renderV(const std::shared_ptr<CScene>& vScene) override;
@@ -30,6 +35,5 @@ namespace Elaina
 		std::shared_ptr<CTexture2D> m_pDuDvMap;
 		glm::mat4 m_ModelMatrix;
 		float m_WaterHeight;
-		float m_MoveSpeed = 0.03f;
 	};
 }

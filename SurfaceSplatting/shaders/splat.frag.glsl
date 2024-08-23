@@ -15,11 +15,11 @@ void main()
 {
 	float Len = length(vUv);
 	if (Len > 1.0)
-    {
+	{
 		discard;
 	}
 	if (!uDepthPrepass)
-    {
+	{
 		float Opacity = 1.0 / sqrt(2.0 * M_PI) * exp(-pow(Len * 2.5, 2.0)/2.0);
 		oColor = vec4(vColor * Opacity, Opacity);
 		// oColor = vec4(vColor, 1.0); // test

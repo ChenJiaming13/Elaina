@@ -2,8 +2,9 @@
 #include <array>
 #include <fstream>
 #include <iostream>
-#include "types.h"
+#include <glad/glad.h>
 #include "safe.h"
+#include "types.h"
 
 bool readBinFile(const std::string& vFileName, std::vector<char>& voBuffer)
 {
@@ -65,40 +66,24 @@ bool loadRsfFile(const std::string& vFileName, std::vector<SSurfel>& voSurfels)
 	return true;
 }
 
-GLuint createVAO(const std::vector<SSurfel>& vSurfels)
+void configSurfelVAOLayout(int vOffset, bool vIsPerInstance)
 {
-	constexpr float QuadVertices[] = {
-		-0.5, -0.5,
-		-0.5, 0.5,
-		0.5, -0.5,
-		0.5, 0.5
-	};
-	GLuint VAO, QuadVBO, SurfelsVBO;
-	GL_SAFE_CALL(glGenVertexArrays(1, &VAO));
-	GL_SAFE_CALL(glGenBuffers(1, &QuadVBO));
-	GL_SAFE_CALL(glGenBuffers(1, &SurfelsVBO));
-	GL_SAFE_CALL(glBindVertexArray(VAO));
+	GL_SAFE_CALL(glEnableVertexAttribArray(vOffset));
+	GL_SAFE_CALL(glVertexAttribPointer(vOffset, 3, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Position)));
+	if (vIsPerInstance) GL_SAFE_CALL(glVertexAttribDivisor(vOffset, 1));
+	vOffset++;
 
-	GL_SAFE_CALL(glBindBuffer(GL_ARRAY_BUFFER, QuadVBO));
-	GL_SAFE_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(QuadVertices), QuadVertices, GL_STATIC_DRAW));
-	GL_SAFE_CALL(glEnableVertexAttribArray(0));
-	GL_SAFE_CALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), static_cast<void*>(nullptr)));
+	GL_SAFE_CALL(glEnableVertexAttribArray(vOffset));
+	GL_SAFE_CALL(glVertexAttribPointer(vOffset, 3, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Normal)));
+	if (vIsPerInstance) GL_SAFE_CALL(glVertexAttribDivisor(vOffset, 1));
+	vOffset++;
 
-	GL_SAFE_CALL(glBindBuffer(GL_ARRAY_BUFFER, SurfelsVBO));
-	GL_SAFE_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(SSurfel) * vSurfels.size(), vSurfels.data(), GL_STATIC_DRAW));
-	GL_SAFE_CALL(glEnableVertexAttribArray(1));
-	GL_SAFE_CALL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Position)));
-	GL_SAFE_CALL(glVertexAttribDivisor(1, 1));
-	GL_SAFE_CALL(glEnableVertexAttribArray(2));
-	GL_SAFE_CALL(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Normal)));
-	GL_SAFE_CALL(glVertexAttribDivisor(2, 1));
-	GL_SAFE_CALL(glEnableVertexAttribArray(3));
-	GL_SAFE_CALL(glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Radius)));
-	GL_SAFE_CALL(glVertexAttribDivisor(3, 1));
-	GL_SAFE_CALL(glEnableVertexAttribArray(4));
-	GL_SAFE_CALL(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Color)));
-	GL_SAFE_CALL(glVertexAttribDivisor(4, 1));
+	GL_SAFE_CALL(glEnableVertexAttribArray(vOffset));
+	GL_SAFE_CALL(glVertexAttribPointer(vOffset, 1, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Radius)));
+	if (vIsPerInstance) GL_SAFE_CALL(glVertexAttribDivisor(vOffset, 1));
+	vOffset++;
 
-	GL_SAFE_CALL(glBindVertexArray(0));
-	return VAO;
+	GL_SAFE_CALL(glEnableVertexAttribArray(vOffset));
+	GL_SAFE_CALL(glVertexAttribPointer(vOffset, 4, GL_FLOAT, GL_FALSE, sizeof(SSurfel), (void*)offsetof(SSurfel, _Color)));
+	if (vIsPerInstance) GL_SAFE_CALL(glVertexAttribDivisor(vOffset, 1));
 }

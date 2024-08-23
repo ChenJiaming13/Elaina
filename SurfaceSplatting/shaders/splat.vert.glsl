@@ -36,7 +36,7 @@ mat3 calcRotation(vec3 Axis, float Angle)
 
 void main()
 {
-    vUv = 2.0 * iQuadPos.xy;
+	vUv = 2.0 * iQuadPos.xy;
 	vNormal = normalize(iNormal);
 	vColor = iColor.xyz;
 
@@ -44,14 +44,14 @@ void main()
 	vec3 QuadNormal = vec3(0, 0, 1);
 	float ScaledRadius = iRadius * uRadiusScale;
 	if (abs(vNormal) != QuadNormal)
-    {
+	{
 		vec3 RotAxis = normalize(cross(QuadNormal, vNormal));
 		float RotAngle = acos(dot(QuadNormal, vNormal));
 		RotMat = calcRotation(RotAxis, RotAngle);
 	}
 	vec3 WorldPos = RotMat * ScaledRadius * vec3(iQuadPos, 0.0) + iPos.xyz;
 	if (uDepthPrepass)
-    {
+	{
 		vec3 ViewDir = normalize(WorldPos - uCamPos);
 		WorldPos += ViewDir * ScaledRadius * uForwardFactor; // why?
 	}

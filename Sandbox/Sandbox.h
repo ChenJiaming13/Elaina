@@ -15,6 +15,7 @@ namespace Elaina
 	class CDeferredLitPass;
 	class CDirShadowMapPass;
 	class CPointShadowMapPass;
+	class CWaterLitPass;
 	class CFrameBuffer;
 	class CRenderPipeline;
 	class CCameraController;
@@ -53,6 +54,7 @@ private:
 	std::shared_ptr<Elaina::CDeferredLitPass> m_pDeferredLitPass;
 	std::shared_ptr<Elaina::CDirShadowMapPass> m_pDirShadowMapPass;
 	std::shared_ptr<Elaina::CPointShadowMapPass> m_pPointShadowMapPass;
+	std::shared_ptr<Elaina::CWaterLitPass> m_pWaterPass;
 	std::shared_ptr<Elaina::CCameraController> m_pCameraController;
 	std::shared_ptr<Elaina::CNode> m_pObjNode;
 	std::vector<std::shared_ptr<Elaina::CNode>> m_pNodes;
