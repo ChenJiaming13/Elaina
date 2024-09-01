@@ -16,18 +16,18 @@ void Elaina::CArcballController::control(const std::shared_ptr<CCamera>& vCamera
 
 void Elaina::CArcballController::onMouseButtonDownV(int vKey)
 {
-	if (vKey == HIVE_MOUSE_BUTTON_LEFT) m_IsLeftBtnPressed = true;
-	else if (vKey == HIVE_MOUSE_BUTTON_RIGHT) m_IsRightBtnPressed = true;
+	if (vKey == ELAINA_MOUSE_BUTTON_LEFT) m_IsLeftBtnPressed = true;
+	else if (vKey == ELAINA_MOUSE_BUTTON_RIGHT) m_IsRightBtnPressed = true;
 }
 
 void Elaina::CArcballController::onMouseButtonUpV(int vKey)
 {
-	if (vKey == HIVE_MOUSE_BUTTON_LEFT)
+	if (vKey == ELAINA_MOUSE_BUTTON_LEFT)
 	{
 		m_IsLeftBtnPressed = false;
 		m_IsFirst = true;
 	}
-	else if (vKey == HIVE_MOUSE_BUTTON_RIGHT)
+	else if (vKey == ELAINA_MOUSE_BUTTON_RIGHT)
 	{
 		m_IsRightBtnPressed = false;
 		m_IsFirst = true;

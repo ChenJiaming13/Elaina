@@ -5,7 +5,7 @@
 
 namespace Elaina
 {
-	class CFPSController : public CCameraController
+	class CFPSController final : public CCameraController
 	{
 	public:
 		CFPSController();
@@ -20,7 +20,7 @@ namespace Elaina
 		void onMouseScrollV(float vOffsetX, float vOffsetY) override;
 
 	private:
-		void __updateCamera();
+		void __updateCameraFront() const;
 		float m_Yaw;
 		float m_Pitch;
 		float m_Speed;
