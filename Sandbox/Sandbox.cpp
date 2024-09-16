@@ -188,7 +188,7 @@ void CSandbox::__setupCamera(int vWidth, int vHeight)
 {
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, static_cast<float>(vWidth) / static_cast<float>(vHeight));
 	m_pCameraController = std::make_shared<Elaina::CArcballController>();
-	m_pCameraController->control(pCamera);
+	m_pCameraController->controlV(pCamera);
 	m_pScene->setCamera(pCamera);
 }
 

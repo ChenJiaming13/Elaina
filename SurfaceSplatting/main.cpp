@@ -30,7 +30,7 @@ int main()
 	Elaina::CFrameBuffer::initDefaultFrameBuffer(App.getWidth(), App.getHeight(), 0);
 	const auto& pCamera = std::make_shared<Elaina::CCamera>(Elaina::CCamera::ECameraType::PERSP, static_cast<float>(App.getWidth()) / static_cast<float>(App.getHeight()));
 	const auto& pCameraController = std::make_shared<Elaina::CArcballController>();
-	pCameraController->control(pCamera);
+	pCameraController->controlV(pCamera);
 	App.addInputHandler(pCameraController);
 	App.addInputHandler(std::make_shared<CMyHandler>());
 

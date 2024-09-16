@@ -6,9 +6,9 @@ Elaina::CFPSController::CFPSController() :
 	m_Sensitivity(0.1f), m_IsLeftBtnPressed(false), m_IsFirst(true)
 {}
 
-void Elaina::CFPSController::control(const std::shared_ptr<CCamera>& vCamera)
+void Elaina::CFPSController::controlV(const std::shared_ptr<CCamera>& vCamera)
 {
-	CCameraController::control(vCamera);
+	CCameraController::controlV(vCamera);
 	__updateCameraFront();
 }
 
@@ -35,7 +35,7 @@ void Elaina::CFPSController::onMouseButtonUpV(int vKey)
 		m_IsFirst = true;
 	}
 }
-void Elaina::CFPSController::update(float vDeltaTime)
+void Elaina::CFPSController::updateV(float vDeltaTime)
 {
 	const float Velocity = m_Speed * vDeltaTime;
 	glm::vec3 Position = m_pCamera->getWorldPos();

@@ -114,7 +114,7 @@ int main()
 	pCamera->setFar(100000.0f);
 	//const auto& pCameraController = std::make_shared<Elaina::CArcballController>();
 	const auto& pCameraController = std::make_shared<Elaina::CFPSController>();
-	pCameraController->control(pCamera);
+	pCameraController->controlV(pCamera);
 	App.addInputHandler(pCameraController);
 	App.addInputHandler(std::make_shared<CMyHandler>());
 
@@ -141,7 +141,7 @@ int main()
 		const float DeltaTime = CurrTime - LastTime;
 		LastTime = CurrTime;
 		App.pollEvents();
-		pCameraController->update(DeltaTime);
+		pCameraController->updateV(DeltaTime);
 		Elaina::CImGui::beginFrame();
 		GL_SAFE_CALL(glViewport(0, 0, g_FrameBuffer->getWidth(), g_FrameBuffer->getHeight()));
 		GL_SAFE_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));

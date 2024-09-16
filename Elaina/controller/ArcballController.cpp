@@ -8,9 +8,9 @@ Elaina::CArcballController::CArcballController() :
 {
 }
 
-void Elaina::CArcballController::control(const std::shared_ptr<CCamera>& vCamera)
+void Elaina::CArcballController::controlV(const std::shared_ptr<CCamera>& vCamera)
 {
-	CCameraController::control(vCamera);
+	CCameraController::controlV(vCamera);
 	__updateCamera();
 }
 

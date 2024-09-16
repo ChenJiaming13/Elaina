@@ -10,8 +10,8 @@ namespace Elaina
 	public:
 		CFPSController();
 		
-		void control(const std::shared_ptr<CCamera>& vCamera) override;
-		void update(float vDeltaTime) override;
+		void controlV(const std::shared_ptr<CCamera>& vCamera) override;
+		void updateV(float vDeltaTime) override;
 		void onKeyDownV(int vKey) override;
 		void onKeyUpV(int vKey) override;
 		void onMouseButtonDownV(int vKey) override;
