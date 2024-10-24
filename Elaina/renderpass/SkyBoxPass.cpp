@@ -5,7 +5,7 @@
 #include "base/VertexArrayObject.h"
 #include "base/TextureCube.h"
 #include "core/Camera.h"
-#include "core/Scene.h"
+#include "scene/Scene.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
 #include "utils/AssetsPath.h"

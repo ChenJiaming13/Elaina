@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TextureCube.h"
+#include <stb_image.h>
 #include "safe.h"
 
 Elaina::CTextureCube::CTextureCube(int vWidth, int vHeight, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType)

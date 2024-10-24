@@ -116,7 +116,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)vendor\imgui;$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -135,7 +135,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)vendor\imgui;$(SolutionDir)vendor\tinygltf;$(SolutionDir)vendor\glad\include;$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Elaina;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -146,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scene\Bounds.h" />
+    <ClInclude Include="loader\AssimpLoader.h" />
     <ClInclude Include="utils\AssetsPath.h" />
     <ClInclude Include="base\Framebuffer.h" />
     <ClInclude Include="base\RenderBuffer.h" />
@@ -159,7 +161,7 @@
     <ClInclude Include="core\InputHandler.h" />
     <ClInclude Include="core\Camera.h" />
     <ClInclude Include="core\GlfwWindow.h" />
-    <ClInclude Include="core\Node.h" />
+    <ClInclude Include="scene\Node.h" />
     <ClInclude Include="core\RenderPass.h" />
     <ClInclude Include="core\RenderPipeline.h" />
     <ClInclude Include="core\Transform.h" />
@@ -175,18 +177,19 @@
     <ClInclude Include="parser\GlslParser.h" />
     <ClInclude Include="renderpass\ForwardLitPass.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="core\Mesh.h" />
+    <ClInclude Include="scene\Mesh.h" />
     <ClInclude Include="light\Light.h" />
     <ClInclude Include="loader\ModelLoader.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="renderpass\PostProcessPass.h" />
     <ClInclude Include="primitive\Primitive.h" />
     <ClInclude Include="safe.h" />
-    <ClInclude Include="core\Scene.h" />
+    <ClInclude Include="scene\Scene.h" />
     <ClInclude Include="base\TextureCube.h" />
     <ClInclude Include="renderpass\WaterLitPass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="loader\AssimpLoader.cpp" />
     <ClCompile Include="base\Framebuffer.cpp" />
     <ClCompile Include="base\RenderBuffer.cpp" />
     <ClCompile Include="base\ShaderProgram.cpp" />
@@ -197,7 +200,7 @@
     <ClCompile Include="controller\FPSController.cpp" />
     <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\GlfwWindow.cpp" />
-    <ClCompile Include="core\Node.cpp" />
+    <ClCompile Include="scene\Node.cpp" />
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="base\Texture.cpp" />
@@ -220,23 +223,10 @@
     </ClCompile>
     <ClCompile Include="renderpass\PostProcessPass.cpp" />
     <ClCompile Include="primitive\Primitive.cpp" />
-    <ClCompile Include="core\Scene.cpp" />
+    <ClCompile Include="scene\Scene.cpp" />
     <ClCompile Include="base\TextureCube.cpp" />
     <ClCompile Include="renderpass\WaterLitPass.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\vendor\glad\glad.vcxproj">
-      <Project>{4f8946e7-3838-487c-ac99-4be5938b75a2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\vendor\imgui\imgui.vcxproj">
-      <Project>{28221dd0-db4a-434d-a6ab-fe2bdee1a91a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\vendor\tinygltf\tinygltf.vcxproj">
-      <Project>{85292b36-f86a-41f7-803b-a413690b8ab0}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClCompile Include="utils\stb_image.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

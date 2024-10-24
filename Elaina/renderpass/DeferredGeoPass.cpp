@@ -2,10 +2,10 @@
 #include "DeferredGeoPass.h"
 #include "base/ShaderProgram.h"
 #include "core/Camera.h"
-#include "core/Scene.h"
-#include "core/Node.h"
-#include "core/Mesh.h"
 #include "core/Material.h"
+#include "scene/Scene.h"
+#include "scene/Node.h"
+#include "scene/Mesh.h"
 #include "safe.h"
 #include "utils/AssetsPath.h"
 

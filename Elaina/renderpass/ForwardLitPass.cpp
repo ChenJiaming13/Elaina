@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "ForwardLitPass.h"
 #include "base/ShaderProgram.h"
-#include "core/Node.h"
-#include "core/Scene.h"
-#include "core/Mesh.h"
+#include "base/Framebuffer.h"
 #include "core/Material.h"
 #include "core/Camera.h"
+#include "scene/Node.h"
+#include "scene/Scene.h"
+#include "scene/Mesh.h"
 #include "light/Light.h"
 #include "safe.h"
-#include "base/Framebuffer.h"
 #include "utils/AssetsPath.h"
 
 Elaina::CForwardLitPass::CForwardLitPass(bool vIsFinalPass):

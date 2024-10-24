@@ -4,9 +4,9 @@
 #include "base/Framebuffer.h"
 #include "base/ShaderProgram.h"
 #include "base/TextureCube.h"
-#include "core/Mesh.h"
-#include "core/Node.h"
-#include "core/Scene.h"
+#include "scene/Mesh.h"
+#include "scene/Node.h"
+#include "scene/Scene.h"
 #include "light/Light.h"
 #include "utils/AssetsPath.h"
 

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Texture2D.h"
+#include <stb_image.h>
 #include "safe.h"
 
 Elaina::CTexture2D::CTexture2D(int vWidth, int vHeight, GLenum vInternalFormat, GLenum vFormat, GLenum vDataType)

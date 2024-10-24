@@ -5,9 +5,9 @@
 #include "base/ShaderProgram.h"
 #include "base/Texture2D.h"
 #include "core/Camera.h"
-#include "core/Mesh.h"
-#include "core/Node.h"
-#include "core/Scene.h"
+#include "scene/Mesh.h"
+#include "scene/Node.h"
+#include "scene/Scene.h"
 #include "primitive/Primitive.h"
 #include "utils/AssetsPath.h"
 

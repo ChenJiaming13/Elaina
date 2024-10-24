@@ -60,7 +60,7 @@
     <ClInclude Include="base\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\Node.h">
+    <ClInclude Include="scene\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\Transform.h">
@@ -69,13 +69,13 @@
     <ClInclude Include="base\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\Mesh.h">
+    <ClInclude Include="scene\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="loader\ModelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\Scene.h">
+    <ClInclude Include="scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="light\Light.h">
@@ -132,6 +132,12 @@
     <ClInclude Include="renderpass\WaterLitPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="loader\AssimpLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\Bounds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -167,7 +173,7 @@
     <ClCompile Include="base\Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\Node.cpp">
+    <ClCompile Include="scene\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\Transform.cpp">
@@ -179,7 +185,7 @@
     <ClCompile Include="loader\ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\Scene.cpp">
+    <ClCompile Include="scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\RenderPipeline.cpp">
@@ -227,8 +233,11 @@
     <ClCompile Include="light\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClCompile Include="loader\AssimpLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ namespace Elaina
 	class CTransform
 	{
 	public:
-		CTransform(
+		explicit CTransform(
 			const glm::vec3& vPosition = glm::vec3(0.0f, 0.0f, 0.0f),
 			const glm::vec3& vRotation = glm::vec3(0.0f, 0.0f, 0.0f),
 			const glm::vec3& vScale = glm::vec3(1.0f, 1.0f, 1.0f)

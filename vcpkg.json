@@ -1,7 +1,23 @@
 {
   "dependencies": [
+    "assimp",
     "glfw3",
     "glm",
-    "spdlog"
+    {
+      "name": "imgui",
+      "features": [
+        "glfw-binding",
+        "opengl3-binding"
+      ]
+    },
+    "spdlog",
+    "stb",
+    "tinygltf",
+    {
+      "name": "glad",
+      "features": [
+        "gl-api-latest"
+      ]
+    }
   ]
 }

@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "ModelLoader.h"
 #include "base/VertexArrayObject.h"
-#include "core/Mesh.h"
-#include "core/Node.h"
+#include "scene/Mesh.h"
+#include "scene/Node.h"
 
 #define MODE_DEFAULT -1 
 #define MODE_POINT 0

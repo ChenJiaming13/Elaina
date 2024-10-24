@@ -5,7 +5,7 @@
 #include "base/Framebuffer.h"
 #include "base/VertexArrayObject.h"
 #include "core/Camera.h"
-#include "core/Scene.h"
+#include "scene/Scene.h"
 #include "light/Light.h"
 #include "primitive/Primitive.h"
 #include "safe.h"
