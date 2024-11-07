@@ -11,6 +11,7 @@
 #include "framework.h"
 #include <exception>
 #include <format>
+#include <ranges>
 #include <fstream>
 #include <numeric>
 #include <Windows.h>

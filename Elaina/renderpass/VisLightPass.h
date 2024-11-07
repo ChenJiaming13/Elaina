@@ -8,7 +8,7 @@ namespace Elaina
 	class CVertexArrayObject;
 	class CFrameBuffer;
 	class CShaderProgram;
-	class CVisLightPass final : public CRenderPass
+	class CVisLightPass final : public IRenderPass
 	{
 	public:
 		CVisLightPass();

@@ -8,7 +8,7 @@ namespace Elaina
 	struct SPointLight;
 	class CShaderProgram;
 	class CFrameBuffer;
-	class CPointShadowMapPass final : public CRenderPass
+	class CPointShadowMapPass final : public IRenderPass
 	{
 	public:
 		CPointShadowMapPass();

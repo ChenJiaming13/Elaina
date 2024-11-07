@@ -7,7 +7,7 @@ namespace Elaina
 	class CFrameBuffer;
 	class CVertexArrayObject;
 	class CTexture2D;
-	class CWaterLitPass final : public CRenderPass
+	class CWaterLitPass final : public IRenderPass
 	{
 	public:
 		float _MoveSpeed = 0.03f;

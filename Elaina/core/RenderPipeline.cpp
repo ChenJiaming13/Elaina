@@ -32,7 +32,7 @@ void Elaina::CRenderPipeline::render(const std::shared_ptr<CScene>& vScene) cons
 }
 
 void Elaina::CRenderPipeline::addRenderPass(
-	const std::shared_ptr<CRenderPass>& vRenderPass,
+	const std::shared_ptr<IRenderPass>& vRenderPass,
 	const std::function<void(const std::shared_ptr<CScene>& vScene)>& vFuncPrevRender,
 	const std::function<void(const std::shared_ptr<CScene>& vScene)>& vFuncPostRender)
 {

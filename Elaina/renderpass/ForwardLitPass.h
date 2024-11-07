@@ -6,7 +6,7 @@ namespace Elaina
 {
 	class CShaderProgram;
 	class CFrameBuffer;
-	class CForwardLitPass final : public CRenderPass
+	class CForwardLitPass final : public IRenderPass
 	{
 	public:
 		explicit CForwardLitPass(bool vIsFinalPass);

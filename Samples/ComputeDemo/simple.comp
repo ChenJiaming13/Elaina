@@ -1,0 +1,18 @@
+#version 460 core
+
+layout(local_size_x = 1, local_size_y = 1) in;
+layout(rgba32f, binding = 0) uniform image2D img_output;
+layout(rgba8, binding = 1) uniform image2D img_input;
+
+void main() {
+  ivec2 coords = ivec2(gl_GlobalInvocationID.xy);
+  ivec2 size = imageSize(img_input);
+  vec4 pixel = imageLoad(img_input, coords);
+  // pixel = vec4(
+  //   coords.x * 1.0 / size.x,
+  //   coords.y * 1.0 / size.y,
+  //   0.0,
+  //   1.0
+  // );
+  imageStore(img_output, coords, pixel);
+}

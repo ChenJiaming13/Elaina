@@ -7,7 +7,7 @@ namespace Elaina
 {
 	class CShaderProgram;
 	class CFrameBuffer;
-	class CDeferredGeoPass final : public CRenderPass
+	class CDeferredGeoPass final : public IRenderPass
 	{
 	public:
 		CDeferredGeoPass();

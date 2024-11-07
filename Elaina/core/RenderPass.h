@@ -5,11 +5,11 @@
 namespace Elaina
 {
 	class CScene;
-	class CRenderPass
+	class IRenderPass
 	{
 	public:
-		CRenderPass() = default;
-		virtual ~CRenderPass() = default;
+		IRenderPass() = default;
+		virtual ~IRenderPass() = default;
 
 		virtual void renderV(const std::shared_ptr<CScene>& vScene) = 0;
 		virtual void initV(int vWidth, int vHeight) {}

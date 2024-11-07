@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <spdlog/spdlog.h>
 
 #ifdef _DEBUG
 inline void checkGLError()
@@ -8,7 +9,7 @@ inline void checkGLError()
 	GLenum Error = glGetError();
 	if (Error != GL_NO_ERROR)
 	{
-		throw Error;
+		spdlog::error(__FUNCTION__);
 	}
 }
 

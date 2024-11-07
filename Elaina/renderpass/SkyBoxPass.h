@@ -8,7 +8,7 @@ namespace Elaina
 	class CVertexArrayObject;
 	class CFrameBuffer;
 	class CShaderProgram;
-	class CSkyBoxPass final : public CRenderPass
+	class CSkyBoxPass final : public IRenderPass
 	{
 	public:
 		explicit CSkyBoxPass(const std::array<std::string, 6>& vCubeMapFiles);

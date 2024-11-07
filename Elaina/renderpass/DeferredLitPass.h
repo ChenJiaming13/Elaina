@@ -9,7 +9,7 @@ namespace Elaina
 	class CFrameBuffer;
 	class CShaderProgram;
 	class CTexture;
-	class CDeferredLitPass final : public CRenderPass
+	class CDeferredLitPass final : public IRenderPass
 	{
 	public:
 		explicit CDeferredLitPass(bool vIsFinalPass);

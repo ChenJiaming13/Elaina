@@ -146,15 +146,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="base\Buffer.h" />
+    <ClInclude Include="base\Framebuffer.h" />
+    <ClInclude Include="base\RenderBuffer.h" />
+    <ClInclude Include="base\Texture.h" />
+    <ClInclude Include="base\Texture2D.h" />
+    <ClInclude Include="base\TextureCube.h" />
+    <ClInclude Include="gl\BufferManager.h" />
+    <ClInclude Include="core\WindowSystem.h" />
+    <ClInclude Include="gl\FrameBufferManager.h" />
+    <ClInclude Include="gl\ShaderProgramManager.h" />
+    <ClInclude Include="gl\TextureManager.h" />
+    <ClInclude Include="scene\Geometry.h" />
     <ClInclude Include="scene\Bounds.h" />
     <ClInclude Include="loader\AssimpLoader.h" />
     <ClInclude Include="utils\AssetsPath.h" />
-    <ClInclude Include="base\Framebuffer.h" />
-    <ClInclude Include="base\RenderBuffer.h" />
     <ClInclude Include="base\ShaderProgram.h" />
-    <ClInclude Include="base\Texture2D.h" />
     <ClInclude Include="base\VertexArrayObject.h" />
-    <ClInclude Include="base\Buffer.h" />
     <ClInclude Include="controller\ArcballController.h" />
     <ClInclude Include="controller\CameraController.h" />
     <ClInclude Include="controller\FPSController.h" />
@@ -166,7 +174,6 @@
     <ClInclude Include="core\RenderPipeline.h" />
     <ClInclude Include="core\Transform.h" />
     <ClInclude Include="core\Material.h" />
-    <ClInclude Include="base\Texture.h" />
     <ClInclude Include="renderpass\VisLightPass.h" />
     <ClInclude Include="renderpass\PointShadowMapPass.h" />
     <ClInclude Include="ui\ImGui.h" />
@@ -185,17 +192,24 @@
     <ClInclude Include="primitive\Primitive.h" />
     <ClInclude Include="safe.h" />
     <ClInclude Include="scene\Scene.h" />
-    <ClInclude Include="base\TextureCube.h" />
     <ClInclude Include="renderpass\WaterLitPass.h" />
+    <ClInclude Include="gl\VAOManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="loader\AssimpLoader.cpp" />
+    <ClCompile Include="base\Buffer.cpp" />
     <ClCompile Include="base\Framebuffer.cpp" />
     <ClCompile Include="base\RenderBuffer.cpp" />
-    <ClCompile Include="base\ShaderProgram.cpp" />
+    <ClCompile Include="base\Texture.cpp" />
     <ClCompile Include="base\Texture2D.cpp" />
+    <ClCompile Include="base\TextureCube.cpp" />
+    <ClCompile Include="gl\BufferManager.cpp" />
+    <ClCompile Include="core\WindowSystem.cpp" />
+    <ClCompile Include="gl\FrameBufferManager.cpp" />
+    <ClCompile Include="gl\ShaderProgramManager.cpp" />
+    <ClCompile Include="gl\TextureManager.cpp" />
+    <ClCompile Include="loader\AssimpLoader.cpp" />
+    <ClCompile Include="base\ShaderProgram.cpp" />
     <ClCompile Include="base\VertexArrayObject.cpp" />
-    <ClCompile Include="base\Buffer.cpp" />
     <ClCompile Include="controller\ArcballController.cpp" />
     <ClCompile Include="controller\FPSController.cpp" />
     <ClCompile Include="core\Camera.cpp" />
@@ -203,7 +217,6 @@
     <ClCompile Include="scene\Node.cpp" />
     <ClCompile Include="core\RenderPipeline.cpp" />
     <ClCompile Include="core\Transform.cpp" />
-    <ClCompile Include="base\Texture.cpp" />
     <ClCompile Include="light\Light.cpp" />
     <ClCompile Include="renderpass\VisLightPass.cpp" />
     <ClCompile Include="renderpass\PointShadowMapPass.cpp" />
@@ -224,9 +237,9 @@
     <ClCompile Include="renderpass\PostProcessPass.cpp" />
     <ClCompile Include="primitive\Primitive.cpp" />
     <ClCompile Include="scene\Scene.cpp" />
-    <ClCompile Include="base\TextureCube.cpp" />
     <ClCompile Include="renderpass\WaterLitPass.cpp" />
     <ClCompile Include="utils\stb_image.cpp" />
+    <ClCompile Include="gl\VAOManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

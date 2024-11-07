@@ -7,7 +7,7 @@ namespace Elaina
 {
 	class CShaderProgram;
 	class CFrameBuffer;
-	class CDirShadowMapPass final : public CRenderPass
+	class CDirShadowMapPass final : public IRenderPass
 	{
 	public:
 		CDirShadowMapPass();

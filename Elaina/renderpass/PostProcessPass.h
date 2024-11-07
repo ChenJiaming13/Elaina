@@ -7,7 +7,7 @@ namespace Elaina
 	class CShaderProgram;
 	class CVertexArrayObject;
 	class CFrameBuffer;
-	class CPostProcessPass final : public CRenderPass
+	class CPostProcessPass final : public IRenderPass
 	{
 	public:
 		explicit CPostProcessPass(const std::shared_ptr<CShaderProgram>& vShaderProgram, bool vIsFinalPass);
