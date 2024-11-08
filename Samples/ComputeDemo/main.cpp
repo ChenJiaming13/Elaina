@@ -3,7 +3,7 @@
 #include "gl/ShaderProgramManager.h"
 #include "gl/TextureManager.h"
 #include "gl/BufferManager.h"
-#include "gl/VAOManager.h"
+#include "gl/GeometryManager.h"
 #include "gl/FrameBufferManager.h"
 
 using namespace Elaina;
@@ -16,7 +16,7 @@ int main()
 	gl::CTextureManager TextureManager;
 	gl::CShaderProgramManager ProgramManager;
 	gl::CBufferManager BufferManager;
-	gl::CVAOManager VAOManager;
+	gl::CGeometryManager GeometryManager;
 
 	float Vertices[] = {
 		 1.0f,  1.0f,
@@ -40,13 +40,16 @@ int main()
 	};
 	auto VertexBufferHandle = BufferManager.createBuffer(VertexBufferCreateInfo);
 	auto IndexBufferHandle = BufferManager.createBuffer(IndexBufferCreateInfo);
-	gl::SVAOCreateInfo VAOCreateInfo
+	gl::SGeometryInfo GeometryInfo
 	{
 		._VertexBufferHandle = VertexBufferHandle,
 		._IndexBufferHandle = IndexBufferHandle,
-		._Layouts = { 2 }
+		._Layouts = { 2 },
+		._VerticesCount = 4,
+		._IndicesCount = 6,
+		._Primitive = GL_TRIANGLES
 	};
-	gl::VAOHandle VAOHandle = VAOManager.createVAO(VAOCreateInfo);
+	gl::GeometryHandle GeometryHandle = GeometryManager.createGeometry(GeometryInfo);
 	constexpr int Width = 512;
 	constexpr int Height = 512;
 	constexpr gl::STexture2DCreateInfo TextureCreateInfo
@@ -102,8 +105,7 @@ int main()
 		TextureManager.bindSampler2D(OutputTextureHandle, 0);
 		ProgramManager.useProgram(GraphicsProgramHandle);
 		ProgramManager.setUniform(GraphicsProgramHandle, "uTexture", 0);
-		VAOManager.bindVAO(VAOHandle);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		GeometryManager.draw(GeometryHandle);
 
 		WindowSystem.swapBuffers();
 	}

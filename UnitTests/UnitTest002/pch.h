@@ -9,4 +9,4 @@
 #include <glad/glad.h>
 #include "core/WindowSystem.h"
 #include "gl/BufferManager.h"
-#include "gl/VAOManager.h"
+#include "gl/GeometryManager.h"

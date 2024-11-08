@@ -2,7 +2,7 @@
 
 using namespace Elaina;
 
-TEST(Test_VAOManager, NT_CreateVAO)
+TEST(Test_GeometryManager, NT_CreateGeometry)
 {
 	core::CWindowSystem WindowSystem;
 	ASSERT_TRUE(WindowSystem.init());
@@ -37,13 +37,16 @@ TEST(Test_VAOManager, NT_CreateVAO)
 	const auto IndexBufferHandle = BufferManager.createBuffer(IndexBufferInfo);
 	ASSERT_NE(IndexBufferHandle, gl::INVALID_BUFFER_HANDLE);
 
-	const gl::SVAOCreateInfo VAOInfo
+	const gl::SGeometryInfo GeometryInfo
 	{
 		._VertexBufferHandle = VertexBufferHandle,
 		._IndexBufferHandle = IndexBufferHandle,
-		._Layouts = {3, 3, 2}
+		._Layouts = {3, 3, 2},
+		._VerticesCount = 4,
+		._IndicesCount = 6,
+		._Primitive = GL_TRIANGLES
 	};
-	gl::CVAOManager VAOManager;
-	const auto VAOHandle = VAOManager.createVAO(VAOInfo);
-	ASSERT_NE(VAOHandle, gl::INVALID_VAO_HANDLE);
+	gl::CGeometryManager GeometryManager;
+	const auto VAOHandle = GeometryManager.createGeometry(GeometryInfo);
+	ASSERT_NE(VAOHandle, gl::INVALID_GEOMETRY_HANDLE);
 }

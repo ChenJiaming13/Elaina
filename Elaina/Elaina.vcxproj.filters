@@ -153,7 +153,7 @@
     <ClInclude Include="gl\BufferManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gl\VAOManager.h">
+    <ClInclude Include="gl\GeometryManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gl\ShaderProgramManager.h">
@@ -272,7 +272,7 @@
     <ClCompile Include="gl\BufferManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gl\VAOManager.cpp">
+    <ClCompile Include="gl\GeometryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gl\ShaderProgramManager.cpp">

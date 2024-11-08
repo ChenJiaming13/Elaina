@@ -193,7 +193,7 @@
     <ClInclude Include="safe.h" />
     <ClInclude Include="scene\Scene.h" />
     <ClInclude Include="renderpass\WaterLitPass.h" />
-    <ClInclude Include="gl\VAOManager.h" />
+    <ClInclude Include="gl\GeometryManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\Buffer.cpp" />
@@ -239,7 +239,7 @@
     <ClCompile Include="scene\Scene.cpp" />
     <ClCompile Include="renderpass\WaterLitPass.cpp" />
     <ClCompile Include="utils\stb_image.cpp" />
-    <ClCompile Include="gl\VAOManager.cpp" />
+    <ClCompile Include="gl\GeometryManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
