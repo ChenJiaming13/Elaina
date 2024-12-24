@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <glad/glad.h>
+
 namespace Elaina::gl
 {
 	using BufferHandle = GLuint;
@@ -16,6 +19,8 @@ namespace Elaina::gl
 	class CBufferManager
 	{
 	public:
+		~CBufferManager();
+
 		BufferHandle createBuffer(const SBufferCreateInfo& vCreateInfo);
 
 		void deleteBuffer(BufferHandle vHandle);

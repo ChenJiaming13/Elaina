@@ -14,6 +14,7 @@
 #include <ranges>
 #include <fstream>
 #include <numeric>
+#include <cassert>
 #include <Windows.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

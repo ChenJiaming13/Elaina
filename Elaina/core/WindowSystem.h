@@ -4,7 +4,7 @@ struct GLFWwindow;
 
 namespace Elaina::core
 {
-	struct SWindowSystemInfo
+	struct SWindowSystemCreateInfo
 	{
 		int _Width = 800;
 		int _Height = 600;
@@ -19,18 +19,17 @@ namespace Elaina::core
 	public:
 		~CWindowSystem() { cleanup(); }
 
-		bool init(const SWindowSystemInfo& vInfo={});
+		bool init(const SWindowSystemCreateInfo& vInfo={});
 		void cleanup();
 		[[nodiscard]] bool shouldClose() const;
 		static void pollEvents();
 		void swapBuffers() const;
-		[[nodiscard]] int getWidth() const { return m_Info._Width; }
-		[[nodiscard]] int getHeight() const { return m_Info._Height; }
+		[[nodiscard]] std::pair<int, int> getExtent() const;
+		[[nodiscard]] float getAspect() const;
 
 	private:
 		static void __setupDebug();
 
-		SWindowSystemInfo m_Info{};
 		GLFWwindow* m_pWindow = nullptr;
 	};
 }

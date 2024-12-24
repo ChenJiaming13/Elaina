@@ -3,6 +3,19 @@
 
 using namespace Elaina::gl;
 
+CGeometryManager::~CGeometryManager()
+{
+	std::vector<GeometryHandle> Handles;
+	for (const auto& Handle : m_GeometryInfos | std::views::keys)
+	{
+		Handles.push_back(Handle);
+	}
+	for (const BufferHandle Handle : Handles)
+	{
+		deleteGeometry(Handle);
+	}
+}
+
 GeometryHandle CGeometryManager::createGeometry(const SGeometryInfo& vInfo)
 {
 	if (vInfo._VertexBufferHandle == INVALID_BUFFER_HANDLE || vInfo._Layouts.empty()) return INVALID_GEOMETRY_HANDLE;
@@ -31,23 +44,23 @@ GeometryHandle CGeometryManager::createGeometry(const SGeometryInfo& vInfo)
 		glVertexArrayAttribBinding(Handle, AttrIndex, BindingIndex);
 		CurrNumFloats += vInfo._Layouts[AttrIndex];
 	}
-	if (Handle != INVALID_GEOMETRY_HANDLE) m_Geometries[Handle] = vInfo;
+	if (Handle != INVALID_GEOMETRY_HANDLE) m_GeometryInfos[Handle] = vInfo;
 	return Handle;
 }
 
 void CGeometryManager::deleteGeometry(GeometryHandle vHandle)
 {
 	assert(vHandle != INVALID_GEOMETRY_HANDLE);
-	assert(m_Geometries.contains(vHandle));
+	assert(m_GeometryInfos.contains(vHandle));
 	glDeleteVertexArrays(1, &vHandle);
-	m_Geometries.erase(vHandle);
+	m_GeometryInfos.erase(vHandle);
 }
 
 void CGeometryManager::draw(GeometryHandle vHandle) const
 {
 	assert(vHandle != INVALID_GEOMETRY_HANDLE);
-	assert(m_Geometries.contains(vHandle));
-	const auto& Geometry = m_Geometries.at(vHandle);
+	assert(m_GeometryInfos.contains(vHandle));
+	const auto& Geometry = m_GeometryInfos.at(vHandle);
 	glBindVertexArray(vHandle);
 	if (Geometry._IndexBufferHandle == INVALID_BUFFER_HANDLE)
 	{

@@ -3,6 +3,19 @@
 
 using namespace Elaina::gl;
 
+CBufferManager::~CBufferManager()
+{
+	std::vector<BufferHandle> Handles;
+	for (const BufferHandle Handle : m_BufferInfos | std::views::keys)
+	{
+		Handles.push_back(Handle);
+	}
+	for (const BufferHandle Handle : Handles)
+	{
+		deleteBuffer(Handle);
+	}
+}
+
 BufferHandle CBufferManager::createBuffer(const SBufferCreateInfo& vCreateInfo)
 {
 	BufferHandle Handle = INVALID_BUFFER_HANDLE;

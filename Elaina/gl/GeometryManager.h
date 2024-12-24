@@ -23,6 +23,8 @@ namespace Elaina::gl
 	class CGeometryManager
 	{
 	public:
+		~CGeometryManager();
+
 		GeometryHandle createGeometry(const SGeometryInfo& vInfo); // ABCABC
 
 		void deleteGeometry(GeometryHandle vHandle);
@@ -30,6 +32,6 @@ namespace Elaina::gl
 		void draw(GeometryHandle vHandle) const;
 
 	private:
-		std::map<GeometryHandle, SGeometryInfo> m_Geometries;
+		std::map<GeometryHandle, SGeometryInfo> m_GeometryInfos;
 	};
 }

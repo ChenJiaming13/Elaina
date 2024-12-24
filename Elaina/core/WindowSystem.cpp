@@ -3,7 +3,7 @@
 
 using namespace Elaina::core;
 
-bool CWindowSystem::init(const SWindowSystemInfo& vInfo)
+bool CWindowSystem::init(const SWindowSystemCreateInfo& vInfo)
 {
 	if (m_pWindow != nullptr)
 	{
@@ -32,17 +32,11 @@ bool CWindowSystem::init(const SWindowSystemInfo& vInfo)
 		return false;
 	}
 	if (vInfo._EnableDebug) __setupDebug();
-	m_Info = vInfo;
-	m_Info._Width = Width;
-	m_Info._Height = Height;
 	return true;
 }
 
 void CWindowSystem::cleanup()
 {
-	m_Info._Width = 0;
-	m_Info._Height = 0;
-	m_Info._Title = "";
 	if (m_pWindow != nullptr)
 	{
 		glfwDestroyWindow(m_pWindow);
@@ -66,6 +60,19 @@ void CWindowSystem::swapBuffers() const
 {
 	if (m_pWindow == nullptr) return;
 	glfwSwapBuffers(m_pWindow);
+}
+
+std::pair<int, int> CWindowSystem::getExtent() const
+{
+	int Width, Height;
+	glfwGetFramebufferSize(m_pWindow, &Width, &Height);
+	return { Width, Height };
+}
+
+float CWindowSystem::getAspect() const
+{
+	auto [Width, Height] = getExtent();
+	return static_cast<float>(Width) / static_cast<float>(Height);
 }
 
 void messageCallback(GLenum vSource, GLenum vType, GLuint vErrorCode, GLenum vSeverity, GLsizei vLength, GLchar const* vMessage, void const* vUserParam)

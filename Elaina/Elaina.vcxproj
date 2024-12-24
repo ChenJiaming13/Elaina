@@ -152,6 +152,7 @@
     <ClInclude Include="base\Texture.h" />
     <ClInclude Include="base\Texture2D.h" />
     <ClInclude Include="base\TextureCube.h" />
+    <ClInclude Include="basic_geometry\BasicGeometry.h" />
     <ClInclude Include="gl\BufferManager.h" />
     <ClInclude Include="core\WindowSystem.h" />
     <ClInclude Include="gl\FrameBufferManager.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="base\Texture.cpp" />
     <ClCompile Include="base\Texture2D.cpp" />
     <ClCompile Include="base\TextureCube.cpp" />
+    <ClCompile Include="basic_geometry\BasicGeometry.cpp" />
     <ClCompile Include="gl\BufferManager.cpp" />
     <ClCompile Include="core\WindowSystem.cpp" />
     <ClCompile Include="gl\FrameBufferManager.cpp" />
