@@ -7,24 +7,24 @@ TEST(Test_GeometryManager, NT_CreateGeometry)
 	core::CWindowSystem WindowSystem;
 	ASSERT_TRUE(WindowSystem.init());
 
-	float Vertices[] = {
+	constexpr float Vertices[] = {
 		// positions          // colors           // texture coords
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
 		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
 		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
-	unsigned int Indices[] = {
+	constexpr unsigned int Indices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
-	constexpr gl::SBufferCreateInfo VertexBufferInfo
+	gl::SBufferCreateInfo VertexBufferInfo
 	{
 		._BufferSize = sizeof(Vertices),
 		._BufferUsage = GL_DYNAMIC_STORAGE_BIT,
 		._pData = Vertices
 	};
-	constexpr gl::SBufferCreateInfo IndexBufferInfo
+	gl::SBufferCreateInfo IndexBufferInfo
 	{
 		._BufferSize = sizeof(Vertices),
 		._BufferUsage = GL_DYNAMIC_STORAGE_BIT,
